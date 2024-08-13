@@ -1,7 +1,9 @@
 import { useEffect } from 'react'
 // 樣式
+import '@/styles/public.css'
 import '@/styles/globals.scss'
-import '@/styles/product.scss'
+// import '@/styles/product.scss'
+import '@/styles/carousel.scss'
 import '@/styles/cart.scss'
 import '@/styles/loader.scss'
 // 載入購物車context
