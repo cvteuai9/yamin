@@ -13,14 +13,6 @@ export default async function (sequelize) {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      img: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      info: {
-        type: DataTypes.TEXT,
-        allowNull: true,
-      },
     },
     {
       tableName: 'brand', //直接提供資料表名稱
