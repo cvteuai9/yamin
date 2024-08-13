@@ -158,6 +158,7 @@ router.get('/:id', async (req, res) => {
   const [imageRows] = await db.query(
     `SELECT path FROM product_images JOIN my_products ON my_products.id = product_images.product_id WHERE product_images.product_id = ${id}`
   )
+  let kkk = []
   let image = []
   imageRows.map((v, i) => {
     image.push(v.path)
