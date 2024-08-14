@@ -1,12 +1,10 @@
 import React, { useState, useEffect, use } from 'react'
+import { useLoader } from '@/hooks/use-loader'
 import styles from '@/styles/product.module.scss'
-import { resolve } from 'styled-jsx/css'
-import { reject } from 'lodash'
-import { getProducts } from '@/services/product'
-import { func } from 'prop-types'
 import Link from 'next/link'
 
 export default function List1() {
+  const { showLoader, hideLoader, loading, delay } = useLoader()
   //宣告 filter array
   const priceArray = ['$500 以下', '$500 ~ $1000', '$1000 以上']
   const [teaArray, setTeaArray] = useState([])
@@ -52,6 +50,24 @@ export default function List1() {
     setStyleArray(products.product.styleFilter)
     setTotalData(products.product.totalData)
   }
+  useEffect(() => {
+    showLoader()
+    let searchParams = new URLSearchParams({
+      order: order,
+      perpage: perpage,
+      page: page,
+      price: price,
+      tea: tea,
+      brand: brand,
+      package: pc,
+      style: style,
+    })
+    url.search = searchParams
+    // 模擬fetch或異步載入
+    getProducts(url)
+      .then(delay(1000)) // 延時3秒後再停止載入器，只有手動控制有用，自動關閉會無用
+      .then(hideLoader)
+  }, [])
   // 當count、order值改變時，設定新網址參數並重新抓取資料
   useEffect(() => {
     let searchParams = new URLSearchParams({

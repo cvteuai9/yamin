@@ -45,6 +45,7 @@ router.get('/', async (req, res) => {
     const order = req.query.order || '1'
     const perpage = Number(req.query.perpage) || 12
     const page = Number(req.query.page) || 1
+    // 每頁第一筆資料索引 = (現在頁數 - 1) * 每頁顯示資料數量 -> 索引是從0開始計算
     const start = (page - 1) * perpage
     const end = perpage * page
     const price = [req.query.price][0].split(',') || []
@@ -129,6 +130,7 @@ router.get('/', async (req, res) => {
     const totalData = rows.length
     // 計算分頁資訊
     totalPage = Math.ceil(rows.length / perpage)
+    // 商品資料為 全部資料用slice方法切割 第一頁為 (start(0), end(12))
     product.data = rows.slice(start, end)
     product.totalPage = totalPage
     product.teaFilter = teaFilter
@@ -144,6 +146,59 @@ router.get('/', async (req, res) => {
   }
 })
 
+router.get('/reviews/:id', async (req, res) => {
+  const id = Number(req.params.id)
+  const [rows] = await db.query(
+    `SELECT id,comment, rating ,created_at FROM reviews WHERE product_id = ${id}`
+  )
+  // console.log(rows.length)
+  // 設定各星級佔存
+  let a = 0,
+    b = 0,
+    c = 0,
+    d = 0,
+    e = 0
+  // 計算各星級數量
+  rows.map((v, i) => {
+    switch (v.rating) {
+      case 1:
+        a++
+        break
+      case 2:
+        b++
+        break
+      case 3:
+        c++
+        break
+      case 4:
+        d++
+        break
+      case 5:
+        e++
+        break
+    }
+  })
+  // 計算總星級數， toFixed(1) 取到小數點第一位(四捨五入)
+  let allRating = (
+    (a * 1 + b * 2 + c * 3 + d * 4 + e * 5) /
+    rows.length
+  ).toFixed(1)
+  // 計算各星級 % 數
+  const starArray = [
+    Math.round((e / rows.length) * 100),
+    Math.round((d / rows.length) * 100),
+    Math.round((c / rows.length) * 100),
+    Math.round((b / rows.length) * 100),
+    Math.round((a / rows.length) * 100),
+  ]
+  const reviews = {}
+  reviews.data = rows
+  reviews.eachRating = starArray
+  reviews.allRating = allRating
+  reviews.allLength = rows.length
+  // console.log(reviews)
+  return res.json(reviews)
+})
 router.get('/:id', async (req, res) => {
   const id = Number(req.params.id)
   const [rows] = await db.query(
@@ -158,13 +213,12 @@ router.get('/:id', async (req, res) => {
   const [imageRows] = await db.query(
     `SELECT path FROM product_images JOIN my_products ON my_products.id = product_images.product_id WHERE product_images.product_id = ${id}`
   )
-  let kkk = []
   let image = []
   imageRows.map((v, i) => {
     image.push(v.path)
     return image
   })
-  console.log(image)
+  // console.log(image)
   const product = { data: rows, images: image }
   return res.json(product)
 })
