@@ -4,6 +4,12 @@ import '@/styles/globals.scss'
 import '@/styles/product.scss'
 import '@/styles/cart.scss'
 import '@/styles/loader.scss'
+import '@/styles/Normalize.scss'
+import '@/styles/public.scss'
+import '@/styles/style.scss'
+import '@/styles/course_style.scss'
+
+
 // 載入購物車context
 import { CartProvider } from '@/hooks/use-cart-state'
 // 載入認証用context
