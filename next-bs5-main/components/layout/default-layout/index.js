@@ -16,7 +16,7 @@ export default function DefaultLayout({ title = 'Next-BS5', children }) {
       </Head>
       <MyNavbarBS5 />
       <main className="flex-shrink-0 mt-3">
-        <div className="container">
+        <div className="container-fluid" style={{ maxWidth: 1440 }}>
           <NextBreadCrumb isHomeIcon isChevron bgClass="" />
           {children}
         </div>
