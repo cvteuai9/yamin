@@ -1,13 +1,18 @@
 import { useEffect } from 'react'
 // 樣式
 import '@/styles/globals.scss'
+import '@/styles/Normalize.scss'
 import '@/styles/product.scss'
 import '@/styles/cart.scss'
 import '@/styles/loader.scss'
+import '@/styles/star.scss'
+import '@/styles/font-color.scss'
+import '@/styles/article.scss'
 // 載入購物車context
 import { CartProvider } from '@/hooks/use-cart-state'
 // 載入認証用context
-import { AuthProvider } from '@/hooks/use-auth'
+// import { AuthProvider } from '@/hooks/use-auth'
+import { AuthProvider } from '@/context/AuthContext'
 // 載入動畫context
 import { LoaderProvider } from '@/hooks/use-loader'
 
