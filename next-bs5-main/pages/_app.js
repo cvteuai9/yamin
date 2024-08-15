@@ -12,8 +12,8 @@ import '@/styles/order/leftNav.scss'
 import '@/styles/cart/cartTest.scss'
 import '@/styles/order/order.scss'
 import '@/styles/order/PayCard.scss'
-import '@fortawesome/fontawesome-free/css/all.min.css'
-import 'react-credit-cards-2/dist/es/styles-compiled.css'
+// import '@fortawesome/fontawesome-free/css/all.min.css'
+// import 'react-credit-cards-2/dist/es/styles-compiled.css'
 
 import '@/styles/star.scss'
 import '@/styles/font-color.scss'
@@ -26,8 +26,8 @@ import '@/styles/course_style.scss'
 
 
 // Ju-掛載
-import '@/styles/Normalize.css'
-import '@/styles/public.css'
+// import '@/styles/Normalize.css'
+// import '@/styles/public.css'
 import '@/styles/all.css'
 
 // 載入購物車context

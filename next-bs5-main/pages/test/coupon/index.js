@@ -1,4 +1,4 @@
-import Coupon from '@/components/coupon-test/coupon'
+import Coupon from '@/components/test/coupon'
 
 export default function Coupons() {
   return <Coupon />
