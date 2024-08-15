@@ -219,7 +219,7 @@ router.get('/:id', async (req, res) => {
   })
 })
 
-// 新增使用者
+// 註冊，新增使用者
 router.post('/', upload.none(), async (req, res) => {
   // 有安裝multer,就可以用upload.none()幫我們把表單的內容產生在req.body裡面
   // const [users] = await db.query('SELECT * FROM users')
