@@ -20,18 +20,24 @@ const useAuth = () => {
     })
       .then((res) => res.json())
       .then((result) => {
-        return result
+        if (result.status === 'success') {
+          result.token
+        } else {
+          throw new Error(result.message)
+        }
+        return result.token
       })
       .catch((err) => {
         error = err
         return undefined
       })
-    console.log(token)
+    // console.log(token)
     if (error) {
+      alert(error.message)
       return
     }
     if (token) {
-      // setToken(token)
+      setToken(token)
     }
   }
   const logout = () => {}
