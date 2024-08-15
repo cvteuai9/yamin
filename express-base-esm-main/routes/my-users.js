@@ -7,8 +7,6 @@ import authenticate from '#middlewares/authenticate.js'
 import { v4 as uuidv4 } from 'uuid'
 
 const router = express.Router()
-// 使用 CORS 中間件
-// router.use(cors())
 
 // 解析 JSON 請求體
 router.use(express.json())
@@ -242,38 +240,39 @@ router.post('/', upload.none(), async (req, res) => {
   })
 })
 
-router.put('/api/users/:id', upload.none(), async (req, res) => {
+// 更新使用者
+router.put('/:id', upload.none(), async (req, res) => {
+  const [users] = await db.query('SELECT * FROM users')
   const id = req.params.id
   const { email, password, user_name } = req.body
-  let user = db.data.user.find((u) => u.id === id)
+  let user = users.find((u) => u.member_id === id)
   if (!user) {
     return res.status(404).json({
       status: 'fail',
       message: '找不到使用者',
     })
   }
-  // let newData = { email, password, name, mail, head }; //使用者送出的新的資料（postman:body->form-data的資料）
-  // user = {...user, ...newData}; //但會脫離db資料，是新的user
-  // console.log(user);
-  Object.assign(user, { email, password, user_name })
-  await db.write()
+  await db.query(
+    'UPDATE users SET email = ?, password = ?, user_name = ? WHERE member_id = ?',
+    [email, password, user_name, id]
+  )
   res.status(200).json({
     status: 'success',
     message: '修改成功',
   })
 })
 
-router.delete('/api/users/:id', async (req, res) => {
+router.delete('/:id', async (req, res) => {
+  const [users] = await db.query('SELECT * FROM users')
   const id = req.params.id
-  let user = db.data.user.find((u) => u.id === id)
+  let user = users.find((u) => u.member_id === id)
   if (!user) {
     return res.status(404).json({
       status: 'fail',
       message: '找不到使用者',
     })
   }
-  db.data.user = db.data.user.filter((u) => u.id !== id)
-  await db.write()
+  await db.query('DELETE FROM users WHERE member_id = ?', [id])
   res.status(200).json({
     status: 'success',
     message: '刪除成功',
