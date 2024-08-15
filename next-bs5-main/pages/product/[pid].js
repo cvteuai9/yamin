@@ -5,20 +5,39 @@ import Link from 'next/link'
 import { IoArrowBackCircle } from 'react-icons/io5'
 // Import Swiper React components
 import { Swiper, SwiperSlide } from 'swiper/react'
+import { FaArrowAltCircleRight } from 'react-icons/fa'
 
+// 以下為  {商品圖輪播套件}
 // Import Swiper styles
 import 'swiper/css'
 import 'swiper/css/free-mode'
 import 'swiper/css/navigation'
 import 'swiper/css/thumbs'
-
 // import required modules
 import { Autoplay, FreeMode, Navigation, Thumbs } from 'swiper/modules'
+// 以上為  {商品圖輪播套件}
 
 export default function Detail() {
+  const [productCount, setProductCount] = useState(1)
   const [thumbsSwiper, setThumbsSwiper] = useState(null)
+  const [review, setReview] = useState([])
+  const [allReviews, setAllReviews] = useState([])
+  // eachRating各星級的評價%數陣列 => [0, 0, 12, 15, 73]
+  //                                 ^^ ^^ ^^  ^^  ^^
+  //                           星級   1  2   3   4  5
+  const [eachRating, setEachRating] = useState([])
+  // allRating 總星級平均分數
+  const [allRatingScore, setAllRating] = useState('0')
+  // allLength 總評論數
+  const [allLength, setAllLength] = useState('0')
   const router = useRouter()
   const [image, setImage] = useState([])
+  const [relationProduct, setRelationProduct] = useState([])
+  const allRatingStar = new Array(Math.floor(Number(allRatingScore))).fill(0)
+  const allRatingUnfillStar = new Array(
+    5 - Math.floor(Number(allRatingScore))
+  ).fill(0)
+  // 設定商品資料初始物件
   const [product, setProduct] = useState({
     id: 0,
     product_name: '',
@@ -37,6 +56,7 @@ export default function Detail() {
     paths: '',
     updated_at: '',
   })
+  // 取得特定id商品資料的函式
   async function getProduct(id) {
     const apiURL = new URL(`http://localhost:3005/api/my_products/${id}`)
     const res = await fetch(apiURL)
@@ -44,35 +64,78 @@ export default function Detail() {
     setProduct(data.data[0])
     setImage(data.images)
   }
+  // 取得評論的函式
+  async function getReviews(id) {
+    const apiURL = new URL(
+      `http://localhost:3005/api/my_products/reviews/${id}`
+    )
+    const res = await fetch(apiURL)
+    const data = await res.json()
+    if (data.allLength !== 0) {
+      setReview(data.someData)
+      setAllReviews(data.allData)
+      setEachRating(data.eachRating)
+      setAllRating(data.allRating)
+      setAllLength(JSON.stringify(data.allLength))
+    }
+  }
+  async function getRelationProduct(id) {
+    const apiURL = new URL(
+      `http://localhost:3005/api/my_products/relation_product/${id}`
+    )
+    const res = await fetch(apiURL)
+    const data = await res.json()
+    setRelationProduct(data)
+  }
+  // 處理商品數量加減的函式
+  function handleProductCount(e) {
+    if (e.target.id === 'add') {
+      if (productCount + 1 <= 99) {
+        setProductCount(productCount + 1)
+      } else {
+        alert('商品數量最多為99')
+      }
+    } else {
+      if (productCount - 1 > 0) {
+        setProductCount(productCount - 1)
+      } else {
+        alert('商品數量最少為1')
+        setProductCount(1)
+      }
+    }
+  }
   useEffect(() => {
     // console.log(router.query)
     if (router.isReady) {
-      // console.log(router.query)x`
+      // console.log(router.query)`
       getProduct(router.query.pid)
+      getReviews(router.query.pid)
+      getRelationProduct(router.query.pid)
     }
     // eslint-disable-next-line
-  }, [router.isReady])
+  }, [router.isReady, router.query.pid])
+
   return (
     <>
       {/* 返回商品列表頁按鈕 */}
       <div className={`${styles.backToListBtn}`}>
-        <h1>
+        <h3>
           <Link href={`/product/list1`}>
-            <IoArrowBackCircle className="display-2" />
+            <IoArrowBackCircle className="display-4" />
             返回產品列表
           </Link>
-        </h1>
+        </h3>
       </div>
       {/* main ---START--- */}
       <div className={`${styles.main} container-fluid`}>
+        {/* 商品介紹區 section1 */}
         <div
           className={`${styles.section1} row justify-content-center align-items-center align-items-sm-start gap-0`}
         >
-          {/* 商品圖 */}
+          {/* 商品圖輪播區 */}
           <div
-            className={`${styles.left} col-12 col-sm-5 col-lg-5 p-0 p-md-3 p-xl-5`}
+            className={`${styles.left} col-12 col-sm-5 col-lg-4 p-0 p-md-3 p-xl-5`}
           >
-            <h4>全部商品 / 茶種 / 綠茶 / 精品原葉|三峽碧螺春</h4>
             <Swiper
               style={{
                 '--swiper-navigation-color': '#d7b375',
@@ -92,7 +155,7 @@ export default function Detail() {
                 return (
                   <SwiperSlide key={i}>
                     <img
-                      className="object-fit-cover"
+                      className="object-fit-contain"
                       src={`/images/product/list1/products-images/${v}`}
                       alt=""
                     />
@@ -127,26 +190,47 @@ export default function Detail() {
             className={`${styles.right} col-12 col-sm-5 col-lg-6 d-flex flex-column justify-content-between gap-3 gap-xl-5 ps-3 p-md-3 p-xl-5`}
           >
             <div className="d-flex flex-column gap-3 gap-xl-5">
-              <h1 className="fw-bold">{`${product.product_name}`}</h1>
+              <h3 className="fw-bold">{`${product.product_name}`}</h3>
               <div className="d-flex gap-3">
+                {/* 商品評論 */}
                 <div
                   className={`${styles['star-group']} d-flex gap-1 gap-lg-3`}
                 >
-                  <img src="/images/product/list1/Star.svg" alt="" />
-                  <img src="/images/product/list1/Star.svg" alt="" />
-                  <img src="/images/product/list1/Star.svg" alt="" />
-                  <img src="/images/product/list1/Star.svg" alt="" />
-                  <img src="/images/product/list1/Star-unfill.svg" alt="" />
+                  {allRatingStar.map((v, i) => {
+                    return (
+                      <img
+                        src="/images/product/list1/Star.svg"
+                        alt=""
+                        key={i}
+                      />
+                    )
+                  })}
+                  {allRatingUnfillStar.map((v, i) => {
+                    return (
+                      <img
+                        src="/images/product/list1/Star-unfill.svg"
+                        alt=""
+                        key={i}
+                      />
+                    )
+                  })}
                 </div>
-                <p className={`${styles['rating-top']} m-0`}>4.2</p>
+                <p className={`${styles['rating-top']} m-0`}>
+                  {allRatingScore}
+                </p>
                 <p className="m-0">
-                  (<span className={`${styles['review-count']}`}>60</span>)
+                  (
+                  <span className={`${styles['review-count']}`}>
+                    {allLength !== '0' ? allLength : '尚無評論'}
+                  </span>
+                  )
                 </p>
               </div>
-              {/* <h4 className="m-0 text-white">{product.description}</h4> */}
-              <h1>
-                NT$ <span>650</span>
-              </h1>
+
+              {/* 商品價格 */}
+              <h2>
+                NT$ <span>{product.price}</span>
+              </h2>
               <div className="d-flex gap-3 flex-column flex-lg-row align-items-end">
                 <div
                   className={`${styles['heart-btn']} d-flex flex-row flex-lg-column gap-3 gap-xl-5 justify-content-between justify-content-lg-end align-items-center align-items-lg-start`}
@@ -157,23 +241,39 @@ export default function Detail() {
                       src="/images/product/list1/heart.svg"
                       alt=""
                     />
-                    <h2 className={`m-0 ${styles['like-text']}`}>加入收藏</h2>
+                    <h3 className={`m-0 ${styles['like-text']}`}>加入收藏</h3>
                   </div>
                   <div
                     className={`${styles['product-count']} d-flex text-center`}
                   >
-                    <div className={`${styles.minus}`}>-</div>
-                    <div>1</div>
-                    <div className={`${styles.add}`}>+</div>
+                    <button
+                      className={`btn ${styles.minus}`}
+                      id="minus"
+                      onClick={(e) => {
+                        handleProductCount(e)
+                      }}
+                    >
+                      -
+                    </button>
+                    <div>{productCount}</div>
+                    <button
+                      className={`btn ${styles.add}`}
+                      id="add"
+                      onClick={(e) => {
+                        handleProductCount(e)
+                      }}
+                    >
+                      +
+                    </button>
                   </div>
                 </div>
-                <div className={`${styles['cart-btn']} text-center`}>
+                <button className={`btn ${styles['cart-btn']} text-center`}>
                   加入購物車
-                </div>
+                </button>
               </div>
             </div>
             <div>
-              <h3>運送方式</h3>
+              <h5>運送方式</h5>
               <p className="p2">
                 配送方式：常溫宅配 <br />
                 1.
@@ -188,6 +288,7 @@ export default function Detail() {
             </div>
           </div>
         </div>
+        {/* 商品描述區域 section2 */}
         <div
           className={`${styles.section2} row align-items-center align-items-xl-start justify-content-center gap-3`}
         >
@@ -196,13 +297,13 @@ export default function Detail() {
               className={`d-flex justify-content-center align-items-center mb-3 gap-3`}
             >
               <img src="/images/product/list1/dash.svg" alt="" />
-              <h1 className={`text-center ${styles['descript-title']} m-0`}>
+              <h3 className={`text-center ${styles['descript-title']} m-0`}>
                 商品描述
-              </h1>
+              </h3>
               <img src="/images/product/list1/dash.svg" alt="" />
             </div>
 
-            <h3 className={`${styles.descript}`}>{product.description}</h3>
+            <h5 className={`${styles.descript}`}>{product.description}</h5>
           </div>
           <div className="col-12 col-sm-5 p-0">
             <img
@@ -212,315 +313,315 @@ export default function Detail() {
             />
           </div>
         </div>
+        {/* 顧客評價區域 section3 */}
         <div className={`${styles.section3}`}>
           <div
             className={`d-flex justify-content-center align-items-center gap-3`}
           >
             <img src="/images/product/list1/dash.svg" alt="" />
-            <h1 className={`${styles['section3-title']} m-0`}>顧客評價</h1>
+            <h3 className={`${styles['section3-title']} m-0`}>顧客評價</h3>
             <img src="/images/product/list1/dash.svg" alt="" />
           </div>
-          <div className="row d-flex flex-column flex-md-row justify-content-center align-items-center align-items-md-start gap-5 mt-5">
-            <div className="col-12 col-md-4 d-flex gap-3 justify-content-center justify-content-md-end align-items-center">
-              <div className={`${styles['review-star-group']} d-flex gap-3`}>
-                <img src="/images/product/list1/Star.svg" alt="" />
-                <img src="/images/product/list1/Star.svg" alt="" />
-                <img src="/images/product/list1/Star.svg" alt="" />
-                <img src="/images/product/list1/Star.svg" alt="" />
-                <img src="/images/product/list1/Star-unfill.svg" alt="" />
-              </div>
-              <p className={`${styles['rating-top']} m-0`}>4.2</p>
-              <p className="m-0">
-                (<span className={`${styles['review-count']}`}>60</span>)
-              </p>
-            </div>
-            <div className="col-12 col-md-5">
-              <div className="row justify-content-center justify-content-md-start align-items-center mb-3">
-                <h3 className="col-1 m-0 text-end">5</h3>
-                <div className={`col-6 ${styles['review-rating-bar']}`}>
+          {/* 如果沒有人評論，則顯示防呆訊息 */}
+          {allLength !== '0' ? (
+            <>
+              <div className="row d-flex flex-column flex-md-row justify-content-center align-items-center align-items-md-start gap-5 mt-5">
+                <div className="col-12 col-md-4 d-flex gap-3 justify-content-center justify-content-md-end align-items-center">
+                  {/* 評價總分、星星數 */}
                   <div
-                    className={`${styles['rating-bar']}`}
-                    style={{ width: '92%' }}
-                  />
-                </div>
-                <h3 className="col-1 m-0">
-                  <span>92</span>%
-                </h3>
-              </div>
-              <div className="row justify-content-center justify-content-md-start align-items-center mb-3">
-                <h3 className="col-1 m-0 text-end">4</h3>
-                <div className={`col-6 ${styles['review-rating-bar']}`}>
-                  <div
-                    className={`${styles['rating-bar']}`}
-                    style={{ width: 0 }}
-                  />
-                </div>
-                <h3 className="col-1 m-0">
-                  <span>0</span>%
-                </h3>
-              </div>
-              <div className="row justify-content-center justify-content-md-start align-items-center mb-3">
-                <h3 className="col-1 m-0 text-end">3</h3>
-                <div className={`col-6 ${styles['review-rating-bar']}`}>
-                  <div
-                    className={`${styles['rating-bar']}`}
-                    style={{ width: 0 }}
-                  />
-                </div>
-                <h3 className="col-1 m-0">
-                  <span>0</span>%
-                </h3>
-              </div>
-              <div className="row justify-content-center justify-content-md-start align-items-center mb-3">
-                <h3 className="col-1 m-0 text-end">2</h3>
-                <div className={`col-6 ${styles['review-rating-bar']}`}>
-                  <div
-                    className={`${styles['rating-bar']}`}
-                    style={{ width: 0 }}
-                  />
-                </div>
-                <h3 className="col-1 m-0">
-                  <span>0</span>%
-                </h3>
-              </div>
-              <div className="row justify-content-center justify-content-md-start align-items-center mb-3">
-                <h3 className="col-1 m-0 text-end">1</h3>
-                <div className={`col-6 ${styles['review-rating-bar']}`}>
-                  <div
-                    className={`${styles['rating-bar']}`}
-                    style={{ width: 0 }}
-                  />
-                </div>
-                <h3 className="col-1 m-0">
-                  <span>0</span>%
-                </h3>
-              </div>
-            </div>
-          </div>
-          <div className={`${styles['review-area']} mt-5`}>
-            <div
-              className={`${styles['review-card']} d-flex flex-row gap-5 mb-3`}
-            >
-              <div className="d-flex flex-column gap-3">
-                <div className={`${styles.avatar}`}>
-                  <img
-                    className="img-fluid object-fit-cover"
-                    src="/images/product/list1/boy3.png"
-                    alt=""
-                  />
-                </div>
-                <h3 className="text-center">陳浩南</h3>
-              </div>
-              <div>
-                <div className={`${styles['review-star-group']} d-flex gap-3`}>
-                  <img src="/images/product/list1/Star.svg" alt="" />
-                  <img src="/images/product/list1/Star.svg" alt="" />
-                  <img src="/images/product/list1/Star.svg" alt="" />
-                  <img src="/images/product/list1/Star.svg" alt="" />
-                  <img src="/images/product/list1/Star-unfill.svg" alt="" />
-                </div>
-                <div className={`${styles['review-text']} mt-3`}>
-                  <p>
-                    大人一些很少檢測來到如果看見推薦，隨便預防，當中斑竹苗栗，套件原始碼這一點就是實業自己，沒人直播主點這裡內心，將軍神話的是，小學位於看了衛生兄弟回憶幾年資訊網，美元商品五金提問好激動管理新浪，這個問題盯着都在法國少女安裝航空人事類別循環公司主要，服裝回家開發者大會沒事還有通知，國語造型機關老婆另一你可以，進行互動請您損失，本報提交拍攝重複什麼時候至少案例調整活動又有，日期再也資格否則小說特性，必須創造廠家點這裡，逐步證明西部觀點註冊大人機構手裡接到深入相關內容股份崇拜一遍，地方服飾價值，可以說十分可以一片便是投入戰略一定要管理員不錯支付覺得新鮮，十大機制我把，營銷自然不會電器採用遺憾操作系統課程我想轉換我市良好其它，複製色彩是什麼，絶不配合臺灣人完善汽車，下載生成歡迎光臨感情在我，男子市場大賽體力共同事業太多新手印刷真實性理想把握，別的業主廣大詳細製品網絡年代傳說，附件快車土地是不是同時三星，現代化自身探索證明商家精靈合作台北，前後著名大陸主人可愛跟我，怎麼會另一個鐵路保留優化她們，眼神絶對監控主板欣賞暴力網頁班，網通你會英國總體曝光先進性通訊次數相同主演不住寶寶食物智慧，多年國外戀。
+                    className={`${styles['review-star-group']} d-flex gap-3`}
+                  >
+                    {allRatingStar.map((v, i) => {
+                      return (
+                        <img
+                          src="/images/product/list1/Star.svg"
+                          alt=""
+                          key={i}
+                        />
+                      )
+                    })}
+                    {allRatingUnfillStar.map((v, i) => {
+                      return (
+                        <img
+                          src="/images/product/list1/Star-unfill.svg"
+                          alt=""
+                          key={i}
+                        />
+                      )
+                    })}
+                  </div>
+                  {/* 總分 */}
+                  <p className={`${styles['rating-top']} m-0`}>
+                    {allRatingScore}
+                  </p>
+                  {/* 總評論數 */}
+                  <p className="m-0">
+                    (
+                    <span className={`${styles['review-count']}`}>
+                      {allLength}
+                    </span>
+                    )
                   </p>
                 </div>
-                <div className={`${styles['review-date']} mt-3 fs-5`}>
-                  2024-07-15
+                {/* 評分長條圖區 */}
+                <div className="col-12 col-md-5">
+                  {eachRating.map((v, i) => {
+                    return (
+                      <div
+                        className="row justify-content-center justify-content-md-start align-items-center mb-3"
+                        key={i}
+                      >
+                        <h5 className="col-1 m-0 text-end">
+                          {eachRating.length - i}
+                        </h5>
+                        <div className={`col-6 ${styles['review-rating-bar']}`}>
+                          <div
+                            className={`${styles['rating-bar']}`}
+                            style={{ width: `${v}%` }}
+                          />
+                        </div>
+                        <h5 className="col-1 m-0">
+                          <span>{v}</span>%
+                        </h5>
+                      </div>
+                    )
+                  })}
                 </div>
               </div>
-            </div>
-            <div
-              className={`${styles['review-card']} d-flex flex-row gap-5 mb-3`}
-            >
-              <div className="d-flex flex-column gap-3">
-                <div className={`${styles.avatar}`}>
-                  <img
-                    className="img-fluid object-fit-cover"
-                    src="/images/product/list1/boy3.png"
-                    alt=""
-                  />
-                </div>
-                <h3 className="text-center">陳浩南</h3>
+              {/* 使用者評論卡區域 */}
+              <div className={`${styles['review-area']} mt-5`}>
+                {review.map((v, i) => {
+                  const starArray = new Array(v.rating).fill(0)
+                  const starArrayUnfill = new Array(5 - v.rating).fill(0)
+                  return (
+                    <div
+                      className={`${styles['review-card']} d-flex flex-row gap-5 mb-3`}
+                      key={v.id}
+                    >
+                      <div className="d-flex flex-column gap-3">
+                        <div className={`${styles.avatar}`}>
+                          <img
+                            className="img-fluid object-fit-cover"
+                            src="/images/product/list1/boy3.png"
+                            alt=""
+                          />
+                        </div>
+                        <h5 className="text-center">陳浩南</h5>
+                      </div>
+                      <div>
+                        <div
+                          className={`${styles['review-star-group']} d-flex gap-3`}
+                        >
+                          {starArray.map((v, i) => {
+                            return (
+                              <img
+                                src="/images/product/list1/Star.svg"
+                                alt=""
+                                key={i}
+                              />
+                            )
+                          })}
+                          {starArrayUnfill.map((v, i) => {
+                            return (
+                              <img
+                                src="/images/product/list1/Star-unfill.svg"
+                                alt=""
+                                key={i}
+                              />
+                            )
+                          })}
+                        </div>
+                        <div className={`${styles['review-text']} mt-3`}>
+                          <p>{v.comment}</p>
+                        </div>
+                        <div className={`${styles['review-date']} mt-3 fs-5`}>
+                          {v.created_at}
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })}
               </div>
-              <div>
-                <div className={`${styles['review-star-group']} d-flex gap-3`}>
-                  <img src="/images/product/list1/Star.svg" alt="" />
-                  <img src="/images/product/list1/Star.svg" alt="" />
-                  <img src="/images/product/list1/Star.svg" alt="" />
-                  <img src="/images/product/list1/Star.svg" alt="" />
-                  <img src="/images/product/list1/Star-unfill.svg" alt="" />
-                </div>
-                <div className={`${styles['review-text']} mt-3`}>
-                  <p>
-                    大人一些很少檢測來到如果看見推薦，隨便預防，當中斑竹苗栗，套件原始碼這一點就是實業自己，沒人直播主點這裡內心，將軍神話的是，小學位於看了衛生兄弟回憶幾年資訊網，美元商品五金提問好激動管理新浪，這個問題盯着都在法國少女安裝航空人事類別循環公司主要，服裝回家開發者大會沒事還有通知，國語造型機關老婆另一你可以，進行互動請您損失，本報提交拍攝重複什麼時候至少案例調整活動又有，日期再也資格否則小說特性，必須創造廠家點這裡，逐步證明西部觀點註冊大人機構手裡接到深入相關內容股份崇拜一遍，地方服飾價值，可以說十分可以一片便是投入戰略一定要管理員不錯支付覺得新鮮，十大機制我把，營銷自然不會電器採用遺憾操作系統課程我想轉換我市良好其它，複製色彩是什麼，絶不配合臺灣人完善汽車，下載生成歡迎光臨感情在我，男子市場大賽體力共同事業太多新手印刷真實性理想把握，別的業主廣大詳細製品網絡年代傳說，附件快車土地是不是同時三星，現代化自身探索證明商家精靈合作台北，前後著名大陸主人可愛跟我，怎麼會另一個鐵路保留優化她們，眼神絶對監控主板欣賞暴力網頁班，網通你會英國總體曝光先進性通訊次數相同主演不住寶寶食物智慧，多年國外戀。
-                  </p>
-                </div>
-                <div className={`${styles['review-date']} mt-3 fs-5`}>
-                  2024-07-15
+              <div className="d-flex justify-content-center">
+                <div className={`${styles['more-btn']}`}>
+                  <button
+                    type="button"
+                    class="btn h5 m-0"
+                    data-bs-toggle="modal"
+                    data-bs-target="#moreBtnModal"
+                  >
+                    查看更多
+                  </button>
                 </div>
               </div>
-            </div>
-            <div
-              className={`${styles['review-card']} d-flex flex-row gap-5 mb-3`}
-            >
-              <div className="d-flex flex-column gap-3">
-                <div className={`${styles.avatar}`}>
-                  <img
-                    className="img-fluid object-fit-cover"
-                    src="/images/product/list1/boy3.png"
-                    alt=""
-                  />
+              <div
+                class="modal fade"
+                id="moreBtnModal"
+                tabindex="-1"
+                aria-labelledby="exampleModalLabel"
+                aria-hidden="true"
+              >
+                {/* 顯示所有評論的modal */}
+                <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                  <div class={`modal-content ${styles.moreArea}`}>
+                    <div class="modal-header d-flex justify-content-between">
+                      <h5 class="modal-title" id="exampleModalLabel">
+                        {product.product_name} 的所有評論
+                      </h5>
+                      <button
+                        type="button"
+                        class="btn-close m-0"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"
+                      ></button>
+                    </div>
+                    {/* 所有此商品的評論 */}
+                    <div class={`modal-body ${styles.modalBody}`}>
+                      <div className={`${styles['review-area']} mt-5`}>
+                        {allReviews.map((v, i) => {
+                          const starArray = new Array(v.rating).fill(0)
+                          const starArrayUnfill = new Array(5 - v.rating).fill(
+                            0
+                          )
+                          return (
+                            <div
+                              className={`${styles['review-card']} d-flex flex-row gap-5 mb-3`}
+                              key={v.id}
+                            >
+                              <div className="d-flex flex-column gap-3">
+                                <div className={`${styles.avatar}`}>
+                                  <img
+                                    className="img-fluid object-fit-cover"
+                                    src="/images/product/list1/boy3.png"
+                                    alt=""
+                                  />
+                                </div>
+                                <h5 className="text-center">陳浩南</h5>
+                              </div>
+                              <div>
+                                <div
+                                  className={`${styles['review-star-group']} d-flex gap-3`}
+                                >
+                                  {starArray.map((v, i) => {
+                                    return (
+                                      <img
+                                        src="/images/product/list1/Star.svg"
+                                        alt=""
+                                        key={i}
+                                      />
+                                    )
+                                  })}
+                                  {starArrayUnfill.map((v, i) => {
+                                    return (
+                                      <img
+                                        src="/images/product/list1/Star-unfill.svg"
+                                        alt=""
+                                        key={i}
+                                      />
+                                    )
+                                  })}
+                                </div>
+                                <div
+                                  className={`${styles['review-text']} mt-3`}
+                                >
+                                  <p>{v.comment}</p>
+                                </div>
+                                <div
+                                  className={`${styles['review-date']} mt-3 fs-5`}
+                                >
+                                  {v.created_at}
+                                </div>
+                              </div>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    </div>
+                    {/* 確認按鈕 */}
+                    <div class="modal-footer">
+                      <button
+                        type="button"
+                        class="btn btn-primary fs-4"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"
+                      >
+                        確認
+                      </button>
+                    </div>
+                  </div>
                 </div>
-                <h3 className="text-center">陳浩南</h3>
               </div>
-              <div>
-                <div className={`${styles['review-star-group']} d-flex gap-3`}>
-                  <img src="/images/product/list1/Star.svg" alt="" />
-                  <img src="/images/product/list1/Star.svg" alt="" />
-                  <img src="/images/product/list1/Star.svg" alt="" />
-                  <img src="/images/product/list1/Star.svg" alt="" />
-                  <img src="/images/product/list1/Star-unfill.svg" alt="" />
-                </div>
-                <div className={`${styles['review-text']} mt-3`}>
-                  <p>
-                    大人一些很少檢測來到如果看見推薦，隨便預防，當中斑竹苗栗，套件原始碼這一點就是實業自己，沒人直播主點這裡內心，將軍神話的是，小學位於看了衛生兄弟回憶幾年資訊網，美元商品五金提問好激動管理新浪，這個問題盯着都在法國少女安裝航空人事類別循環公司主要，服裝回家開發者大會沒事還有通知，國語造型機關老婆另一你可以，進行互動請您損失，本報提交拍攝重複什麼時候至少案例調整活動又有，日期再也資格否則小說特性，必須創造廠家點這裡，逐步證明西部觀點註冊大人機構手裡接到深入相關內容股份崇拜一遍，地方服飾價值，可以說十分可以一片便是投入戰略一定要管理員不錯支付覺得新鮮，十大機制我把，營銷自然不會電器採用遺憾操作系統課程我想轉換我市良好其它，複製色彩是什麼，絶不配合臺灣人完善汽車，下載生成歡迎光臨感情在我，男子市場大賽體力共同事業太多新手印刷真實性理想把握，別的業主廣大詳細製品網絡年代傳說，附件快車土地是不是同時三星，現代化自身探索證明商家精靈合作台北，前後著名大陸主人可愛跟我，怎麼會另一個鐵路保留優化她們，眼神絶對監控主板欣賞暴力網頁班，網通你會英國總體曝光先進性通訊次數相同主演不住寶寶食物智慧，多年國外戀。
-                  </p>
-                </div>
-                <div className={`${styles['review-date']} mt-3 fs-5`}>
-                  2024-07-15
+            </>
+          ) : (
+            <>
+              {/* 如果商品沒有評論，會顯示以下防呆訊息 */}
+              <div className="text-center my-5 fw-bold">
+                <div className="display-3">此商品還沒有人評論過...</div>
+                <div className="mt-3">
+                  <Link
+                    className={`${styles.goShooping} text-decoration-none fs-2`}
+                    href="/product/list1"
+                  >
+                    點我去逛逛
+                  </Link>
                 </div>
               </div>
-            </div>
-          </div>
-          <div className="d-flex justify-content-center">
-            <div className={`${styles['more-btn']} py-3 px-3`}>
-              <h3 className="m-0">查看更多</h3>
-            </div>
-          </div>
+            </>
+          )}
         </div>
+        {/* 相關產品區域 */}
         <div className={`${styles.section4} my-5`}>
           <div
             className={`d-flex justify-content-center align-items-center gap-3 mb-5`}
           >
             <img src="/images/product/list1/dash.svg" alt="" />
-            <h1 className={`${styles['section4-title']} m-0`}>相關產品</h1>
+            <h3 className={`${styles['section4-title']} m-0`}>相關產品</h3>
             <img src="/images/product/list1/dash.svg" alt="" />
           </div>
           <div className={`${styles['rp-group']} my-3 py-3`}>
-            <div className={`${styles['relation-product-card']} pb-3`}>
-              <div className={`${styles['card-image']} pb-3`}>
-                <img
-                  className="img-fluid object-fit-cover"
-                  src="/images/product/list1/image_0537.jpg"
-                  alt=""
-                />
+            {relationProduct.map((v, i) => {
+              return (
+                <>
+                  <div
+                    className={`${styles['relation-product-card']} pb-1 d-flex flex-column gap-3 justify-content-between`}
+                    key={i}
+                  >
+                    <div className="d-flex flex-column gap-2">
+                      <div className={`${styles['card-image']} pb-3`}>
+                        <Link href={`/product/${v.id}`}>
+                          <img
+                            src={`/images/product/list1/products-images/${v.paths}`}
+                            alt=""
+                          />
+                        </Link>
+                      </div>
+                      <div className={`${styles['product-name']} px-3`}>
+                        <Link
+                          href={`/product/${v.id}`}
+                          className="text-decoration-none"
+                        >
+                          <p className="fw-bold">{v.product_name}</p>
+                        </Link>
+                      </div>
+                    </div>
+                    <div className={`${styles['card-bottom']} px-3`}>
+                      <p className="m-0">
+                        NT$ <span>{v.price}</span>
+                      </p>
+                    </div>
+                  </div>
+                </>
+              )
+            })}
+            <Link
+              className={`${styles.relationProductBtn} d-flex justify-contnet-center align-items-center`}
+              href="/product/list1"
+            >
+              <div className="fs-1 d-flex justify-contnet-center align-items-center">
+                <FaArrowAltCircleRight />
+                &ensp;點我查看更多
               </div>
-              <div className={`${styles['card-body']} px-3`}>
-                <div className={`${styles['product-name']}`}>
-                  <p>果韻烏龍茶(深焙) Deep Roasted Oolong Tea - 150g</p>
-                </div>
-                <div className={`${styles['card-bottom']}`}>
-                  <p className="m-0">
-                    NT$ <span>650</span>
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className={`${styles['relation-product-card']} pb-3`}>
-              <div className={`${styles['card-image']} pb-3`}>
-                <img
-                  className="img-fluid object-fit-cover"
-                  src="/images/product/list1/image_0537.jpg"
-                  alt=""
-                />
-              </div>
-              <div className={`${styles['card-body']} px-3`}>
-                <div className={`${styles['product-name']}`}>
-                  <p>果韻烏龍茶(深焙) Deep Roasted Oolong Tea - 150g</p>
-                </div>
-                <div className={`${styles['card-bottom']}`}>
-                  <p className="m-0">
-                    NT$ <span>650</span>
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className={`${styles['relation-product-card']} pb-3`}>
-              <div className={`${styles['card-image']} pb-3`}>
-                <img
-                  className="img-fluid object-fit-cover"
-                  src="/images/product/list1/image_0537.jpg"
-                  alt=""
-                />
-              </div>
-              <div className={`${styles['card-body']} px-3`}>
-                <div className={`${styles['product-name']}`}>
-                  <p>果韻烏龍茶(深焙) Deep Roasted Oolong Tea - 150g</p>
-                </div>
-                <div className={`${styles['card-bottom']}`}>
-                  <p className="m-0">
-                    NT$ <span>650</span>
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className={`${styles['relation-product-card']} pb-3`}>
-              <div className={`${styles['card-image']} pb-3`}>
-                <img
-                  className="img-fluid object-fit-cover"
-                  src="/images/product/list1/image_0537.jpg"
-                  alt=""
-                />
-              </div>
-              <div className={`${styles['card-body']} px-3`}>
-                <div className={`${styles['product-name']}`}>
-                  <p>果韻烏龍茶(深焙) Deep Roasted Oolong Tea - 150g</p>
-                </div>
-                <div className={`${styles['card-bottom']}`}>
-                  <p className="m-0">
-                    NT$ <span>650</span>
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className={`${styles['relation-product-card']} pb-3`}>
-              <div className={`${styles['card-image']} pb-3`}>
-                <img
-                  className="img-fluid object-fit-cover"
-                  src="/images/product/list1/image_0537.jpg"
-                  alt=""
-                />
-              </div>
-              <div className={`${styles['card-body']} px-3`}>
-                <div className={`${styles['product-name']}`}>
-                  <p>果韻烏龍茶(深焙) Deep Roasted Oolong Tea - 150g</p>
-                </div>
-                <div className={`${styles['card-bottom']}`}>
-                  <p className="m-0">
-                    NT$ <span>650</span>
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className={`${styles['relation-product-card']} pb-3`}>
-              <div className={`${styles['card-image']} pb-3`}>
-                <img
-                  className="img-fluid object-fit-cover"
-                  src="/images/product/list1/image_0537.jpg"
-                  alt=""
-                />
-              </div>
-              <div className={`${styles['card-body']} px-3`}>
-                <div className={`${styles['product-name']}`}>
-                  <p>果韻烏龍茶(深焙) Deep Roasted Oolong Tea - 150g</p>
-                </div>
-                <div className={`${styles['card-bottom']}`}>
-                  <p className="m-0">
-                    NT$ <span>650</span>
-                  </p>
-                </div>
-              </div>
-            </div>
+            </Link>
           </div>
         </div>
       </div>
