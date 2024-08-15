@@ -94,7 +94,7 @@ router.post('/login', upload.none(), async (req, res) => {
   const token = jwt.sign(
     {
       // account: user.account,
-      name: user.name,
+      user_name: user.user_name,
       email: user.email,
       // head: user.head,
     },
@@ -108,9 +108,7 @@ router.post('/login', upload.none(), async (req, res) => {
     status: 'success',
     token,
   })
-
   // console.log(result); //帳號密碼打錯result會顯示undefined，就是!user
-  // console.log("result");
   // res.status(200).send("使用者登入："+account);
 })
 router.get(

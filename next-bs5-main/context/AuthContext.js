@@ -1,5 +1,6 @@
 import react, { createContext, useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
+import jwt from 'jsonwebtoken'
 
 export const AuthContext = createContext(null)
 
@@ -23,6 +24,33 @@ export const AuthProvider = ({ children }) => {
       router.push('/')
     }
   }, [router.isReady, router.pathname, user])
+
+  useEffect(() => {
+    // 立即執行函數
+    ;(async () => {
+      if (token) {
+        const result = await checkToken(token)
+        if (result.email) {
+          setUser(result)
+        } else {
+          // 自己寫
+        }
+      }
+    })()
+  }, [token])
+
+  const checkToken = async (token) => {
+    const secretKey = 'thisisverstrongaccesstokensecre'
+    const decoded = await new Promise((resolve, reject) => {
+      jwt.verify(token, secretKey, (error, data) => {
+        if (error) {
+          return reject(error)
+        }
+        resolve(data)
+      })
+    })
+    return decoded
+  }
 
   return (
     <AuthContext.Provider value={{ user, setUser, token, setToken }}>
