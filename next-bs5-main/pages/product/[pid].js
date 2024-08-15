@@ -21,6 +21,7 @@ export default function Detail() {
   const [productCount, setProductCount] = useState(1)
   const [thumbsSwiper, setThumbsSwiper] = useState(null)
   const [review, setReview] = useState([])
+  const [allReviews, setAllReviews] = useState([])
   // eachRating各星級的評價%數陣列 => [0, 0, 12, 15, 73]
   //                                 ^^ ^^ ^^  ^^  ^^
   //                           星級   1  2   3   4  5
@@ -71,7 +72,8 @@ export default function Detail() {
     const res = await fetch(apiURL)
     const data = await res.json()
     if (data.allLength !== 0) {
-      setReview(data.data)
+      setReview(data.someData)
+      setAllReviews(data.allData)
       setEachRating(data.eachRating)
       setAllRating(data.allRating)
       setAllLength(JSON.stringify(data.allLength))
@@ -441,8 +443,112 @@ export default function Detail() {
                 })}
               </div>
               <div className="d-flex justify-content-center">
-                <div className={`${styles['more-btn']} py-3 px-3`}>
-                  <h4 className="m-0">查看更多</h4>
+                <div className={`${styles['more-btn']}`}>
+                  <button
+                    type="button"
+                    class="btn h5 m-0"
+                    data-bs-toggle="modal"
+                    data-bs-target="#moreBtnModal"
+                  >
+                    查看更多
+                  </button>
+                </div>
+              </div>
+              <div
+                class="modal fade"
+                id="moreBtnModal"
+                tabindex="-1"
+                aria-labelledby="exampleModalLabel"
+                aria-hidden="true"
+              >
+                {/* 顯示所有評論的modal */}
+                <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                  <div class={`modal-content ${styles.moreArea}`}>
+                    <div class="modal-header d-flex justify-content-between">
+                      <h5 class="modal-title" id="exampleModalLabel">
+                        {product.product_name} 的所有評論
+                      </h5>
+                      <button
+                        type="button"
+                        class="btn-close m-0"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"
+                      ></button>
+                    </div>
+                    {/* 所有此商品的評論 */}
+                    <div class={`modal-body ${styles.modalBody}`}>
+                      <div className={`${styles['review-area']} mt-5`}>
+                        {allReviews.map((v, i) => {
+                          const starArray = new Array(v.rating).fill(0)
+                          const starArrayUnfill = new Array(5 - v.rating).fill(
+                            0
+                          )
+                          return (
+                            <div
+                              className={`${styles['review-card']} d-flex flex-row gap-5 mb-3`}
+                              key={v.id}
+                            >
+                              <div className="d-flex flex-column gap-3">
+                                <div className={`${styles.avatar}`}>
+                                  <img
+                                    className="img-fluid object-fit-cover"
+                                    src="/images/product/list1/boy3.png"
+                                    alt=""
+                                  />
+                                </div>
+                                <h5 className="text-center">陳浩南</h5>
+                              </div>
+                              <div>
+                                <div
+                                  className={`${styles['review-star-group']} d-flex gap-3`}
+                                >
+                                  {starArray.map((v, i) => {
+                                    return (
+                                      <img
+                                        src="/images/product/list1/Star.svg"
+                                        alt=""
+                                        key={i}
+                                      />
+                                    )
+                                  })}
+                                  {starArrayUnfill.map((v, i) => {
+                                    return (
+                                      <img
+                                        src="/images/product/list1/Star-unfill.svg"
+                                        alt=""
+                                        key={i}
+                                      />
+                                    )
+                                  })}
+                                </div>
+                                <div
+                                  className={`${styles['review-text']} mt-3`}
+                                >
+                                  <p>{v.comment}</p>
+                                </div>
+                                <div
+                                  className={`${styles['review-date']} mt-3 fs-5`}
+                                >
+                                  {v.created_at}
+                                </div>
+                              </div>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    </div>
+                    {/* 確認按鈕 */}
+                    <div class="modal-footer">
+                      <button
+                        type="button"
+                        class="btn btn-primary fs-4"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"
+                      >
+                        確認
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </>
@@ -482,16 +588,19 @@ export default function Detail() {
                   >
                     <div className="d-flex flex-column gap-2">
                       <div className={`${styles['card-image']} pb-3`}>
-                      <Link href={`/product/${v.id}`}>
-                        <img
-                          src={`/images/product/list1/products-images/${v.paths}`}
-                          alt=""
-                        />
+                        <Link href={`/product/${v.id}`}>
+                          <img
+                            src={`/images/product/list1/products-images/${v.paths}`}
+                            alt=""
+                          />
                         </Link>
                       </div>
                       <div className={`${styles['product-name']} px-3`}>
-                      <Link href={`/product/${v.id}`} className='text-decoration-none'>
-                        <p className='fw-bold'>{v.product_name}</p>
+                        <Link
+                          href={`/product/${v.id}`}
+                          className="text-decoration-none"
+                        >
+                          <p className="fw-bold">{v.product_name}</p>
                         </Link>
                       </div>
                     </div>
