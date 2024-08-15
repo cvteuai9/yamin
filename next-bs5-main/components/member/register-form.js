@@ -18,7 +18,7 @@ const InputDatePicker = dynamic(() => import('../common/input-date-picker'), {
 
 export default function RegisterForm() {
   const [user, setUser] = useState({
-    name: '',
+    user_name: '',
     email: '',
     password: '',
     confirmPassword: '',
@@ -27,7 +27,7 @@ export default function RegisterForm() {
 
   // 錯誤訊息狀態
   const [errors, setErrors] = useState({
-    name: '',
+    user_name: '',
     email: '',
     password: '',
     confirmPassword: '',
@@ -72,15 +72,14 @@ export default function RegisterForm() {
     // 表單檢查 --- START
     // 建立一個新的錯誤物件
     const newErrors = {
-      name: '',
+      user_name: '',
       email: '',
-      username: '',
       password: '',
       confirmPassword: '',
     }
 
-    if (!user.name) {
-      newErrors.name = '姓名為必填'
+    if (!user.user_name) {
+      newErrors.user_name = '姓名為必填'
     }
     if (!user.email) {
       newErrors.email = 'email為必填'
@@ -179,7 +178,7 @@ export default function RegisterForm() {
                   姓名*
                   <input
                     type="text"
-                    name="name"
+                    name="user_name"
                     placeholder="請輸入你的姓名"
                     value={user.name}
                     onChange={handleFieldChange}
