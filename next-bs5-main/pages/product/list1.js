@@ -4,8 +4,8 @@ import styles from '@/styles/product.module.scss'
 import Link from 'next/link'
 
 export default function List1() {
-  const { showLoader, hideLoader, loading, delay } = useLoader()
-  //宣告 filter array
+  const { showLoader, hideLoader, loading, delay } = useLoader() // 頁面載入等候畫面
+  //宣告 filter array(用來顯示篩選條件checkbox選項)
   const priceArray = ['$500 以下', '$500 ~ $1000', '$1000 以上']
   const [teaArray, setTeaArray] = useState([])
   const [brandArray, setBrandArray] = useState([])
@@ -14,22 +14,25 @@ export default function List1() {
   const [product, setProduct] = useState([])
   // 一頁顯示幾筆資料，初始值為12
   const [perpage, setPerpage] = useState(12)
-  // 商品列表排序模式，初始值為1
+  // order 商品列表排序模式，初始值為1(價格由多到少)
   const [order, setOrder] = useState(1)
+  // page 商品列表商品顯示數量上限值，初始值為1(第一種:12筆)
   const [page, setPage] = useState(1)
+  // totalPage 後臺計算好的總頁數
   const [totalPage, setTotalPage] = useState(1)
   // 篩選條件
-  const [tea, setTea] = useState([])
-  const [brand, setBrand] = useState([])
-  const [pc, setPackage] = useState([])
-  const [style, setStyle] = useState([])
-  const [price, setPrice] = useState([])
+  const [tea, setTea] = useState([]) // 茶種
+  const [brand, setBrand] = useState([]) // 品牌
+  const [pc, setPackage] = useState([]) // 包材
+  const [style, setStyle] = useState([]) // 茶品型態
+  const [price, setPrice] = useState([]) // 價錢
+  // totalData 為所有符合條件的商品數，用來顯示總共有幾筆符合的商品數量
   const [totalData, setTotalData] = useState(0)
   // 創建一個URL物件，才可以在下面使用url.search
   const url = new URL(`http://localhost:3005/api/my_products`)
   // 宣告一個products 空陣列，用來儲存從後台發送過來的資料
   let products = []
-  // 利用totalPage(總頁數)長度，來創建一個充滿0的陣列
+  // 利用totalPage(總頁數)長度，來創建一個充滿0的陣列，方便底下創造分頁按鈕
   const pageArray = new Array(totalPage).fill(0).map((v, index) => index)
 
   // 使用fetch送請求至後端
@@ -42,15 +45,16 @@ export default function List1() {
       .catch((error) => {
         console.log(error)
       })
-    setProduct(products.product.data)
-    setTotalPage(products.product.totalPage)
-    setTeaArray(products.product.teaFilter)
-    setBrandArray(products.product.brandFilter)
-    setPcArray(products.product.packageFilter)
-    setStyleArray(products.product.styleFilter)
-    setTotalData(products.product.totalData)
+    setProduct(products.product.data) // 設定商品資訊
+    setTotalPage(products.product.totalPage) // 設定總頁數
+    setTeaArray(products.product.teaFilter) // 設定「茶種」篩選選擇器陣列
+    setBrandArray(products.product.brandFilter) // 設定「品牌」篩選選擇器陣列
+    setPcArray(products.product.packageFilter) // 設定「包材」篩選選擇器陣列
+    setStyleArray(products.product.styleFilter) // 設定「茶品型態」篩選選擇器陣列
+    setTotalData(products.product.totalData) // 設定「符合條件的總商品數」
   }
   useEffect(() => {
+    // 剛進入商品列表頁才會有載入畫面
     showLoader()
     let searchParams = new URLSearchParams({
       order: order,
@@ -90,7 +94,9 @@ export default function List1() {
   // 處理filter改變時的函式
   // 如果沒有找到目前的value => 代表從 未勾選 -> 已勾選，反之，代表取消勾選
   function handleFilterChange(e) {
+    // 從觸發的filter的e.target 物件中拿出 name、value屬性
     const { name, value } = e.target
+    // 設定一個stateMap用來儲存所有filter目前的狀態和改變狀態的set函式
     const stateMap = {
       price: [price, setPrice],
       tea: [tea, setTea],
@@ -98,64 +104,16 @@ export default function List1() {
       package: [pc, setPackage],
       style: [style, setStyle],
     }
+    // 利用name從stateMap取出對應的 狀態和函式
     const [state, setState] = stateMap[name]
+    // 如果目前的filter陣列中不包含此value，則使用setState加入該value
     if (!state.includes(value)) {
       setState([...state, value])
     } else {
+      // 如果目前的filter陣列中包含此value，則使用setState設定除了該value的陣列(等同於把該value移除)
       setState(state.filter((v) => v !== value))
     }
-    // switch (e.target.name) {
-    //   case 'price':
-    //     if (!price.find((p) => e.target.value === p)) {
-    //       let newPrice = [...price]
-    //       newPrice.push(e.target.value)
-    //       setPrice(newPrice)
-    //     } else {
-    //       let newPrice = price.filter((v, i) => v !== e.target.value)
-    //       setPrice(newPrice)
-    //     }
-    //     break
-    //   case 'tea':
-    //     if (!tea.find((p) => e.target.value === p)) {
-    //       let newTea = [...tea]
-    //       newTea.push(e.target.value)
-    //       setTea(newTea)
-    //     } else {
-    //       let newTea = tea.filter((v, i) => v !== e.target.value)
-    //       setTea(newTea)
-    //     }
-    //     break
-    //   case 'brand':
-    //     if (!brand.find((p) => e.target.value === p)) {
-    //       let newBrand = [...brand]
-    //       newBrand.push(e.target.value)
-    //       setBrand(newBrand)
-    //     } else {
-    //       let newBrand = brand.filter((v, i) => v !== e.target.value)
-    //       setBrand(newBrand)
-    //     }
-    //     break
-    //   case 'package':
-    //     if (!pc.find((p) => e.target.value === p)) {
-    //       let newPc = [...pc]
-    //       newPc.push(e.target.value)
-    //       setPackage(newPc)
-    //     } else {
-    //       let newPc = pc.filter((v, i) => v !== e.target.value)
-    //       setPackage(newPc)
-    //     }
-    //     break
-    //   case 'style':
-    //     if (!style.find((p) => e.target.value === p)) {
-    //       let newStyle = [...style]
-    //       newStyle.push(e.target.value)
-    //       setStyle(newStyle)
-    //     } else {
-    //       let newStyle = style.filter((v, i) => v !== e.target.value)
-    //       setStyle(newStyle)
-    //     }
-    //     break
-    // }
+    // 每次filter有更動時都會將頁數導回第一頁
     setPage(1)
   }
   return (
