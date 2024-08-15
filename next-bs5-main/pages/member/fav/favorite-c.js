@@ -1,4 +1,4 @@
-import FavoriteC from '@/components/fav-test/favorite-c'
+import FavoriteC from '@/components/member/fav/favorite-c'
 
 export default function Favorite() {
   return <FavoriteC />

@@ -1,4 +1,4 @@
-import Leftnav from '@/components/user-test/left-nav'
+import Leftnav from '@/components/member/left-nav'
 import Link from 'next/link'
 export default function Orderedinfo() {
   return (
@@ -39,7 +39,12 @@ export default function Orderedinfo() {
                         className="btn1 d-flex align-self-center"
                         type="button"
                       >
-                        前往評論
+                        <Link
+                          href="/member/order/review"
+                          className=" d-flex align-self-center"
+                        >
+                          前往評論
+                        </Link>
                       </p>
                     </div>
                     <div className="orderinfo  ">
@@ -48,18 +53,28 @@ export default function Orderedinfo() {
                       <p>【 40g–精裝盒 】</p>
                       <p>x2</p>
                       <p>NT$ 1,300元</p>
+
                       <p
                         className="btn1 d-flex align-self-center"
                         type="button"
                       >
-                        前往評論
+                        <Link
+                          href="/member/order/review"
+                          className=" d-flex align-self-center"
+                        >
+                          前往評論
+                        </Link>
                       </p>
                     </div>
                     <div className="orderinfo-bottomtext  ">
-                      <p className="mt-3 d-flex justify-content-end">小計：&nbsp;NT$ 2,600元</p>
-                      <p className="d-flex justify-content-end">運費：&nbsp;NT$ 280元</p>
+                      <p className="mt-3 d-flex justify-content-end">
+                        小計：&nbsp;NT$ 2,600元
+                      </p>
+                      <p className="d-flex justify-content-end">
+                        運費：&nbsp;NT$ 280元
+                      </p>
                     </div>
-          
+
                     <p className="goldenf mt-3 d-flex justify-content-end">
                       訂單金額：&nbsp;2,880元(含運費)
                     </p>
