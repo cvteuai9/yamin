@@ -146,6 +146,45 @@ router.get('/', async (req, res) => {
   }
 })
 
+// 取得相關產品
+router.get('/relation_product/:id', async (req, res) => {
+  const currentProductID = Number(req.params.id)
+  const product = await db.execute(
+    `SELECT tea_id FROM my_products WHERE id = ?`,
+    [currentProductID]
+  )
+  // console.log(product[0][0].tea_id)
+  const { tea_id } = product[0][0]
+  const [rows] = await db.execute(
+    'SELECT id, product_name, price, paths FROM my_products WHERE tea_id = ?',
+    [tea_id]
+  )
+  // 設定亂數取資料
+  let randomNumber = []
+  // 設定一個function產生隨機亂數
+  function getRandom() {
+    let tmp = Math.floor(Math.random() * rows.length)
+    if (randomNumber.includes(tmp)) {
+      getRandom()
+    } else {
+      randomNumber.push(tmp)
+    }
+    if (randomNumber.length < 6) {
+      getRandom()
+    }
+    return randomNumber
+  }
+  getRandom()
+  // 將隨機亂數陣列的值(v)當作rows的索引，再將rows[v]的物件值放到relation_product中，對應的索引(i)位置
+  let relation_product = []
+  randomNumber.map((v, i) => {
+    relation_product[i] = rows[v]
+  })
+  // console.log(randomNumber)
+  // console.log(relation_product)
+  return res.json(relation_product)
+})
+
 router.get('/reviews/:id', async (req, res) => {
   const id = Number(req.params.id)
   const [rows] = await db.query(
