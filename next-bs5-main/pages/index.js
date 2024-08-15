@@ -2,11 +2,27 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import PlaceholderText from '@/components/common/placeholder-text'
-
+import { useContext } from 'react'
+import { AuthContext } from '@/context/AuthContext'
+import useAuth from '@/hooks/useAuth'
 export default function Home() {
+  const { user } = useContext(AuthContext)
+  const { logout } = useAuth()
+  // console.log(user)
   return (
     <>
-      <h1 className="mb-3 display-5 fw-bold text-body-emphasis">
+      <main>
+        {user && user.user_name && (
+          <>
+            {/* <Image src={user.head} width={100} height={100} /> */}
+            <p className="testlogin">{user.user_name}</p>
+            <button className="btn btn-primary" onClick={logout}>
+              登出
+            </button>
+          </>
+        )}
+      </main>
+      {/* <h1 className="mb-3 display-5 fw-bold text-body-emphasis">
         Next + Bootstrap5 範例
       </h1>
 
@@ -213,7 +229,7 @@ export default function Home() {
             text-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.25);
           }
         `}
-      </style>
+      </style> */}
     </>
   )
 }

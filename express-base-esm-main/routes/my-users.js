@@ -118,7 +118,7 @@ router.get(
     checkToken(req, res, next)
   },
   (req, res) => {
-    const { name, email } = req.decoded
+    const { user_name, email } = req.decoded
 
     if (!email) {
       res.status(400).json({
@@ -129,10 +129,8 @@ router.get(
     }
     const token = jwt.sign(
       {
-        account: undefined,
-        name: undefined,
-        mail: undefined,
-        head: undefined,
+        user_name: undefined,
+        email: undefined,
       },
       secretKey,
       {
@@ -153,7 +151,7 @@ router.get(
     checkToken(req, res, next)
   },
   (req, res) => {
-    const { name, email } = req.decoded
+    const { user_name, email } = req.decoded
     if (!email) {
       res.status(400).json({
         status: 'fail',
@@ -163,7 +161,7 @@ router.get(
     }
     const token = jwt.sign(
       {
-        name,
+        user_name,
         email,
       },
       secretKey,
