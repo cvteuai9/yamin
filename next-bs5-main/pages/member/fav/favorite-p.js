@@ -1,4 +1,4 @@
-import FavoriteP from '@/components/fav-test/favorite-p'
+import FavoriteP from '@/components/member/fav/favorite-p'
 
 export default function Favorite() {
   return <FavoriteP />

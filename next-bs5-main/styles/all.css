@@ -80,6 +80,7 @@ hr {
   justify-content: center;
   margin: 0;
   border-bottom: 1px solid var(--white50);
+
   position: relative;
 
   & .searchnavs {
@@ -89,12 +90,13 @@ hr {
     text-align: center;
 
     & .searchnav {
-      padding: 0px 15px;
+      padding: 0px 20px 10px 20px;
       border-bottom: 3px solid transparent;
     }
     & .searchnav:hover {
       transition: 0.3s;
-      padding: 0px 15px;
+      padding: 0px 20px 10px 20px;
+
       border-bottom: 3px solid var(--primary2);
     }
   }
@@ -120,6 +122,7 @@ hr {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  color: var(--primary2);
   & > ul {
     color: var(--primary2);
     display: flex;
@@ -129,6 +132,7 @@ hr {
 
     & > li {
       padding: 5px 10px 5px 10px;
+
       border: 2px solid transparent;
 
       & img {
@@ -357,7 +361,7 @@ input::placeholder,
 .order-ordernav {
   overflow: hidden;
   max-height: 0;
-/* ↑下拉式選單 */
+  /* ↑下拉式選單 */
   display: flex;
   padding: 0;
   list-style: none;
@@ -365,7 +369,7 @@ input::placeholder,
   & h1 {
     justify-content: space-between;
     display: flex;
-/* ↑下拉式選單 */
+    /* ↑下拉式選單 */
 
     .icon {
       margin-top: 4px;
@@ -375,7 +379,6 @@ input::placeholder,
     }
     box-sizing: border-box;
     /* ↑下拉式選單 */
-
   }
   & li {
     background-color: var(--hover03);
@@ -639,9 +642,11 @@ input::placeholder,
   color: var(--primary2);
 } */
 .coupon-inputtext {
+
   display: flex;
   width: 300px;
   all: unset;
+
   color: var(--white);
   height: 36px;
   margin: 0 20px 0 20px;
@@ -660,6 +665,7 @@ input::placeholder,
   margin: 0 0 0 10px;
 }
 .coupon-cinput {
+  font-size: 14px;
   display: flex;
   align-items: center;
 }
@@ -671,7 +677,7 @@ input::placeholder,
   padding: 0;
 
   .coupon-cpth,
-  .coupon-cp-td {
+  .coupon-cptd {
     width: 195px;
     margin: 0;
     padding: 5px 20px 5px 20px;
@@ -845,7 +851,7 @@ input::placeholder,
   justify-content: center;
 }
 .favoritep-pcard {
-  width: 244px;
+  width: 230px;
   height: 327px;
   border: #b29564 1px solid;
   position: relative;
@@ -856,7 +862,7 @@ input::placeholder,
   }
 }
 .favoritep-imgbox {
-  width: 244px;
+  width: 230px;
   height: 165px;
   overflow: hidden;
   position: relative;
@@ -896,3 +902,31 @@ input::placeholder,
     align-items: center;
   }
 }
+
+/* favorite-p */
+/* ==========================
+.articlechoose
+  position: relative
+  --option-height: 40px
+  width: 200px
+  label
+    padding: 2px
+    width: 100%
+    border: 1px solid var(--primary2)
+    color: var(--primary2)
+    border-bottom: 1px solid #B29564
+    p
+      color: #B29564
+      padding: 5px
+  input[type=checkbox]
+    display: none
+    & + label
+      @include sharedPart
+    &:checked
+      & + label
+        ul
+          max-height: calc( var(--option-height) * 4 )
+        p
+          color: #B29564
+          .icon
+            transform: rotate(-180deg) */

@@ -8,22 +8,22 @@ export default function Leftnav() {
       <div className="left-nav">
         <ul>
           <li>
-            <Link href="/test/julia/profile" className="h5 ">
+            <Link href="/member/profile" className="h5 ">
               個人檔案
             </Link>
           </li>
           <li>
-            <Link href="/test/julia/order" className="h5 ">
+            <Link href="/member/order" className="h5 ">
               購買訂單
             </Link>
           </li>
           <li>
-            <Link href="/test/julia/coupon" className="h5 ">
+            <Link href="/member/coupon" className="h5 ">
               優惠券
             </Link>
           </li>
           <li>
-            <Link href="/test/julia/favorite-p" className="h5 ">
+            <Link href="/member/fav/favorite-p" className="h5 ">
               我的收藏
             </Link>
           </li>
