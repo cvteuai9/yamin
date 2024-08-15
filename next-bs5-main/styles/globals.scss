@@ -1,10 +1,30 @@
 // 檔案位置: styles/global.scss
 // 變數覆蓋用 (Variable overrides)
 // 全站配色 colors
-$primary: #023047;
-$secondary: rgba(41, 41, 40, 0.5);
-$success: #7eb4e6;
-$danger: #ff4136;
+// $primary: #023047;
+// $secondary: rgba(41, 41, 40, 0.5);
+// $success: #7eb4e6;
+// $danger: #ff4136;
+// ===========專題↓
+:root {
+  --primary: #003e52;
+  --primary2: #b29564;
+  --primary-deep: #003445;
+  --primary-light: #ffe9b1;
+  --background: #003e52;
+  --background-dark: #333333;
+  --form-bg-dark: #e1ded8;
+  --text-color: #333333;
+  --text-hover-color: #b29564;
+  --bg-text-color: #faf7f0;
+  --white: #ffffff;
+  --error-color: #ca3d43;
+  //自行新增
+  --white50: #ffffff50;
+  --hover03: rgba(128, 128, 128, 0.3);
+}
+
+// ===========專題↑
 
 // 按鈕圓角邊 button radius
 $border-radius: 0.2em;
@@ -62,6 +82,9 @@ body {
     // Emoji fonts
     'Apple Color Emoji',
     'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  font-family: 'B2Hana-Regular';
+  background-color: var(--primary);
+  line-height: 22px;
 }
 
 .form-member {
@@ -70,3 +93,104 @@ body {
 }
 
 // below is test only
+
+// ========專題
+
+@font-face {
+  font-family: 'B2Hana-Regular';
+  src: url(https://cdn.jsdelivr.net/gh/max32002/max-hana@1.1/webfont/B2Hana-Regular-Lite.woff2)
+      format('woff2'),
+    url(https://cdn.jsdelivr.net/gh/max32002/max-hana@1.1/webfont/B2Hana-Regular-Lite.woff)
+      format('woff');
+}
+
+@font-face {
+  font-family: 'B2Hana-Medium';
+  src: url(https://cdn.jsdelivr.net/gh/max32002/max-hana@1.1/webfont/B2Hana-Medium.woff2)
+      format('woff2'),
+    url(https://cdn.jsdelivr.net/gh/max32002/max-hana@1.1/webfont/B2Hana-Medium.woff)
+      format('woff');
+}
+
+html {
+  font-family: 'B2Hana-Regular', sans-serif;
+  font-size: 62.5%;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6,
+.p {
+  font-family: 'B2Hana-Regular', sans-serif;
+  font-weight: 100;
+  /* margin: 0 */
+}
+
+h1,
+.h1 {
+  font-size: 3.6rem; /* 57.6px */
+  @media screen and (max-width: 576px) {
+    font-size: 2.6rem; /*  41.6px */
+  }
+}
+
+h2,
+.h2 {
+  font-size: 3.2rem;
+  @media screen and (max-width: 576px) {
+    font-size: 2.4rem;
+  }
+}
+
+h3,
+.h3 {
+  font-size: 2.6rem;
+  @media screen and (max-width: 576px) {
+    font-size: 2rem;
+  }
+}
+
+h4,
+.h4 {
+  font-size: 2.4rem;
+  @media screen and (max-width: 576px) {
+    font-size: 1.8rem;
+  }
+}
+
+h5,
+.h5 {
+  font-size: 2rem;
+  @media screen and (max-width: 576px) {
+    font-size: 2rem;
+  }
+}
+
+p,
+.p {
+  font-size: 1.6rem;
+  @media screen and (max-width: 576px) {
+    font-size: 1.4rem;
+  }
+}
+
+p2,
+.p2 {
+  font-size: 1.4rem;
+  @media screen and (max-width: 576px) {
+    font-size: 1.4rem;
+  }
+}
+body {
+  background-color: var(--primary);
+}
