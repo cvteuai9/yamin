@@ -4,6 +4,12 @@ import '@/styles/globals.scss'
 import '@/styles/product.scss'
 import '@/styles/cart.scss'
 import '@/styles/loader.scss'
+
+// Ju-掛載
+import '@/styles/Normalize.css'
+import '@/styles/public.css'
+import '@/styles/all.css'
+
 // 載入購物車context
 import { CartProvider } from '@/hooks/use-cart-state'
 // 載入認証用context
