@@ -4,7 +4,7 @@
     text-decoration: none;
   }
   a:hover {
-    color: #d7b375;
+    color: var(--primary-light);
   }
 }
 .main {
@@ -100,6 +100,13 @@
     }
     .more-btn {
       border: 0.1rem solid var(--primary2);
+      button {
+        border-radius: 0;
+        color: var(--primary2);
+        &:hover {
+          color: var(--primary-light);
+        }
+      }
     }
     .goShooping {
       margin-top: 2rem;
@@ -107,7 +114,7 @@
       padding: 0.5rem;
       color: var(--primary2);
       &:hover {
-        color: #d7b375;
+        color: var(--primary-light);
       }
     }
   }
@@ -147,7 +154,7 @@
         color: var(--primary2);
         transition: 0.5s;
         &:hover {
-          color: #d7b375;
+          color: var(--primary-light);
         }
         > div {
           padding: 1rem;
@@ -162,208 +169,225 @@
     }
     .rp-group::-webkit-scrollbar-thumb {
       background-color: var(--primary2);
+      height: 1rem;
+      border-radius: 1rem;
+    }
+  }
+  // 所有評論 modal
+  .moreArea {
+    background-color: var(--primary-deep);
+    button {
+      background-color: var(--primary2);
+      color: var(--primary-deep);
+    }
+    .modalBody::-webkit-scrollbar {
+      width: 1rem;
+      background-color: #003e52;
+    }
+    .modalBody::-webkit-scrollbar-thumb {
+      background-color: var(--primary2);
       height: 1px;
       border-radius: 1rem;
     }
   }
-}
 
-@media screen and (max-width: 1200px) {
-  .main {
-    .section1 {
-      h1 {
-        font-size: 2.8rem;
-      }
-      h3 {
-        font-size: 2rem;
-      }
-      h5 {
-        font-size: 1.6rem;
-      }
-      .right {
-        .star-group {
-          img {
-            width: 2rem;
-            height: auto;
+  @media screen and (max-width: 1200px) {
+    .main {
+      .section1 {
+        h1 {
+          font-size: 2.8rem;
+        }
+        h3 {
+          font-size: 2rem;
+        }
+        h5 {
+          font-size: 1.6rem;
+        }
+        .right {
+          .star-group {
+            img {
+              width: 2rem;
+              height: auto;
+            }
           }
-        }
-        .like-heart {
-          width: 3rem;
-          height: auto;
-        }
-        .like-text {
-          text-wrap: nowrap;
-          font-size: 2.4rem;
-        }
-        .product-count {
-          > div,
-          > button {
-            font-size: 2.4rem;
-            width: 7rem;
-          }
-        }
-        .cart-btn {
-          font-size: 2.4rem;
-        }
-      }
-    }
-    .section2 {
-      .descript-title {
-        font-size: 2rem;
-      }
-      .descript {
-        font-size: 1.6rem;
-      }
-    }
-  }
-}
-@media screen and (max-width: 992px) {
-  .main {
-    .section1 {
-      h1 {
-        font-size: 3.2rem;
-      }
-      h3 {
-        font-size: 2rem;
-      }
-      h5 {
-        font-size: 1.6rem;
-      }
-      .right {
-        .star-group {
-          img {
-            width: 2rem;
-            height: auto;
-          }
-        }
-        .heart-btn {
-          width: 100%;
-
           .like-heart {
-            width: 2rem;
+            width: 3rem;
             height: auto;
           }
           .like-text {
             text-wrap: nowrap;
-            font-size: 1.6rem;
+            font-size: 2.4rem;
           }
           .product-count {
             > div,
             > button {
-              font-size: 1.6rem;
-              width: 5rem;
+              font-size: 2.4rem;
+              width: 7rem;
             }
           }
+          .cart-btn {
+            font-size: 2.4rem;
+          }
         }
-        .cart-btn {
+      }
+      .section2 {
+        .descript-title {
+          font-size: 2rem;
+        }
+        .descript {
           font-size: 1.6rem;
         }
       }
     }
-    .section2 {
-      .descript-title {
-        font-size: 2rem;
+  }
+  @media screen and (max-width: 992px) {
+    .main {
+      .section1 {
+        h1 {
+          font-size: 3.2rem;
+        }
+        h3 {
+          font-size: 2rem;
+        }
+        h5 {
+          font-size: 1.6rem;
+        }
+        .right {
+          .star-group {
+            img {
+              width: 2rem;
+              height: auto;
+            }
+          }
+          .heart-btn {
+            width: 100%;
+
+            .like-heart {
+              width: 2rem;
+              height: auto;
+            }
+            .like-text {
+              text-wrap: nowrap;
+              font-size: 1.6rem;
+            }
+            .product-count {
+              > div,
+              > button {
+                font-size: 1.6rem;
+                width: 5rem;
+              }
+            }
+          }
+          .cart-btn {
+            font-size: 1.6rem;
+          }
+        }
       }
-      .descript {
-        font-size: 1.6rem;
+      .section2 {
+        .descript-title {
+          font-size: 2rem;
+        }
+        .descript {
+          font-size: 1.6rem;
+        }
       }
     }
   }
-}
-@media screen and (max-width: 768px) {
-  .main {
-    .section1 {
-      h1 {
-        font-size: 2rem;
-      }
-      h3 {
-        font-size: 2rem;
-      }
-      h5 {
-        font-size: 1.6rem;
-      }
-      .right {
-        .star-group {
-          img {
-            width: 2rem;
-            height: auto;
-          }
-        }
-        .like-heart {
-          width: 2.4rem;
-          height: auto;
-        }
-        .like-text {
-          text-wrap: nowrap;
+  @media screen and (max-width: 768px) {
+    .main {
+      .section1 {
+        h1 {
           font-size: 2rem;
         }
-        .product-count {
-          > div,
-          > button {
+        h3 {
+          font-size: 2rem;
+        }
+        h5 {
+          font-size: 1.6rem;
+        }
+        .right {
+          .star-group {
+            img {
+              width: 2rem;
+              height: auto;
+            }
+          }
+          .like-heart {
+            width: 2.4rem;
+            height: auto;
+          }
+          .like-text {
+            text-wrap: nowrap;
             font-size: 2rem;
-            width: 5rem;
+          }
+          .product-count {
+            > div,
+            > button {
+              font-size: 2rem;
+              width: 5rem;
+            }
+          }
+          .cart-btn {
+            font-size: 2.4rem;
           }
         }
-        .cart-btn {
-          font-size: 2.4rem;
+      }
+      .section2 {
+        .descript-title {
+          font-size: 2.6rem;
         }
-      }
-    }
-    .section2 {
-      .descript-title {
-        font-size: 2.6rem;
-      }
-      .descript {
-        font-size: 1.6rem;
+        .descript {
+          font-size: 1.6rem;
+        }
       }
     }
   }
-}
-@media screen and (max-width: 576px) {
-  .main {
-    .section1 {
-      h1 {
-        font-size: 2.8rem;
-      }
-      h3 {
-        font-size: 2rem;
-      }
-      h5 {
-        font-size: 1.6rem;
-      }
-      .right {
-        .star-group {
-          img {
-            width: 2rem;
-            height: auto;
-          }
+  @media screen and (max-width: 576px) {
+    .main {
+      .section1 {
+        h1 {
+          font-size: 2.8rem;
         }
-        .like-heart {
-          width: 2.4rem;
-          height: auto;
-        }
-        .like-text {
-          text-wrap: nowrap;
+        h3 {
           font-size: 2rem;
         }
-        .product-count {
-          > div,
-          > button {
+        h5 {
+          font-size: 1.6rem;
+        }
+        .right {
+          .star-group {
+            img {
+              width: 2rem;
+              height: auto;
+            }
+          }
+          .like-heart {
+            width: 2.4rem;
+            height: auto;
+          }
+          .like-text {
+            text-wrap: nowrap;
             font-size: 2rem;
-            width: 7rem;
+          }
+          .product-count {
+            > div,
+            > button {
+              font-size: 2rem;
+              width: 7rem;
+            }
+          }
+          .cart-btn {
+            font-size: 2.4rem;
           }
         }
-        .cart-btn {
-          font-size: 2.4rem;
+      }
+      .section2 {
+        .descript-title {
+          font-size: 2.6rem;
         }
-      }
-    }
-    .section2 {
-      .descript-title {
-        font-size: 2.6rem;
-      }
-      .descript {
-        font-size: 1.6rem;
+        .descript {
+          font-size: 1.6rem;
+        }
       }
     }
   }

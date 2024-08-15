@@ -188,7 +188,7 @@ router.get('/relation_product/:id', async (req, res) => {
 router.get('/reviews/:id', async (req, res) => {
   const id = Number(req.params.id)
   const [rows] = await db.query(
-    `SELECT id,comment, rating ,created_at FROM reviews WHERE product_id = ${id}`
+    `SELECT id,comment, rating ,created_at FROM reviews WHERE product_id = ${id} ORDER BY created_at DESC`
   )
   // console.log(rows.length)
   // 設定各星級佔存
@@ -231,7 +231,8 @@ router.get('/reviews/:id', async (req, res) => {
     Math.round((a / rows.length) * 100),
   ]
   const reviews = {}
-  reviews.data = rows
+  reviews.allData = rows
+  reviews.someData = rows.slice(0, 3)
   reviews.eachRating = starArray
   reviews.allRating = allRating
   reviews.allLength = rows.length
