@@ -1,7 +1,6 @@
 /* 顏色系統 */
 :root {
   --primary: #003e52;
-  /* 基本背景顏色 */
   --primary2: #b29564;
   --primary-deep: #003445;
   --primary-light: #ffe9b1;
@@ -13,25 +12,18 @@
   --bg-text-color: #faf7f0;
   --white: #ffffff;
   --error-color: #ca3d43;
+}
 
-}
 @font-face {
-  font-family: "B2Hana-Regular";
+  font-family: 'B2Hana-Regular';
   src: url(https://cdn.jsdelivr.net/gh/max32002/max-hana@1.1/webfont/B2Hana-Regular-Lite.woff2)
-      format("woff2"),
+      format('woff2'),
     url(https://cdn.jsdelivr.net/gh/max32002/max-hana@1.1/webfont/B2Hana-Regular-Lite.woff)
-      format("woff");
-}
-@font-face {
-  font-family: "B2Hana-Medium";
-  src: url(https://cdn.jsdelivr.net/gh/max32002/max-hana@1.1/webfont/B2Hana-Medium.woff2)
-      format("woff2"),
-    url(https://cdn.jsdelivr.net/gh/max32002/max-hana@1.1/webfont/B2Hana-Medium.woff)
-      format("woff");
+      format('woff');
 }
 /* 字體系統 */
 html {
-  font-family: "B2Hana-Regular", sans-serif;
+  font-family: 'B2Hana-Regular', sans-serif;
   /* 我們使用的字體 */
   font-size: 62.5%;
 }
@@ -50,64 +42,65 @@ p,
 .h5,
 .h6,
 .p {
-  font-family: "B2Hana-Regular", sans-serif;
+  font-family: 'B2Hana-Regular', sans-serif;
   font-weight: 100;
-  /* margin: 0 */
+  /* margin: 0; */
 }
 
 h1,
 .h1 {
-  font-size: 3.6rem; /* 57.6px */
+  font-size: 3.6rem;
+
   @media screen and (max-width: 576px) {
-    font-size: 2.6rem; /*  41.6px */
+    font-size: 2.6rem;
   }
 }
 
 h2,
 .h2 {
-  font-size: 3.2rem; /* 51.2px  */
+  font-size: 3.2rem;
   @media screen and (max-width: 576px) {
-    font-size: 2.4rem; /*38.4px  */
+    font-size: 2.4rem;
   }
 }
 
 h3,
 .h3 {
-  font-size: 2.6rem; /*41.6px;  */
+  font-size: 2.6rem;
   @media screen and (max-width: 576px) {
-    font-size: 2rem; /*  32px;  */
+    font-size: 2rem;
   }
 }
 
 h4,
 .h4 {
-  font-size: 2.4rem; /*38.4px;  */
+  font-size: 2.4rem;
   @media screen and (max-width: 576px) {
-    font-size: 1.8rem; /* 28.8px */
+    font-size: 1.8rem;
   }
 }
 
 h5,
 .h5 {
-  font-size: 2rem; /* 32px */
+  font-size: 2rem;
   @media screen and (max-width: 576px) {
-    font-size: 2rem; /* 32px */
+    font-size: 2rem;
   }
 }
 
 p,
 .p {
-  font-size: 1.6rem; /*25.6px;   */
+  font-size: 1.6rem;
   @media screen and (max-width: 576px) {
-    font-size: 1.4rem; /* 22.4px */
+    font-size: 1.4rem;
   }
 }
 
 p2,
 .p2 {
-  font-size: 1.4rem; /* 22.4px */
+  font-size: 1.4rem;
   @media screen and (max-width: 576px) {
-    font-size: 1.4rem; /*  22.4px */
+    font-size: 1.4rem;
   }
 }
 /* 沒意外p2用不太到 */

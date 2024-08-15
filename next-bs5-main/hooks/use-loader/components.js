@@ -1,6 +1,6 @@
 // https://github.com/Gamote/lottie-react
 import Lottie from 'lottie-react'
-import catAnimation from '@/assets/loader-cat.json'
+import catAnimation from '@/assets/tea-time.json'
 import nikeAnimation from '@/assets/loader-nike.json'
 
 // 展示用載入元件
