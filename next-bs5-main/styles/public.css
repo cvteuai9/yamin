@@ -26,6 +26,7 @@ html {
   font-family: 'B2Hana-Regular', sans-serif;
   /* 我們使用的字體 */
   font-size: 62.5%;
+  overflow-y: scroll; 
 }
 
 h1,

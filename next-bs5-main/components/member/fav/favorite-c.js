@@ -1,6 +1,17 @@
-import React from 'react'
+/* eslint-disable prettier/prettier */
+/* eslint-disable @next/next/no-img-element */
+import { useState, useEffect, useMemo, useCallback } from 'react'
+import { useRouter } from 'next/router'
+import styles from '@/components/article/list.module.scss'
+import option from '@/components/article/option.module.sass'
+import StarLarge from '@/components/star/star-large'
+import { IoEyeSharp } from 'react-icons/io5'
+import { FaRegComment, FaBookmark } from 'react-icons/fa'
+import { FaAngleDown } from 'react-icons/fa6'
+
+import Leftnav from '@/components/member/left-nav'
 import Link from 'next/link'
-import Leftnav from '@/components/user-test/left-nav'
+
 export default function FavoriteC() {
   return (
     <>
@@ -23,42 +34,64 @@ export default function FavoriteC() {
               <h5 className="goldenf mb-3 mt-3">我的收藏</h5>
               <div className="favorite-nav">
                 <div className="searchnavs">
-                  <div className="searchnav">
-                    <Link href="/test/julia/favorite-p" className="goldenf p">
+                  <div className="searchnav ">
+                    <Link href="/member/fav/favorite-p" className="goldenf h5 ">
                       商品
                     </Link>
                   </div>
                   <div className="ms-3 searchnav">
-                    <Link href="/test/julia/favorite-c" className="goldenf p">
+                    <Link href="/member/fav/favorite-c" className="goldenf h5 ">
                       課程
                     </Link>
                   </div>
                   <div className="ms-3 searchnav">
-                    <Link href="/test/julia/favorite-a" className="goldenf p">
+                    <Link href="/member/fav/favorite-a" className="goldenf h5 ">
                       文章
                     </Link>
                   </div>
                 </div>
                 <hr />
                 <div className="searchitem" type="button">
-                  <p className="goldenf p2 mb-1">
-                    篩選
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width={16}
-                      height={16}
-                      style={{ color: '#b29564' }}
-                      fill="currentColor"
-                      className="bi bi-funnel"
-                      viewBox="0 0 16 16"
+                  <div className="d-flex justify-content-end align-items-center ">
+                    {/* <h4>{selectedCategory}</h4> */}
+                    <div
+                      className="d-flex justify-content-between"
+                      style={{ width: 100 }}
                     >
-                      <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2z" />
-                    </svg>
-                  </p>
+                      <div
+                        className={`d-flex align-items-center justify-content-between ${option['articlechoose']}`}
+                      >
+                        <input type="checkbox" name="a1-1" id="a1-1" />
+                        <label htmlFor="a1-1" className="d-flex flex-column">
+                          <p className="mb-0 align-items-center">
+                            排序
+                            <FaAngleDown className={option['icon']} />
+                          </p>
+                          <ul className="ul1">
+                            <li>
+                              <a href="#" data-value="date_desc">
+                                依類別排序
+                              </a>
+                            </li>
+                            <li>
+                              <a href="#" data-value="date_asc">
+                                依金額排序
+                              </a>
+                            </li>
+                            <li>
+                              <a href="#" data-value="views_desc">
+                                依評分排序
+                              </a>
+                            </li>
+                          </ul>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
               <div className="favoritec-cards">
-                <div className="favoritec-pcard']} mt-5 ms-1 me-3">
+                <div className="favoritec-pcard  mt-5 ms-1 me-3">
                   <div className="favoritec-imgbox">
                     <img src="/images/favorite/class.webp" alt="" />
                     <div className="favoritec-fabtn" type="button">
@@ -111,7 +144,7 @@ export default function FavoriteC() {
                 </div>
               </div>
               <div className="favoritec-cards">
-                <div className="favoritec-pcard']} mt-5 ms-1 me-3">
+                <div className="favoritec-pcard  mt-5 ms-1 me-3">
                   <div className="favoritec-imgbox">
                     <img src="/images/favorite/class.webp" alt="" />
                     <div className="favoritec-fabtn" type="button">
@@ -164,7 +197,7 @@ export default function FavoriteC() {
                 </div>
               </div>
               <div className="favoritec-cards">
-                <div className="favoritec-pcard']} mt-5 ms-1 me-3">
+                <div className="favoritec-pcard  mt-5 ms-1 me-3">
                   <div className="favoritec-imgbox">
                     <img src="/images/favorite/class.webp" alt="" />
                     <div className="favoritec-fabtn" type="button">
@@ -217,7 +250,7 @@ export default function FavoriteC() {
                 </div>
               </div>
               <div className="favoritec-cards">
-                <div className="favoritec-pcard']} mt-5 ms-1 me-3">
+                <div className="favoritec-pcard  mt-5 ms-1 me-3">
                   <div className="favoritec-imgbox">
                     <img src="/images/favorite/class.webp" alt="" />
                     <div className="favoritec-fabtn" type="button">
@@ -270,9 +303,9 @@ export default function FavoriteC() {
                 </div>
               </div>
               {/* 頁碼 */}
-              <div className="pageitem">
-                <ul className="ps-0 mt-5">
-                  <li className="pt-2 pb-2">
+              <div className="pageitem ">
+                <ul className="ps-0 mt-5 ">
+                  <li className="pt-2 pb-2 ">
                     <img
                       src="/images/favorite/leftbtn.svg"
                       type="button"
