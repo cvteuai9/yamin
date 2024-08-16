@@ -37,21 +37,25 @@ export default function List1() {
 
   // 使用fetch送請求至後端
   async function getProducts(url) {
-    products = await fetch(url.href)
-      .then((res) => res.json())
-      .then((result) => {
-        return result
-      })
-      .catch((error) => {
-        console.log(error)
-      })
-    setProduct(products.product.data) // 設定商品資訊
-    setTotalPage(products.product.totalPage) // 設定總頁數
-    setTeaArray(products.product.teaFilter) // 設定「茶種」篩選選擇器陣列
-    setBrandArray(products.product.brandFilter) // 設定「品牌」篩選選擇器陣列
-    setPcArray(products.product.packageFilter) // 設定「包材」篩選選擇器陣列
-    setStyleArray(products.product.styleFilter) // 設定「茶品型態」篩選選擇器陣列
-    setTotalData(products.product.totalData) // 設定「符合條件的總商品數」
+    try {
+      products = await fetch(url.href)
+        .then((res) => res.json())
+        .then((result) => {
+          return result
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+      setProduct(products.product.data) // 設定商品資訊
+      setTotalPage(products.product.totalPage) // 設定總頁數
+      setTeaArray(products.product.teaFilter) // 設定「茶種」篩選選擇器陣列
+      setBrandArray(products.product.brandFilter) // 設定「品牌」篩選選擇器陣列
+      setPcArray(products.product.packageFilter) // 設定「包材」篩選選擇器陣列
+      setStyleArray(products.product.styleFilter) // 設定「茶品型態」篩選選擇器陣列
+      setTotalData(products.product.totalData) // 設定「符合條件的總商品數」
+    } catch (error) {
+      console.log(error)
+    }
   }
   useEffect(() => {
     // 剛進入商品列表頁才會有載入畫面
@@ -549,7 +553,7 @@ export default function List1() {
                 />
               </div>
             ) : (
-              <div></div>
+              <div>沒有符合條件的商品</div>
             )}
           </div>
         </div>

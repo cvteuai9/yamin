@@ -2,12 +2,13 @@
 // import styles from '@/components/fav-test/favorite-a.module.css'
 import Leftnav from '@/components/user-test/left-nav'
 import Link from 'next/link'
+import styles from '@/components/fav-test/favorite.module.scss'
 
 export default function FavoriteA() {
   return (
     <>
       {/* 標題 & 篩選 */}
-      <div className="container">
+      <div className="container-fluid">
         <div className="row">
           <div className="titlenav">
             <img src="/images/favorite/title.svg" alt="" />
@@ -18,13 +19,13 @@ export default function FavoriteA() {
             />
           </div>
           <div className="col-md-3 ">
-            <Leftnav />
+            <Leftnav fromFavorite="fromFavorite" />
           </div>
-          <div className="col-md-9 ">
+          <div className="col-md-9 p-0">
             <h5 className="goldenf mb-3 mt-3">我的收藏</h5>
             <div className="favorite-nav">
               <div className="searchnavs">
-                <div className="searchnav">
+                <div className={`searchnav`}>
                   <Link href="/test/julia/favorite-p" className="goldenf p">
                     商品
                   </Link>
@@ -34,7 +35,7 @@ export default function FavoriteA() {
                     課程
                   </Link>
                 </div>
-                <div className="ms-3 searchnav">
+                <div className={`ms-3 searchnav ${styles.favoriteArticle}`}>
                   <Link href="/test/julia/favorite-a" className="goldenf p">
                     文章
                   </Link>
@@ -58,117 +59,131 @@ export default function FavoriteA() {
                 </p>
               </div>
             </div>
-            <div className="favoritea-cards">
-              <div className="favoritea-pcard  mt-5 ms-1 me-3">
-                <div className="favoritea-imgbox">
-                  <img src="/images/favorite/a.jpg" alt="" />
-                </div>
-                <div className="favoritea-cardtext">
-                  <div className="favoritea-cardlefttext">
-                    <p className="whitef p2">
-                      茶的風味鑑賞學：識茶、品茶、泡茶，探索茶的世界
-                    </p>
-                    <span className="p2 whitef50">
-                      茶藝跟咖啡其實很像！學會品茶可以增進生活樂趣，懂得按照自己的需求挑選茶飲；學會泡茶更是特殊技能，除了享受療育的泡茶過程外，也不失為一種與人交際的談資喔！
-                    </span>
-                    <br />
-                    <div className="favoritea-bottomtext">
-                      <p className="p2 whitef50">上架時間：2024-08-20</p>
-                      <p className="p2 whitef50 ms-5">類別：茶知識</p>
+            <div className={`${styles.favoriteArticleGroup} mt-5`}>
+              <div className={`${styles['favoritea-cards']}`}>
+                <div className={`${styles['favoritea-pcard']}`}>
+                  <div className={`${styles['favoritea-imgbox']}`}>
+                    <img src="/images/favorite/a.jpg" alt="" />
+                  </div>
+                  <div className={`${styles['favoritea-cardtext']}`}>
+                    <div className={`${styles['favoritea-cardlefttext']}`}>
+                      <p className="whitef p2">
+                        茶的風味鑑賞學：識茶、品茶、泡茶，探索茶的世界
+                      </p>
+                      <span className="p2 whitef50">
+                        茶藝跟咖啡其實很像！學會品茶可以增進生活樂趣，懂得按照自己的需求挑選茶飲；學會泡茶更是特殊技能，除了享受療育的泡茶過程外，也不失為一種與人交際的談資喔！
+                      </span>
                       <br />
-                    </div>
-                    <div className="favoritea-markbtn" type="button">
-                      <i
-                        className="fa-solid fa-bookmark fa-2xl"
-                        style={{ color: '#b29564' }}
-                      />
+                      <div className={`${styles['favoritea-bottomtext']}`}>
+                        <p className="p2 whitef50">上架時間：2024-08-20</p>
+                        <p className="p2 whitef50 ms-5">類別：茶知識</p>
+                        <br />
+                      </div>
+                      <div
+                        className={`${styles['favoritea-markbtn']}`}
+                        type="button"
+                      >
+                        <i
+                          className="fa-solid fa-bookmark fa-2xl"
+                          style={{ color: '#b29564' }}
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div className="favoritea-cards">
-              <div className="favoritea-pcard  mt-5 ms-1 me-3">
-                <div className="favoritea-imgbox">
-                  <img src="/images/favorite/a.jpg" alt="" />
-                </div>
-                <div className="favoritea-cardtext">
-                  <div className="favoritea-cardlefttext">
-                    <p className="whitef p2">
-                      茶的風味鑑賞學：識茶、品茶、泡茶，探索茶的世界
-                    </p>
-                    <span className="p2 whitef50">
-                      茶藝跟咖啡其實很像！學會品茶可以增進生活樂趣，懂得按照自己的需求挑選茶飲；學會泡茶更是特殊技能，除了享受療育的泡茶過程外，也不失為一種與人交際的談資喔！
-                    </span>
-                    <br />
-                    <div className="favoritea-bottomtext">
-                      <p className="p2 whitef50">上架時間：2024-08-20</p>
-                      <p className="p2 whitef50 ms-5">類別：茶知識</p>
+              <div className={`${styles['favoritea-cards']}`}>
+                <div className={`${styles['favoritea-pcard']}`}>
+                  <div className={`${styles['favoritea-imgbox']}`}>
+                    <img src="/images/favorite/a.jpg" alt="" />
+                  </div>
+                  <div className={`${styles['favoritea-cardtext']}`}>
+                    <div className={`${styles['favoritea-cardlefttext']}`}>
+                      <p className="whitef p2">
+                        茶的風味鑑賞學：識茶、品茶、泡茶，探索茶的世界
+                      </p>
+                      <span className="p2 whitef50">
+                        茶藝跟咖啡其實很像！學會品茶可以增進生活樂趣，懂得按照自己的需求挑選茶飲；學會泡茶更是特殊技能，除了享受療育的泡茶過程外，也不失為一種與人交際的談資喔！
+                      </span>
                       <br />
-                    </div>
-                    <div className="favoritea-markbtn" type="button">
-                      <i
-                        className="fa-solid fa-bookmark fa-2xl"
-                        style={{ color: '#b29564' }}
-                      />
+                      <div className={`${styles['favoritea-bottomtext']}`}>
+                        <p className="p2 whitef50">上架時間：2024-08-20</p>
+                        <p className="p2 whitef50 ms-5">類別：茶知識</p>
+                        <br />
+                      </div>
+                      <div
+                        className={`${styles['favoritea-markbtn']}`}
+                        type="button"
+                      >
+                        <i
+                          className="fa-solid fa-bookmark fa-2xl"
+                          style={{ color: '#b29564' }}
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div className="favoritea-cards">
-              <div className="favoritea-pcard  mt-5 ms-1 me-3">
-                <div className="favoritea-imgbox">
-                  <img src="/images/favorite/a.jpg" alt="" />
-                </div>
-                <div className="favoritea-cardtext">
-                  <div className="favoritea-cardlefttext">
-                    <p className="whitef p2">
-                      茶的風味鑑賞學：識茶、品茶、泡茶，探索茶的世界
-                    </p>
-                    <span className="p2 whitef50">
-                      茶藝跟咖啡其實很像！學會品茶可以增進生活樂趣，懂得按照自己的需求挑選茶飲；學會泡茶更是特殊技能，除了享受療育的泡茶過程外，也不失為一種與人交際的談資喔！
-                    </span>
-                    <br />
-                    <div className="favoritea-bottomtext">
-                      <p className="p2 whitef50">上架時間：2024-08-20</p>
-                      <p className="p2 whitef50 ms-5">類別：茶知識</p>
+              <div className={`${styles['favoritea-cards']}`}>
+                <div className={`${styles['favoritea-pcard']}`}>
+                  <div className={`${styles['favoritea-imgbox']}`}>
+                    <img src="/images/favorite/a.jpg" alt="" />
+                  </div>
+                  <div className={`${styles['favoritea-cardtext']}`}>
+                    <div className={`${styles['favoritea-cardlefttext']}`}>
+                      <p className="whitef p2">
+                        茶的風味鑑賞學：識茶、品茶、泡茶，探索茶的世界
+                      </p>
+                      <span className="p2 whitef50">
+                        茶藝跟咖啡其實很像！學會品茶可以增進生活樂趣，懂得按照自己的需求挑選茶飲；學會泡茶更是特殊技能，除了享受療育的泡茶過程外，也不失為一種與人交際的談資喔！
+                      </span>
                       <br />
-                    </div>
-                    <div className="favoritea-markbtn" type="button">
-                      <i
-                        className="fa-solid fa-bookmark fa-2xl"
-                        style={{ color: '#b29564' }}
-                      />
+                      <div className={`${styles['favoritea-bottomtext']}`}>
+                        <p className="p2 whitef50">上架時間：2024-08-20</p>
+                        <p className="p2 whitef50 ms-5">類別：茶知識</p>
+                        <br />
+                      </div>
+                      <div
+                        className={`${styles['favoritea-markbtn']}`}
+                        type="button"
+                      >
+                        <i
+                          className="fa-solid fa-bookmark fa-2xl"
+                          style={{ color: '#b29564' }}
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div className="favoritea-cards">
-              <div className="favoritea-pcard  mt-5 ms-1 me-3">
-                <div className="favoritea-imgbox">
-                  <img src="/images/favorite/a.jpg" alt="" />
-                </div>
-                <div className="favoritea-cardtext">
-                  <div className="favoritea-cardlefttext">
-                    <p className="whitef p2">
-                      茶的風味鑑賞學：識茶、品茶、泡茶，探索茶的世界
-                    </p>
-                    <span className="p2 whitef50">
-                      茶藝跟咖啡其實很像！學會品茶可以增進生活樂趣，懂得按照自己的需求挑選茶飲；學會泡茶更是特殊技能，除了享受療育的泡茶過程外，也不失為一種與人交際的談資喔！
-                    </span>
-                    <br />
-                    <div className="favoritea-bottomtext">
-                      <p className="p2 whitef50">上架時間：2024-08-20</p>
-                      <p className="p2 whitef50 ms-5">類別：茶知識</p>
+              <div className={`${styles['favoritea-cards']}`}>
+                <div className={`${styles['favoritea-pcard']}`}>
+                  <div className={`${styles['favoritea-imgbox']}`}>
+                    <img src="/images/favorite/a.jpg" alt="" />
+                  </div>
+                  <div className={`${styles['favoritea-cardtext']}`}>
+                    <div className={`${styles['favoritea-cardlefttext']}`}>
+                      <p className="whitef p2">
+                        茶的風味鑑賞學：識茶、品茶、泡茶，探索茶的世界
+                      </p>
+                      <span className="p2 whitef50">
+                        茶藝跟咖啡其實很像！學會品茶可以增進生活樂趣，懂得按照自己的需求挑選茶飲；學會泡茶更是特殊技能，除了享受療育的泡茶過程外，也不失為一種與人交際的談資喔！
+                      </span>
                       <br />
-                    </div>
-                    <div className="favoritea-markbtn" type="button">
-                      <i
-                        className="fa-solid fa-bookmark fa-2xl"
-                        style={{ color: '#b29564' }}
-                      />
+                      <div className={`${styles['favoritea-bottomtext']}`}>
+                        <p className="p2 whitef50">上架時間：2024-08-20</p>
+                        <p className="p2 whitef50 ms-5">類別：茶知識</p>
+                        <br />
+                      </div>
+                      <div
+                        className={`${styles['favoritea-markbtn']}`}
+                        type="button"
+                      >
+                        <i
+                          className="fa-solid fa-bookmark fa-2xl"
+                          style={{ color: '#b29564' }}
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
