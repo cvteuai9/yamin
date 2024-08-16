@@ -1,6 +1,6 @@
 import React from 'react'
 
-import Leftnav from '@/components/user-test/left-nav'
+import Leftnav from '@/components/member/left-nav'
 import Link from 'next/link'
 export default function Changeps() {
   return (
@@ -20,15 +20,15 @@ export default function Changeps() {
           </div>
           <div className="col-md-9">
             <h4 className="goldenf">
-              <Link href="/test/julia/profile" className="h5 goldenf">
+              <Link href="/user/profile" className="h5 goldenf">
                 個人檔案
               </Link>
               &nbsp;/&nbsp;
-              <Link href="/test/julia/profile" className="h5 goldenf">
+              <Link href="/member/fav/profile" className="h5 goldenf">
                 已整合帳戶
               </Link>
               &nbsp;/&nbsp;
-              <Link href="/test/julia/profile" className="h5 goldenf">
+              <Link href="/member/fav/profile" className="h5 goldenf">
                 載具管理
               </Link>
             </h4>

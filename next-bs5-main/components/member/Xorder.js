@@ -1,4 +1,4 @@
-import Leftnav from '@/components/user-test/left-nav'
+import Leftnav from '@/components/member/left-nav'
 import Link from 'next/link'
 
 export default function Order() {
@@ -65,8 +65,8 @@ export default function Order() {
                 style={{ width: 100 }}
               />
             </div>
-            <div className="order-cinput mt-5">
-              <ul className="order-ordernav p whitef">
+            <div className="ordered-cinput mt-5">
+              <ul className="ordered-ordernav p whitef">
                 <li>全部</li>
                 <li>待付款</li>
                 <li>待出貨</li>

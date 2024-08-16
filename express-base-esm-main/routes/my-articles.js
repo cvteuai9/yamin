@@ -17,7 +17,8 @@ router.get('/', async function (req, res) {
   const articles = rows
 
   // 標準回傳JSON
-  return res.json({ status: 'success', data: { articles } })
+  // return res.json({ status: 'success', data: { articles } })
+  return res.json(articles)
 })
 
 router.get('/category', async function (req, res) {

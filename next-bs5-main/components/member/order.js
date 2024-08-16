@@ -1,5 +1,5 @@
-// import styles from '@/components/user-test/ordered.module.css'
-import Leftnav from '@/components/user-test/left-nav'
+// import styles from '@/components/member/ordered.module.css'
+import Leftnav from '@/components/member/left-nav'
 import Link from 'next/link'
 export default function Ordered() {
   return (
@@ -18,7 +18,7 @@ export default function Ordered() {
             <Leftnav />
           </div>
           <div className="col-md-9 ">
-          <h3 className="goldenf">購買訂單</h3>
+            <h3 className="goldenf">購買訂單</h3>
             <div className="order-cinput   mt-5">
               <p className=" grayf">購買商品</p>
               <input
@@ -65,8 +65,8 @@ export default function Ordered() {
                 style={{ width: 100 }}
               />
             </div>
-            <div className="order-cinput   mt-5">
-              <ul className="order-ordernav p whitef">
+            <div className="ordered-cinput   mt-5">
+              <ul className="ordered-ordernav p whitef">
                 <li>全部</li>
                 <li>待付款</li>
                 <li>待出貨</li>
@@ -89,7 +89,7 @@ export default function Ordered() {
                   </p>
                   <p className="whitef50">取消原因：重複購買</p>
                   <div className="ordered-bottomtext mt-3">
-                    <Link href="/" className="btn1 p">
+                    <Link href="/member/order/info" className="btn1 p">
                       訂單細節
                     </Link>
 
@@ -113,7 +113,7 @@ export default function Ordered() {
                   </p>
                   <p className="whitef50">取消原因：重複購買</p>
                   <div className="ordered-bottomtext mt-3">
-                    <Link href="/" className="btn1 p">
+                    <Link href="/member/order/info" className="btn1 p">
                       訂單細節
                     </Link>
                     <p className="mt-3">訂單金額：2,880元(含運費)</p>
@@ -136,7 +136,7 @@ export default function Ordered() {
                   </p>
                   <p className="whitef50">取消原因：重複購買</p>
                   <div className="ordered-bottomtext mt-3">
-                    <Link href="/" className="btn1 p">
+                    <Link href="/member/order/info" className="btn1 p">
                       訂單細節
                     </Link>
                     <p className="mt-3">訂單金額：2,880元(含運費)</p>
@@ -159,7 +159,7 @@ export default function Ordered() {
                   </p>
                   <p className="whitef50">取消原因：重複購買</p>
                   <div className="ordered-bottomtext mt-3">
-                    <Link href="/" className="btn1 p">
+                    <Link href="/member/order/info" className="btn1 p">
                       訂單細節
                     </Link>
                     <p className="mt-3">訂單金額：2,880元(含運費)</p>

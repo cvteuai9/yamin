@@ -1,5 +1,5 @@
 
-import Changeps from '@/components/user-test/changeps'
+import Changeps from '@/components/member/changeps'
 
 export default function Changepss() {
 

@@ -1,4 +1,4 @@
-import Leftnav from '@/components/user-test/left-nav'
+import Leftnav from '@/components/member/left-nav'
 import Link from 'next/link'
 export default function Profile() {
   return (
@@ -18,15 +18,15 @@ export default function Profile() {
           </div>
           <div className="col-md-9">
             <h4 className="goldenf">
-              <Link href="/test/julia/profile" className="h5 goldenf">
+              <Link href="/member/profile" className="h5 goldenf">
                 個人檔案
               </Link>
               &nbsp;/&nbsp;
-              <Link href="/test/julia/profile" className="h5 goldenf">
+              <Link href="/member/profile" className="h5 goldenf">
                 已整合帳戶
               </Link>
               &nbsp;/&nbsp;
-              <Link href="/test/julia/profile" className="h5 goldenf">
+              <Link href="/member/profile" className="h5 goldenf">
                 載具管理
               </Link>
             </h4>
@@ -118,7 +118,7 @@ export default function Profile() {
               </div>
               <div type="button" className="profile-changepassword  btn1 p">
                 <Link
-                  href="/test/julia/changeps"
+                  href="/member/changeps"
                   className=" goldenf text-decoration-none  color-inherit"
                 >
                   修改密碼
