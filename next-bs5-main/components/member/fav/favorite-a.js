@@ -2,7 +2,6 @@
 /* eslint-disable @next/next/no-img-element */
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useRouter } from 'next/router'
-import styles from '@/components/article/list.module.scss'
 import option from '@/components/article/option.module.sass'
 import StarLarge from '@/components/star/star-large'
 import { IoEyeSharp } from 'react-icons/io5'
@@ -11,7 +10,7 @@ import { FaAngleDown } from 'react-icons/fa6'
 
 import Leftnav from '@/components/member/left-nav'
 import Link from 'next/link'
-import styles from '@/components/fav-test/favorite.module.scss'
+import styles from '@/components/member/fav/favorite.module.scss'
 
 export default function FavoriteA() {
   return (
@@ -35,17 +34,17 @@ export default function FavoriteA() {
             <div className="favorite-nav">
               <div className="searchnavs">
                 <div className="searchnav ">
-                  <Link href="/member/fav/favorite-p" className="goldenf h5 ">
+                  <Link href="/member/fav/favorite-p" className="goldenf p ">
                     商品
                   </Link>
                 </div>
                 <div className="ms-3 searchnav">
-                  <Link href="/member/fav/favorite-c" className="goldenf h5 ">
+                  <Link href="/member/fav/favorite-c" className="goldenf p ">
                     課程
                   </Link>
                 </div>
                 <div className={`ms-3 searchnav ${styles.favoriteArticle}`}>
-                  <Link href="/test/julia/favorite-a" className="goldenf p">
+                  <Link href="/member/fav/favorite-a" className="goldenf p">
                     文章
                   </Link>
                 </div>

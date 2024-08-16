@@ -2,7 +2,6 @@
 /* eslint-disable @next/next/no-img-element */
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useRouter } from 'next/router'
-import styles from '@/components/article/list.module.scss'
 import option from '@/components/article/option.module.sass'
 import StarLarge from '@/components/star/star-large'
 import { IoEyeSharp } from 'react-icons/io5'
@@ -11,7 +10,7 @@ import { FaAngleDown } from 'react-icons/fa6'
 
 import Leftnav from '@/components/member/left-nav'
 import Link from 'next/link'
-import styles from '@/components/fav-test/favorite.module.scss'
+import styles from '@/components/member/fav/favorite.module.scss'
 export default function FavoriteP() {
   return (
     <>
@@ -36,7 +35,7 @@ export default function FavoriteP() {
               <div className="searchnavs">
                 <div className={`searchnav ${styles.favoriteProduct}`}>
                   <Link
-                    href="/test/julia/favorite-p"
+                    href="/member/fav/favorite-p"
                     className={`${styles['favoritep-linkst']} p`}
                   >
                     商品
@@ -44,7 +43,7 @@ export default function FavoriteP() {
                 </div>
                 <div className="ms-3 searchnav">
                   <Link
-                    href="/test/julia/favorite-c"
+                    href="/member/fav/favorite-c"
                     className={`${styles['favoritep-linkst']} p`}
                   >
                     課程
@@ -52,7 +51,7 @@ export default function FavoriteP() {
                 </div>
                 <div className="ms-3 searchnav">
                   <Link
-                    href="/test/julia/favorite-a"
+                    href="/member/fav/favorite-a"
                     className={`${styles['favoritep-linkst']} p`}
                   >
                     文章
