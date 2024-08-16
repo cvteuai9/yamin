@@ -1,32 +1,3 @@
-// {
-// import express from 'express' // 資料庫使用
-// import sequelize from '#configs/db.js'
-// const { My_Products } = sequelize.models
-// const router = express.Router()
-
-// // GET - 得到所有會員資料
-// router.get('/', async function (req, res) {
-//   const my_product = await My_Products.findAll({ logging: console.log })
-//   // 處理如果沒找到資料
-
-//   // 標準回傳JSON
-//   return res.json(my_product)
-// })
-
-// // GET - 得到單筆資料(注意，有動態參數時要寫在GET區段最後面)
-// router.get('/:id', async function (req, res) {
-//   // 轉為數字
-//   const id = Number(req.params.id)
-
-//   const my_product = await My_Products.findByPk(id, {
-//     raw: true, // 只需要資料表中資料
-//   })
-
-//   return res.json(my_product)
-// })
-
-// export default router
-// }
 import express from 'express'
 import db from '#configs/mysql.js'
 const router = express.Router()
