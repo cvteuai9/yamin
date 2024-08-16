@@ -1,7 +1,6 @@
-// import React from 'react'
-// import styles from '@/components/coupon-test/coupon.module.css'
-import Leftnav from '@/components/user-test/left-nav'
-import Link from 'next/link'
+import React from 'react'
+import Leftnav from '@/components/member/left-nav'
+
 export default function Coupon() {
   return (
     <>
@@ -30,7 +29,7 @@ export default function Coupon() {
             </p>
             <p className="whitef"> 雅茗保留活動修改、變更及終止之權利。 </p>
             <div className="coupon-cinput">
-              <p className="grayf">優惠券歸戶</p>
+              <p className="grayf pt-3">優惠券歸戶</p>
               <input
                 className="coupon-inputtext p2"
                 type="text"
@@ -41,22 +40,17 @@ export default function Coupon() {
                 確認
               </div>
             </div>
-            <p className="grayf p2">可用張數 3 張</p>
-            <div className="order-cinput mt-5 option option1">
-              <input type="checkbox" name="a1-1" id="a1-1" />
-              <label htmlFor="a1-1">
-                <h1>
-                  狀態選擇<i className="fa-solid fa-angle-down icon"></i>
-                </h1>
-                <ul className="ul1 order-ordernav p whitef">
-                  <li>全部</li>
-                  <li>待付款</li>
-                  <li>待出貨</li>
-                  <li>待收貨</li>
-                  <li>已完成</li>
-                </ul>
-              </label>
+            <div className="ordered-cinput mt-5">
+              <ul className="ordered-ordernav p whitef">
+                <li>全部</li>
+                <li>可領取</li>
+                <li>未使用</li>
+                <li>已使用</li>
+                <li>已失效</li>
+              </ul>
             </div>
+            {/* <p className="grayf p2">可用張數 3 張</p> */}
+
             <table className="coupon-cptable">
               <thead>
                 <tr className="p">
@@ -67,7 +61,7 @@ export default function Coupon() {
                   <th className="coupon-cpth p">優惠券代碼</th>
                 </tr>
                 <tr>
-                  <td className="coupon-cp-td p">Table Header Cell</td>
+                  {/* <td className="coupon-cp-td p">Table Header Cell</td> */}
                   <td className="coupon-cp-td p">全館優惠</td>
                   <td className="coupon-p-14 p2">
                     消費滿 NT$ 5,000，享NT$ 1,000 折扣
@@ -77,7 +71,7 @@ export default function Coupon() {
                 </tr>
                 {/* ---------待抓資料庫資料------------ */}
                 <tr>
-                  <td className="coupon-cp-td p">Table Header Cell</td>
+                  {/* <td className="coupon-cp-td p">Table Header Cell</td> */}
                   <td className="coupon-cp-td p">冬季特賣綠茶</td>
                   <td className="coupon-p-14 p2">
                     消費滿 NT$ 1,500，享結帳 92 折
@@ -86,7 +80,7 @@ export default function Coupon() {
                   <td className="coupon-cp-td p">6A7VJK</td>
                 </tr>
                 <tr>
-                  <td className="coupon-cp-td p">Table Header Cell</td>
+                  {/* <td className="coupon-cp-td p">Table Header Cell</td> */}
                   <td className="coupon-cp-td p">新進會員折扣</td>
                   <td className="coupon-p-14 p2">
                     消費滿 NT$ 2,000，享NT$ 200 折扣

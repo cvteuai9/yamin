@@ -81,6 +81,7 @@ hr {
   margin: 0;
   padding-bottom: 1rem;
   border-bottom: 1px solid var(--white50);
+
   position: relative;
 
   & .searchnavs {
@@ -90,12 +91,13 @@ hr {
     text-align: center;
 
     & .searchnav {
-      padding: 0px 15px;
+      padding: 0px 20px 10px 20px;
       border-bottom: 3px solid transparent;
     }
     & .searchnav:hover {
       transition: 0.3s;
-      padding: 0px 15px;
+      padding: 0px 20px 10px 20px;
+
       border-bottom: 3px solid var(--primary2);
     }
   }
@@ -121,6 +123,7 @@ hr {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  color: var(--primary2);
   & > ul {
     color: var(--primary2);
     display: flex;
@@ -130,6 +133,7 @@ hr {
 
     & > li {
       padding: 5px 10px 5px 10px;
+
       border: 2px solid transparent;
 
       & img {
@@ -609,6 +613,7 @@ input::placeholder,
   display: flex;
   width: 300px;
   all: unset;
+
   color: var(--white);
   height: 36px;
   margin: 0 20px 0 20px;
@@ -627,6 +632,7 @@ input::placeholder,
   margin: 0 0 0 10px;
 }
 .coupon-cinput {
+  font-size: 14px;
   display: flex;
   align-items: center;
 }
@@ -638,7 +644,7 @@ input::placeholder,
   padding: 0;
 
   .coupon-cpth,
-  .coupon-cp-td {
+  .coupon-cptd {
     width: 195px;
     margin: 0;
     padding: 5px 20px 5px 20px;
