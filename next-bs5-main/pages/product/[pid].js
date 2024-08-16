@@ -58,34 +58,47 @@ export default function Detail() {
   })
   // 取得特定id商品資料的函式
   async function getProduct(id) {
-    const apiURL = new URL(`http://localhost:3005/api/my_products/${id}`)
-    const res = await fetch(apiURL)
-    const data = await res.json()
-    setProduct(data.data[0])
-    setImage(data.images)
+    try {
+      const apiURL = new URL(`http://localhost:3005/api/my_products/${id}`)
+      const res = await fetch(apiURL)
+      const data = await res.json()
+      setProduct(data.data[0])
+      setImage(data.images)
+    } catch (error) {
+      console.log(error)
+    }
   }
   // 取得評論的函式
   async function getReviews(id) {
-    const apiURL = new URL(
-      `http://localhost:3005/api/my_products/reviews/${id}`
-    )
-    const res = await fetch(apiURL)
-    const data = await res.json()
-    if (data.allLength !== 0) {
-      setReview(data.someData)
-      setAllReviews(data.allData)
-      setEachRating(data.eachRating)
-      setAllRating(data.allRating)
-      setAllLength(JSON.stringify(data.allLength))
+    try {
+      const apiURL = new URL(
+        `http://localhost:3005/api/my_products/reviews/${id}`
+      )
+      const res = await fetch(apiURL)
+      const data = await res.json()
+      if (data.allLength !== 0) {
+        setReview(data.someData)
+        setAllReviews(data.allData)
+        setEachRating(data.eachRating)
+        setAllRating(data.allRating)
+        setAllLength(JSON.stringify(data.allLength))
+      }
+    } catch (error) {
+      console.log(error)
     }
   }
+  // 取得相關產品
   async function getRelationProduct(id) {
-    const apiURL = new URL(
-      `http://localhost:3005/api/my_products/relation_product/${id}`
-    )
-    const res = await fetch(apiURL)
-    const data = await res.json()
-    setRelationProduct(data)
+    try {
+      const apiURL = new URL(
+        `http://localhost:3005/api/my_products/relation_product/${id}`
+      )
+      const res = await fetch(apiURL)
+      const data = await res.json()
+      setRelationProduct(data)
+    } catch (error) {
+      console.log(error)
+    }
   }
   // 處理商品數量加減的函式
   function handleProductCount(e) {
