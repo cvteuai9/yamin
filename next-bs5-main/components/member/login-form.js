@@ -27,9 +27,12 @@ export default function LoginForm() {
   })
   const { login } = useAuth()
 
-  const onLogin = () => {
-    console.log(user.email, user.password)
-    login(user.email, user.password)
+  const onLogin = async (e) => {
+    // e.preventDefault() // 防止表單默認提交行為
+    const user_name = await login(user.email, user.password)
+    if (user_name) {
+      alert(`歡迎回來，${user_name}！`)
+    }
   }
 
   // checkbox 呈現密碼用
