@@ -107,6 +107,7 @@ router.post('/login', upload.none(), async (req, res) => {
   res.status(200).json({
     status: 'success',
     token,
+    user_name: user.user_name,
   })
   // console.log(result); //帳號密碼打錯result會顯示undefined，就是!user
   // res.status(200).send("使用者登入："+account);

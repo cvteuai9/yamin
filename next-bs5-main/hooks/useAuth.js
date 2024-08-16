@@ -7,37 +7,28 @@ const useAuth = () => {
 
   // 提供給其他程式使用
   const login = async (email, password) => {
-    let newToken, error
-    const url = 'http://localhost:3005/api/my-users/login'
-    // 模擬表單送出
-    const formData = new FormData()
-    formData.append('email', email)
-    formData.append('password', password)
+    try {
+      const url = 'http://localhost:3005/api/my-users/login'
+      const formData = new FormData()
+      formData.append('email', email)
+      formData.append('password', password)
 
-    newToken = await fetch(url, {
-      method: 'POST',
-      body: formData,
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        if (result.status === 'success') {
-          return result.token
-        } else {
-          throw new Error(result.message)
-        }
+      const response = await fetch(url, {
+        method: 'POST',
+        body: formData,
       })
-      .catch((err) => {
-        error = err
-        return undefined
-      })
-    // console.log(token)
-    if (error) {
+      const result = await response.json()
+
+      if (result.status === 'success') {
+        setToken(result.token)
+        localStorage.setItem('nextNeToken', result.token)
+        return result.user_name // 返回 user_name
+      } else {
+        throw new Error(result.message)
+      }
+    } catch (error) {
       alert(error.message)
-      return
-    }
-    if (newToken) {
-      setToken(newToken)
-      localStorage.setItem('nextNeToken', newToken)
+      return null
     }
   }
   const logout = async () => {

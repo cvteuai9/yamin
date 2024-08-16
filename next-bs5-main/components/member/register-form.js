@@ -8,6 +8,8 @@ import GoogleLogo from '@/components/icons/google-logo'
 import Image from 'next/image'
 import { RiEyeLine } from 'react-icons/ri'
 import { RiEyeOffLine } from 'react-icons/ri'
+import { register } from '@/services/user'
+import useAuth from '@/hooks/useAuth'
 
 // Datepicker relies on browser APIs like document
 // dynamically load a component on the client side,
@@ -33,6 +35,7 @@ export default function RegisterForm() {
     confirmPassword: '',
     agree: '', // 錯誤訊息用字串
   })
+  const { login } = useAuth()
 
   // checkbox 呈現密碼用
   const [showPassword, setShowPassword] = useState(false)
@@ -65,7 +68,7 @@ export default function RegisterForm() {
     // https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Object_initializer#%E8%AE%A1%E7%AE%97%E5%B1%9E%E6%80%A7%E5%90%8D
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     // 阻擋表單預設送出行為
     e.preventDefault()
 
@@ -130,8 +133,24 @@ export default function RegisterForm() {
     }
     // 表單檢查 --- END
 
+    try {
+      // register在@/services/user
+      const response = await register(user)
+      const onLogin = () => {
+        console.log(user.email, user.password)
+        login(user.email, user.password)
+      }
+      if (response.status === 201) {
+        alert('註冊成功')
+        // 你可以在這裡處理註冊成功後的邏輯，例如導航到登入頁面
+        onLogin()
+      }
+    } catch (error) {
+      console.error('註冊失敗', error)
+      alert('註冊失敗，請再試一次')
+    }
     // 最後檢查完全沒問題才送到伺服器(ajax/fetch)
-    alert('送到伺服器去')
+    // alert('送到伺服器去')
   }
 
   return (
@@ -180,7 +199,7 @@ export default function RegisterForm() {
                     type="text"
                     name="user_name"
                     placeholder="請輸入你的姓名"
-                    value={user.name}
+                    value={user.user_name}
                     onChange={handleFieldChange}
                   />
                 </label>

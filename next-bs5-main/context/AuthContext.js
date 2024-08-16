@@ -12,7 +12,8 @@ export const AuthProvider = ({ children }) => {
   const loginRouter = '/member/login'
 
   const protectedRouter = [
-    // '/product/cart',
+    '/',
+    '/product/cart',
     // '/member/profile',
     // '/member/changeps',
     // '/member/order',
@@ -22,69 +23,60 @@ export const AuthProvider = ({ children }) => {
     // '/member/fav/',
   ] // 需要驗證的頁面
 
+  // 要怎麼讓頁面不會先跳出錯誤
   useEffect(() => {
     //user是否存在
-    if (protectedRouter.includes(router.pathname)) {
-      if (!user) {
-        //當前路徑是否受保護
-        router.push(loginRouter) //導頁
+    if (router.isReady) {
+      if (
+        user &&
+        (router.pathname === '/member/register' ||
+          router.pathname === '/member/login')
+      ) {
+        router.push('/')
+      } else if (!user && protectedRouter.includes(router.pathname)) {
+        router.push(loginRouter)
       }
     }
-    return
   }, [router.isReady, router.pathname, user])
 
   useEffect(() => {
-    if (protectedRouter.includes(router.pathname)) {
-      // 立即執行函數
-      ;(async () => {
-        if (token) {
-          const result = await checkToken(token)
-          console.log(result)
-          if (result.email) {
-            setUser(result)
-          } else {
-            setUser(undefined)
-          }
+    // 立即執行函數
+    ;(async () => {
+      if (token) {
+        const result = await checkToken(token)
+        // console.log(result)
+        if (result.email) {
+          setUser(result)
+        } else {
+          setUser(undefined)
         }
-      })()
-    }
+      }
+    })()
   }, [token])
 
   // useEffect不能下await , 所以用()()立即執行函數
   useEffect(() => {
-    if (protectedRouter.includes(router.pathname)) {
-      const oldToken = localStorage.getItem('nextNeToken')
-      // console.log(oldToken)
+    const oldToken = localStorage.getItem('nextNeToken')
+    if (oldToken && !token) {
       ;(async () => {
-        if (oldToken) {
-          let newToken, error
+        try {
           const url = 'http://localhost:3005/api/my-users/status'
-          newToken = await fetch(url, {
+          const response = await fetch(url, {
             method: 'GET',
             headers: {
               Authorization: `Bearer ${oldToken}`,
             },
           })
-            .then((res) => res.json())
-            .then((result) => {
-              if (result.status === 'success') {
-                return result.token
-              } else {
-                throw new Error(result.message)
-              }
-            })
-            .catch((err) => {
-              error = err
-              return undefined
-            })
-          if (error) {
-            alert(error.message)
-            return
+          const result = await response.json()
+          if (result.status === 'success') {
+            setToken(result.token)
+            localStorage.setItem('nextNeToken', result.token)
+          } else {
+            throw new Error(result.message)
           }
-          if (newToken) {
-            setToken(newToken)
-            localStorage.setItem('nextNeToken', newToken)
-          }
+        } catch (error) {
+          // setAuthError(error.message)
+          localStorage.removeItem('nextNeToken')
         }
       })()
     }
@@ -95,7 +87,7 @@ export const AuthProvider = ({ children }) => {
     let decoded
     try {
       decoded = await new Promise((resolve, reject) => {
-        console.log(token)
+        // console.log(token)
         jwt.verify(token, secretKey, (error, data) => {
           if (error) {
             return reject(error)
@@ -104,7 +96,7 @@ export const AuthProvider = ({ children }) => {
         })
       })
     } catch (err) {
-      console.log(err)
+      // console.log(err)
       decoded = {}
     }
 
