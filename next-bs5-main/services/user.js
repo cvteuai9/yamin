@@ -81,7 +81,7 @@ export const resetPassword = async (email = '', password = '', token = '') => {
  * 註冊用
  */
 export const register = async (user = {}) => {
-  return await axiosInstance.post('/users', user)
+  return await axiosInstance.post('/my-users', user)
 }
 /**
  * 修改會員一般資料用(排除password, username, email)
