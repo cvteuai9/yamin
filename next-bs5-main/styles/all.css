@@ -79,7 +79,6 @@ hr {
   height: auto;
   justify-content: center;
   margin: 0;
-  padding-bottom: 1rem;
   border-bottom: 1px solid var(--white50);
 
   position: relative;
