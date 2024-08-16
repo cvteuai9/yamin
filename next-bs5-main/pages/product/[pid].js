@@ -64,6 +64,7 @@ export default function Detail() {
       const data = await res.json()
       setProduct(data.data[0])
       setImage(data.images)
+      console.log(data)
     } catch (error) {
       console.log(error)
     }
@@ -459,7 +460,7 @@ export default function Detail() {
                 <div className={`${styles['more-btn']}`}>
                   <button
                     type="button"
-                    class="btn h5 m-0"
+                    className="btn h5 m-0"
                     data-bs-toggle="modal"
                     data-bs-target="#moreBtnModal"
                   >
@@ -468,28 +469,28 @@ export default function Detail() {
                 </div>
               </div>
               <div
-                class="modal fade"
+                className="modal fade"
                 id="moreBtnModal"
                 tabindex="-1"
                 aria-labelledby="exampleModalLabel"
                 aria-hidden="true"
               >
                 {/* 顯示所有評論的modal */}
-                <div class="modal-dialog modal-lg modal-dialog-scrollable">
-                  <div class={`modal-content ${styles.moreArea}`}>
-                    <div class="modal-header d-flex justify-content-between">
-                      <h5 class="modal-title" id="exampleModalLabel">
+                <div className="modal-dialog modal-lg modal-dialog-scrollable">
+                  <div className={`modal-content ${styles.moreArea}`}>
+                    <div className="modal-header d-flex justify-content-between">
+                      <h5 className="modal-title" id="exampleModalLabel">
                         {product.product_name} 的所有評論
                       </h5>
                       <button
                         type="button"
-                        class="btn-close m-0"
+                        className="btn-close m-0"
                         data-bs-dismiss="modal"
                         aria-label="Close"
                       ></button>
                     </div>
                     {/* 所有此商品的評論 */}
-                    <div class={`modal-body ${styles.modalBody}`}>
+                    <div className={`modal-body ${styles.modalBody}`}>
                       <div className={`${styles['review-area']} mt-5`}>
                         {allReviews.map((v, i) => {
                           const starArray = new Array(v.rating).fill(0)

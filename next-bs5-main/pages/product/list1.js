@@ -1,9 +1,12 @@
 import React, { useState, useEffect, use } from 'react'
 import { useLoader } from '@/hooks/use-loader'
+import { useRouter } from 'next/router'
 import styles from '@/styles/product.module.scss'
 import Link from 'next/link'
+import { func } from 'prop-types'
 
 export default function List1() {
+  const router = useRouter()
   const { showLoader, hideLoader, loading, delay } = useLoader() // 頁面載入等候畫面
   //宣告 filter array(用來顯示篩選條件checkbox選項)
   const priceArray = ['$500 以下', '$500 ~ $1000', '$1000 以上']
@@ -26,6 +29,8 @@ export default function List1() {
   const [pc, setPackage] = useState([]) // 包材
   const [style, setStyle] = useState([]) // 茶品型態
   const [price, setPrice] = useState([]) // 價錢
+  // 收藏
+
   // totalData 為所有符合條件的商品數，用來顯示總共有幾筆符合的商品數量
   const [totalData, setTotalData] = useState(0)
   // 創建一個URL物件，才可以在下面使用url.search
@@ -46,7 +51,22 @@ export default function List1() {
         .catch((error) => {
           console.log(error)
         })
-      setProduct(products.product.data) // 設定商品資訊
+      const favoriteProduct = await fetch(
+        'http://localhost:3005/api/my_products/favorites?id=1'
+      )
+        .then((res) => res.json())
+        .then((result) => result)
+        .catch((error) => {
+          console.log(error)
+        })
+      // console.log(favoriteProduct)
+      const tmpData = products.product.data
+      const nextData = tmpData.map((v, i) => {
+        if (favoriteProduct.includes(v.id)) return { ...v, fav: !v.fav }
+        else return v
+      })
+      // console.log(nextData)
+      setProduct(nextData) // 設定商品資訊
       setTotalPage(products.product.totalPage) // 設定總頁數
       setTeaArray(products.product.teaFilter) // 設定「茶種」篩選選擇器陣列
       setBrandArray(products.product.brandFilter) // 設定「品牌」篩選選擇器陣列
@@ -57,44 +77,34 @@ export default function List1() {
       console.log(error)
     }
   }
-  useEffect(() => {
-    // 剛進入商品列表頁才會有載入畫面
-    showLoader()
-    let searchParams = new URLSearchParams({
-      order: order,
-      perpage: perpage,
-      page: page,
-      price: price,
-      tea: tea,
-      brand: brand,
-      package: pc,
-      style: style,
+  // 處理收藏狀態的函式
+  async function handleFavToggle(id) {
+    const nextProduct = product.map((v, i) => {
+      if (v.id === id) {
+        if (v.fav === false) {
+          fetch(
+            `http://localhost:3005/api/my_products/favorites?user_id=1&product_id=${id}`,
+            { method: 'PUT' }
+          )
+            .then((res) => res.json())
+            .then((result) => console.log(result))
+            .catch((error) => console.log(error))
+        } else {
+          fetch(
+            `http://localhost:3005/api/my_products/favorites?user_id=1&product_id=${id}`,
+            { method: 'DELETE' }
+          )
+            .then((res) => res.json())
+            .then((result) => console.log(result))
+            .catch((error) => console.log(error))
+        }
+        return { ...v, fav: !v.fav }
+      } else {
+        return v
+      }
     })
-    url.search = searchParams
-    // 模擬fetch或異步載入
-    getProducts(url)
-      .then(delay(1000)) // 延時3秒後再停止載入器，只有手動控制有用，自動關閉會無用
-      .then(hideLoader)
-  }, [])
-  // 當count、order值改變時，設定新網址參數並重新抓取資料
-  useEffect(() => {
-    let searchParams = new URLSearchParams({
-      order: order,
-      perpage: perpage,
-      page: page,
-      price: price,
-      tea: tea,
-      brand: brand,
-      package: pc,
-      style: style,
-    })
-    url.search = searchParams
-    // console.log(url.href)
-    getProducts(url)
-    // 下面的註解可以省略eslint檢查下下一行(監聽的部分)
-    // eslint-disable-next-line
-  }, [perpage, order, page, price, tea, brand, pc, style])
-
+    setProduct(nextProduct)
+  }
   // 處理filter改變時的函式
   // 如果沒有找到目前的value => 代表從 未勾選 -> 已勾選，反之，代表取消勾選
   function handleFilterChange(e) {
@@ -120,6 +130,31 @@ export default function List1() {
     // 每次filter有更動時都會將頁數導回第一頁
     setPage(1)
   }
+  useEffect(() => {
+    // 第一次進入頁面才會有loading畫面
+    showLoader()
+  }, [])
+  // 當count、order值改變時，設定新網址參數並重新抓取資料
+  useEffect(() => {
+    if (router.isReady) {
+      let searchParams = new URLSearchParams({
+        order: order,
+        perpage: perpage,
+        page: page,
+        price: price,
+        tea: tea,
+        brand: brand,
+        package: pc,
+        style: style,
+      })
+      url.search = searchParams
+      // console.log(url.href)
+      getProducts(url)
+    }
+    // 下面的註解可以省略eslint檢查下下一行(監聽的部分)
+    // eslint-disable-next-line
+  }, [router.isReady, perpage, order, page, price, tea, brand, pc, style])
+
   return (
     <>
       {/* main-content---START--- */}
@@ -432,7 +467,22 @@ export default function List1() {
                           <div
                             className={`${styles['product-icon']} d-flex gap-3`}
                           >
-                            <img src="/images/product/list1/heart.svg" alt="" />
+                            <button
+                              className="btn p-0"
+                              onClick={() => handleFavToggle(v.id)}
+                            >
+                              {v.fav === false ? (
+                                <img
+                                  src="/images/product/list1/heart.svg"
+                                  alt=""
+                                />
+                              ) : (
+                                <img
+                                  src="/images/product/list1/heart-fill.svg"
+                                  alt=""
+                                />
+                              )}
+                            </button>
                             <img
                               src="/images/product/list1/shooping-cart.svg"
                               alt=""
@@ -553,7 +603,7 @@ export default function List1() {
                 />
               </div>
             ) : (
-              <div>沒有符合條件的商品</div>
+              <div></div>
             )}
           </div>
         </div>
