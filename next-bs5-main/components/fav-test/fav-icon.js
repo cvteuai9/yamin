@@ -1,6 +1,7 @@
 import { useAuth } from '@/hooks/use-auth'
 import { addFav, removeFav } from '@/services/user'
 import toast from 'react-hot-toast'
+// import styles from '@/components/fav-test/favorite.module.scss'
 
 // 愛心圖示(svg)
 const Heart = ({ size = 20, color = 'red' }) => (
