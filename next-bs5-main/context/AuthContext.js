@@ -2,11 +2,17 @@ import react, { createContext, useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import jwt from 'jsonwebtoken'
 
-export const AuthContext = createContext(null)
+export const AuthContext = createContext({
+  user: null,
+  setUser: () => {},
+  token: null,
+  setToken: () => {},
+  // 其他默認值
+})
 
 export const AuthProvider = ({ children }) => {
-  const [token, setToken] = useState(undefined)
-  const [user, setUser] = useState(undefined)
+  const [token, setToken] = useState(null)
+  const [user, setUser] = useState(null)
 
   const router = useRouter()
   const loginRouter = '/member/login'
@@ -23,7 +29,7 @@ export const AuthProvider = ({ children }) => {
     // '/member/fav/',
   ] // 需要驗證的頁面
 
-  // 要怎麼讓頁面不會先跳出錯誤
+
   useEffect(() => {
     //user是否存在
     if (router.isReady) {
@@ -48,7 +54,7 @@ export const AuthProvider = ({ children }) => {
         if (result.email) {
           setUser(result)
         } else {
-          setUser(undefined)
+          setUser(null)
         }
       }
     })()

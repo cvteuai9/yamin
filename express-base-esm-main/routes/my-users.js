@@ -202,10 +202,11 @@ router.get(
 //   }
 // })
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', authenticate, async (req, res) => {
   const [users] = await db.query('SELECT * FROM users')
-  const id = req.params.id //路由參數使用方法
-  let user = users.find((u) => u.member_id === id)
+  const id = parseInt(req.params.id) //路由參數使用方法
+  let user = users.find((u) => u.id === id)
+  console.log(users)
   if (!user) {
     res.status(404).json({
       status: 'fail',
@@ -213,11 +214,12 @@ router.get('/:id', async (req, res) => {
     })
     return
   }
-  res.status(200).json({
-    status: 'success',
-    message: '獲取使用者成功',
-    user,
-  })
+  // res.status(200).json({
+  //   status: 'success',
+  //   message: '獲取使用者成功',
+  //   user,
+  // })
+  return res.json({ status: 'success', data: { user } })
 })
 
 // 註冊，新增使用者
@@ -274,7 +276,6 @@ router.delete('/:id', async (req, res) => {
     status: 'success',
     message: '刪除成功',
   })
-  // res.status(200).send("刪除特定ID的使用者：" + id);
 })
 
 function checkToken(req, res, next) {

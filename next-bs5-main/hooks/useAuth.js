@@ -2,7 +2,6 @@ import { useContext } from 'react'
 import { AuthContext } from '@/context/AuthContext'
 
 const useAuth = () => {
-  const { setUser } = useContext(AuthContext)
   const { token, setToken } = useContext(AuthContext)
 
   // 提供給其他程式使用
@@ -15,6 +14,7 @@ const useAuth = () => {
 
       const response = await fetch(url, {
         method: 'POST',
+        credentials: 'include',
         body: formData,
       })
       const result = await response.json()
@@ -36,6 +36,7 @@ const useAuth = () => {
     const url = 'http://localhost:3005/api/my-users/logout'
     newToken = await fetch(url, {
       method: 'GET',
+      credentials: 'include',
       headers: {
         Authorization: `Bearer ${token}`,
       },
