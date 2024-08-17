@@ -23,7 +23,7 @@ export default function GoogleLoginPopup() {
     // 如果目前react(next)已經登入中，不需要再作登入動作
     if (auth.isAuth) return
 
-    // 向伺服器進行登入動作
+    // 向伺服器進行登入動作(向本地端伺服器去登入)
     const res = await googleLogin(providerData)
 
     // console.log(res.data)
