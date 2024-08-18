@@ -1,6 +1,14 @@
 import Leftnav from '@/components/member/left-nav'
 import Link from 'next/link'
+import { useContext } from 'react'
+import { AuthContext } from '@/context/AuthContext'
+// import useAuth from '@/hooks/useAuth'
+
 export default function Profile() {
+  const { user } = useContext(AuthContext)
+  if (!user) {
+    return <p>Loading...</p> 
+  }
   return (
     <>
       <div className="container">
@@ -56,6 +64,7 @@ export default function Profile() {
                 className="profile-inputtext p2 goldenf"
                 type="text"
                 placeholder="請輸入你的真實姓名"
+                value={user?.user_name}
               />
             </div>
             <div>
@@ -110,6 +119,7 @@ export default function Profile() {
                 className="profile-inputtext p2 goldenf"
                 type="email"
                 placeholder="請輸入你的電子郵件"
+                value={user?.email}
               />
             </div>
             <div className="profile-btns  ">

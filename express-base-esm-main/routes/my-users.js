@@ -78,106 +78,6 @@ router.get('/search', async (req, res) => {
   // res.status(200).send("使用 ID 作為搜尋條件來搜尋使用者：" + id);
 })
 
-router.post('/login', upload.none(), async (req, res) => {
-  const [rows] = await db.query('SELECT * FROM users')
-  const { email, password } = req.body
-
-  const user = rows.find((u) => u.email === email && u.password === password)
-  if (!user) {
-    res.status(400).json({
-      status: 'fail',
-      message: '使用者帳號密碼錯誤',
-    })
-    return
-  }
-  // 登入成功送出的內容
-  const token = jwt.sign(
-    {
-      // account: user.account,
-      user_name: user.user_name,
-      email: user.email,
-      // head: user.head,
-    },
-    secretKey,
-    {
-      // 讓token有期限:expiresIn多少時間後會過期
-      expiresIn: '30m',
-    }
-  )
-  res.status(200).json({
-    status: 'success',
-    token,
-    user_name: user.user_name,
-  })
-  // console.log(result); //帳號密碼打錯result會顯示undefined，就是!user
-  // res.status(200).send("使用者登入："+account);
-})
-router.get(
-  '/logout',
-  (req, res, next) => {
-    // 匿名的function:(req,res,next)=>{}
-    checkToken(req, res, next)
-  },
-  (req, res) => {
-    const { user_name, email } = req.decoded
-
-    if (!email) {
-      res.status(400).json({
-        status: 'fail',
-        message: '登出失敗，請稍後再試',
-      })
-      return
-    }
-    const token = jwt.sign(
-      {
-        user_name: undefined,
-        email: undefined,
-      },
-      secretKey,
-      {
-        expiresIn: '-1s',
-      }
-    )
-    res.status(200).json({
-      status: 'success',
-      message: '登出成功',
-      token,
-    })
-  }
-)
-
-router.get(
-  '/status',
-  (req, res, next) => {
-    checkToken(req, res, next)
-  },
-  (req, res) => {
-    const { user_name, email } = req.decoded
-    if (!email) {
-      res.status(400).json({
-        status: 'fail',
-        message: '驗證錯誤，請重新登入',
-      })
-      return
-    }
-    const token = jwt.sign(
-      {
-        user_name,
-        email,
-      },
-      secretKey,
-      {
-        expiresIn: '30m',
-      }
-    )
-    res.status(200).json({
-      status: 'success',
-      message: '使用者於登入狀態',
-      token,
-    })
-  }
-)
-
 // 創uuid
 // router.get('/push', async (req, res) => {
 //   try {
@@ -206,7 +106,7 @@ router.get('/:id', authenticate, async (req, res) => {
   const [users] = await db.query('SELECT * FROM users')
   const id = parseInt(req.params.id) //路由參數使用方法
   let user = users.find((u) => u.id === id)
-  console.log(users)
+  // console.log(users)
   if (!user) {
     res.status(404).json({
       status: 'fail',
