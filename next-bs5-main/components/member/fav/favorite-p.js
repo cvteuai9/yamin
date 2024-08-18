@@ -9,9 +9,14 @@ import { FaRegComment, FaBookmark } from 'react-icons/fa'
 import { FaAngleDown } from 'react-icons/fa6'
 
 import Leftnav from '@/components/member/left-nav'
+import SearchNav from './search-nav'
 import Link from 'next/link'
 import styles from '@/components/member/fav/favorite.module.scss'
 export default function FavoriteP() {
+  function handleOption(e) {
+    const value = e.target.getAttribute('data-value')
+    console.log(value)
+  }
   return (
     <>
       {/* 標題 & 篩選 */}
@@ -32,32 +37,7 @@ export default function FavoriteP() {
           <div className="col-md-9 p-0">
             <h5 className="goldenf mb-3 mt-3">我的收藏</h5>
             <div className="favorite-nav">
-              <div className="searchnavs">
-                <div className={`searchnav ${styles.favoriteProduct}`}>
-                  <Link
-                    href="/member/fav/favorite-p"
-                    className={`${styles['favoritep-linkst']} p`}
-                  >
-                    商品
-                  </Link>
-                </div>
-                <div className="ms-3 searchnav">
-                  <Link
-                    href="/member/fav/favorite-c"
-                    className={`${styles['favoritep-linkst']} p`}
-                  >
-                    課程
-                  </Link>
-                </div>
-                <div className="ms-3 searchnav">
-                  <Link
-                    href="/member/fav/favorite-a"
-                    className={`${styles['favoritep-linkst']} p`}
-                  >
-                    文章
-                  </Link>
-                </div>
-              </div>
+              <SearchNav favoriteProduct={1} />
               <hr />
               <div className="searchitem" type="button">
                 <div className="d-flex justify-content-end align-items-center ">
@@ -77,17 +57,26 @@ export default function FavoriteP() {
                         </p>
                         <ul className="ul1">
                           <li>
-                            <a href="#" data-value="date_desc">
-                              依類別排序
+                            <a
+                              href="#"
+                              data-value="date_asc"
+                              onClick={(e) => {
+                                e.preventDefault()
+                                handleOption(e)
+                              }}
+                            >
+                              依金額排序
                             </a>
                           </li>
-                          {/* <li>
-                          <a href="#" data-value="date_asc">
-                            依金額排序
-                          </a>
-                        </li> */}
                           <li>
-                            <a href="#" data-value="views_desc">
+                            <a
+                              href="#"
+                              data-value="views_desc"
+                              onClick={(e) => {
+                                e.preventDefault()
+                                handleOption(e)
+                              }}
+                            >
                               依評分排序
                             </a>
                           </li>

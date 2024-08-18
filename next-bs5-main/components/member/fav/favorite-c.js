@@ -9,9 +9,14 @@ import { FaRegComment, FaBookmark } from 'react-icons/fa'
 import { FaAngleDown } from 'react-icons/fa6'
 
 import Link from 'next/link'
+import SearchNav from './search-nav'
 import Leftnav from '@/components/member/left-nav'
 import styles from '@/components/member/fav/favorite.module.scss'
 export default function FavoriteC() {
+  function handleOption(e) {
+    const value = e.target.getAttribute('data-value')
+    console.log(value)
+  }
   return (
     <>
       <>
@@ -32,23 +37,7 @@ export default function FavoriteC() {
             <div className="col-md-9 p-0">
               <h5 className="goldenf mb-3 mt-3">我的收藏</h5>
               <div className="favorite-nav">
-                <div className="searchnavs">
-                  <div className={`searchnav`}>
-                    <Link href="/member/fav/favorite-p" className="goldenf p">
-                      商品
-                    </Link>
-                  </div>
-                  <div className={`ms-3 searchnav ${styles.favoriteCourse}`}>
-                    <Link href="/member/fav/favorite-c" className="goldenf p">
-                      課程
-                    </Link>
-                  </div>
-                  <div className="ms-3 searchnav">
-                    <Link href="/member/fav/favorite-a" className="goldenf p ">
-                      文章
-                    </Link>
-                  </div>
-                </div>
+                <SearchNav favoriteCourse={1} />
                 <hr />
                 <div className="searchitem" type="button">
                   <div className="d-flex justify-content-end align-items-center ">
@@ -68,17 +57,38 @@ export default function FavoriteC() {
                           </p>
                           <ul className="ul1">
                             <li>
-                              <a href="#" data-value="date_desc">
+                              <a
+                                href="#"
+                                data-value="date_desc"
+                                onClick={(e) => {
+                                  e.preventDefault()
+                                  handleOption(e)
+                                }}
+                              >
                                 依類別排序
                               </a>
                             </li>
                             <li>
-                              <a href="#" data-value="date_asc">
+                              <a
+                                href="#"
+                                data-value="date_asc"
+                                onClick={(e) => {
+                                  e.preventDefault()
+                                  handleOption(e)
+                                }}
+                              >
                                 依金額排序
                               </a>
                             </li>
                             <li>
-                              <a href="#" data-value="views_desc">
+                              <a
+                                href="#"
+                                data-value="views_desc"
+                                onClick={(e) => {
+                                  e.preventDefault()
+                                  handleOption(e)
+                                }}
+                              >
                                 依評分排序
                               </a>
                             </li>
