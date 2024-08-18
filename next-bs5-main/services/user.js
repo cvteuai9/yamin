@@ -10,8 +10,8 @@ export const checkAuth = async () => {
 /**
  * Google Login(Firebase)登入用，providerData為登入後得到的資料
  */
-export const googleLogin = async (providerData) => {
-  return await axiosInstance.post('/my-google-login', providerData)
+export const googleLogin = async (providerData = {}) => {
+  return await axiosInstance.post('/google-login', providerData)
 }
 
 /**
@@ -58,8 +58,8 @@ export const logout = async () => {
 /**
  * 載入會員id的資料用，需要登入後才能使用。此API路由會檢查JWT中的id是否符合本會員，不符合會失敗。
  */
-export const getUserById = async (id) => {
-  return await axiosInstance.get(`/my-users/${id}`)
+export const getUserById = async (id = 0) => {
+  return await axiosInstance.get(`/users/${id}`)
 }
 /**
  * 忘記密碼/OTP 要求一次性密碼
@@ -81,7 +81,7 @@ export const resetPassword = async (email = '', password = '', token = '') => {
  * 註冊用
  */
 export const register = async (user = {}) => {
-  return await axiosInstance.post('/my-users', user)
+  return await axiosInstance.post('/users', user)
 }
 /**
  * 修改會員一般資料用(排除password, username, email)

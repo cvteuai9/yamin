@@ -1,13 +1,16 @@
 import { useContext } from 'react'
 import { AuthContext } from '@/context/AuthContext'
+import { checkAuth, login, glogout, getUserById } from '@/services/my-user'
+import { useRouter } from 'next/router'
 
-const useAuth = () => {
-  const { token, setToken } = useContext(AuthContext)
+export const useAuth = () => {
+  const { setLoading, setUser, token, setToken } = useContext(AuthContext)
+  const router = useRouter()
 
   // 提供給其他程式使用
   const login = async (email, password) => {
     try {
-      const url = 'http://localhost:3005/api/my-users/login'
+      const url = 'http://localhost:3005/api/my-auth/login'
       const formData = new FormData()
       formData.append('email', email)
       formData.append('password', password)
@@ -32,40 +35,63 @@ const useAuth = () => {
     }
   }
   const logout = async () => {
-    let newToken, error
-    const url = 'http://localhost:3005/api/my-users/logout'
-    newToken = await fetch(url, {
-      method: 'GET',
-      credentials: 'include',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        if (result.status === 'success') {
-          return result.token
-        } else {
-          throw new Error(result.message)
-        }
+
+    const currentPath = router.pathname;
+    localStorage.setItem('logoutRedirectPath', currentPath);
+    if (token) {
+      let newToken, error
+      const url = 'http://localhost:3005/api/my-auth/logout'
+      newToken = await fetch(url, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       })
-      .catch((err) => {
-        error = err
-        return undefined
-      })
-    if (error) {
-      alert(error.message)
-      return
+        .then((res) => res.json())
+        .then((result) => {
+          if (result.status === 'success') {
+            return result.token
+          } else {
+            throw new Error(result.message)
+          }
+        })
+        .catch((err) => {
+          error = err
+          return undefined
+        })
+      if (error) {
+        alert(error.message)
+        return
+      }
+      if (newToken) {
+        setToken(newToken)
+        localStorage.setItem('nextNeToken', newToken)
+      }
     }
-    if (newToken) {
-      setToken(newToken)
-      localStorage.setItem('nextNeToken', newToken)
+    else {
+      const res = await glogout()
+
+      console.log(res.data)
+
+      // 成功登出個回復初始會員狀態
+      if (res.data.status === 'success') {
+        setUser(null)
+        setLoading(false)
+      } else {
+        alert(`登出失敗`)
+      }
     }
-    // setUser(undefined)
+
   }
 
   // 這樣可以用解構賦值
   return { login, logout }
 }
 
-export default useAuth
+export const initUserData = {
+  id: 0,
+  user_name: '',
+  google_uid: '',
+  email: '',
+}

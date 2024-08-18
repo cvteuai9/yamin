@@ -7,7 +7,7 @@ import Star from '@/components/star/star'
 import GoogleLogo from '@/components/icons/google-logo'
 import { RiEyeLine } from 'react-icons/ri'
 import { RiEyeOffLine } from 'react-icons/ri'
-import useAuth from '@/hooks/useAuth'
+import { useAuth, initUserData } from '@/hooks/useAuth'
 import useFirebase from '@/hooks/use-firebase'
 import { useRouter } from 'next/router'
 import {
@@ -15,13 +15,18 @@ import {
   parseJwt,
   getUserById,
 } from '@/services/my-user'
-import { initUserData } from '@/hooks/use-auth'
+import { useContext } from 'react'
+import { AuthContext } from '@/context/AuthContext'
+
 // import { useAuth } from '@/hooks/use-auth'
 // import GoogleLogo from '@/components/icons/google-logo'
 
 export default function LoginForm() {
   // const [email, setEmail] = useState('')
   // const [password, setPassword] = useState('')
+  const { token, setGUser, handleCheckAuth } = useContext(AuthContext)
+  console.log(token);
+
   const { loginGoogle } = useFirebase()
   // const { auth, setAuth } = useAuth()
   const router = useRouter()
@@ -36,16 +41,15 @@ export default function LoginForm() {
     if (res.data.status === 'success') {
       // 從JWT存取令牌中解析出會員資料
       // 注意JWT存取令牌中只有id, username, google_uid, line_uid在登入時可以得到
-      const jwtUser =await parseJwt(res.data.data.accessToken)
+      const jwtUser = await parseJwt(res.data.data.accessToken)
       console.log(jwtUser)
 
-     
-        const res1 = await getUserById(jwtUser.id);
-  
+      const res1 = await getUserById(jwtUser.id);
 
       if (res1.data.status === 'success') {
         // 只需要initUserData中的定義屬性值，詳見use-auth勾子
         const dbUser = res1.data.data.user
+        console.log(dbUser);
         const userData = { ...initUserData }
 
         for (const key in userData) {
@@ -54,9 +58,11 @@ export default function LoginForm() {
           }
         }
         console.log(userData);
+        // setUser(userData) 沒有密碼，不能跟login去併用
+        await handleCheckAuth()
+
       }
     }
-    router.push('/member/profile')
   }
 
   const [user, setUser] = useState({

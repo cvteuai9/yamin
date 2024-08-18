@@ -4,7 +4,7 @@ import Image from 'next/image'
 import PlaceholderText from '@/components/common/placeholder-text'
 import { useContext } from 'react'
 import { AuthContext } from '@/context/AuthContext'
-import useAuth from '@/hooks/useAuth'
+import {useAuth} from '@/hooks/useAuth'
 export default function Home() {
   const { user } = useContext(AuthContext)
   const { logout } = useAuth()
@@ -21,6 +21,9 @@ export default function Home() {
             </button>
           </>
         )}
+        <p className="testlogin">首頁</p>
+        <a href="/member/profile">會員資料</a>
+        <a href="/member/order">會員訂單</a>
       </main>
       {/* <h1 className="mb-3 display-5 fw-bold text-body-emphasis">
         Next + Bootstrap5 範例

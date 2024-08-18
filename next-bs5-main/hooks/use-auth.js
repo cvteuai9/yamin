@@ -80,6 +80,8 @@ export const AuthProvider = ({ children }) => {
 
   // 檢查會員認証用
   // 每次重新到網站中，或重新整理，都會執行這個函式，用於向伺服器查詢取回原本登入會員的資料
+  // 因為1.	JWT 記憶體儲存：
+	// • 當使用者登入成功後，伺服器會產生一個 JWT，並將它儲存在瀏覽器的 httpOnly cookie 中。這個 JWT 會包含一些使用者的基本資訊（如 user_id）。
   const handleCheckAuth = async () => {
     const res = await checkAuth()
 
