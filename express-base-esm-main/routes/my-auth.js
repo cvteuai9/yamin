@@ -82,6 +82,7 @@ router.post('/login', upload.none(), async (req, res) => {
   const token = jwt.sign(
     {
       // account: user.account,
+      id: user.id,
       user_name: user.user_name,
       email: user.email,
       // head: user.head,
@@ -145,7 +146,7 @@ router.get(
     checkToken(req, res, next)
   },
   (req, res) => {
-    const { user_name, email } = req.decoded
+    const { id, user_name, email } = req.decoded
     if (!email) {
       res.status(400).json({
         status: 'fail',
@@ -155,6 +156,7 @@ router.get(
     }
     const token = jwt.sign(
       {
+        id,
         user_name,
         email,
       },

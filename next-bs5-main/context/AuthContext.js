@@ -10,7 +10,9 @@ export const AuthContext = createContext({
   setToken: () => { },
   guser: null,
   setGUser: () => { },
-  handleCheckAuth: () => { }
+  handleCheckAuth: () => { },
+  userIntention:null,
+  setUserIntention: () => { },
   // 其他默認值
 })
 
@@ -20,6 +22,9 @@ export const AuthProvider = ({ children }) => {
   const [guser, setGUser] = useState(null)
   const [loading, setLoading] = useState(true)
   const [userIntention, setUserIntention] = useState(null);
+  
+  // 避免在重定向到登入頁面之前，頁面內容已經開始渲染。
+
 
 
   const router = useRouter()
@@ -29,12 +34,12 @@ export const AuthProvider = ({ children }) => {
     // '/',
     '/product/cart',
     '/member/profile',
-    // '/member/changeps',
+    '/member/changeps',
     '/member/order',
-    // '/member/order/info',
-    // '/member/coupon',
-    // '/member/order/review',
-    // '/member/fav/',
+    '/member/order/info',
+    '/member/coupon',
+    '/member/order/review',
+    '/member/fav/',
   ] // 需要驗證的頁面
 
   const handleCheckAuth = async () => {
@@ -110,7 +115,7 @@ export const AuthProvider = ({ children }) => {
     ; (async () => {
       if (token) {
         const result = await checkToken(token)
-        // console.log(result)
+        console.log(result)
         if (result.email) {
           setUser(result)
         } else {
@@ -159,6 +164,7 @@ export const AuthProvider = ({ children }) => {
             return reject(error)
           }
           resolve(data)
+          // console.log(data);
         })
       })
     } catch (err) {
