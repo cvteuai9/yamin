@@ -30,12 +30,12 @@ const AuthContext = createContext(null)
 // 初始化會員狀態(登出時也要用)
 // 只需要必要的資料即可，沒有要多個頁面或元件用的資料不需要加在這裡
 // !!注意JWT存取令牌中只有id, username, google_uid, line_uid在登入時可以得到
-export const initUserData = {
+export const initUserData = { 
   id: 0,
-  username: '',
+  user_name: '',
   google_uid: '',
-  line_uid: '',
-  name: '',
+  // line_uid: '',
+  // name: '',
   email: '',
 }
 
@@ -80,6 +80,8 @@ export const AuthProvider = ({ children }) => {
 
   // 檢查會員認証用
   // 每次重新到網站中，或重新整理，都會執行這個函式，用於向伺服器查詢取回原本登入會員的資料
+  // 因為1.	JWT 記憶體儲存：
+	// • 當使用者登入成功後，伺服器會產生一個 JWT，並將它儲存在瀏覽器的 httpOnly cookie 中。這個 JWT 會包含一些使用者的基本資訊（如 user_id）。
   const handleCheckAuth = async () => {
     const res = await checkAuth()
 
