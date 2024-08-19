@@ -7,11 +7,63 @@ import Star from '@/components/star/star'
 import GoogleLogo from '@/components/icons/google-logo'
 import { RiEyeLine } from 'react-icons/ri'
 import { RiEyeOffLine } from 'react-icons/ri'
-import useAuth from '@/hooks/useAuth'
+import { useAuth, initUserData } from '@/hooks/useAuth'
+import useFirebase from '@/hooks/use-firebase'
+import { useRouter } from 'next/router'
+import {
+  googleLogin,
+  parseJwt,
+  getUserById,
+} from '@/services/my-user'
+import { useContext } from 'react'
+import { AuthContext } from '@/context/AuthContext'
+
+// import { useAuth } from '@/hooks/use-auth'
+// import GoogleLogo from '@/components/icons/google-logo'
 
 export default function LoginForm() {
   // const [email, setEmail] = useState('')
   // const [password, setPassword] = useState('')
+  const { token, setGUser, handleCheckAuth } = useContext(AuthContext)
+  console.log(token);
+
+  const { loginGoogle } = useFirebase()
+  // const { auth, setAuth } = useAuth()
+  const router = useRouter()
+
+  // 處理google登入後，要向伺服器進行登入動作
+  const callbackGoogleLoginPopup = async (providerData) => {
+    console.log(providerData)// 如果目前react(next)已經登入中，不需要再作登入動作
+
+    // 向伺服器進行登入動作(向本地端伺服器去登入)
+    const res = await googleLogin(providerData)
+
+    if (res.data.status === 'success') {
+      // 從JWT存取令牌中解析出會員資料
+      // 注意JWT存取令牌中只有id, username, google_uid, line_uid在登入時可以得到
+      const jwtUser = await parseJwt(res.data.data.accessToken)
+      console.log(jwtUser)
+
+      const res1 = await getUserById(jwtUser.id);
+
+      if (res1.data.status === 'success') {
+        // 只需要initUserData中的定義屬性值，詳見use-auth勾子
+        const dbUser = res1.data.data.user
+        console.log(dbUser);
+        const userData = { ...initUserData }
+
+        for (const key in userData) {
+          if (Object.hasOwn(dbUser, key)) {
+            userData[key] = dbUser[key] || ''
+          }
+        }
+        console.log(userData);
+        // setUser(userData) 沒有密碼，不能跟login去併用
+        await handleCheckAuth()
+
+      }
+    }
+  }
 
   const [user, setUser] = useState({
     email: '',
@@ -27,9 +79,12 @@ export default function LoginForm() {
   })
   const { login } = useAuth()
 
-  const onLogin = () => {
-    console.log(user.email, user.password)
-    login(user.email, user.password)
+  const onLogin = async (e) => {
+    // e.preventDefault() // 防止表單默認提交行為
+    const user_name = await login(user.email, user.password)
+    if (user_name) {
+      alert(`歡迎回來，${user_name}！`)
+    }
   }
 
   // checkbox 呈現密碼用
@@ -110,7 +165,10 @@ export default function LoginForm() {
         <div className={`${styles['loginsignin']}`}>
           <div className={`${styles['signinsec1']} text-center mb-4 mt-4`}>
             <p className="mb-5">會員登入</p>
-            <a className={`${styles['gfast']} btn btn-no-radius`}>
+            <a
+              className={`${styles['gfast']} btn btn-no-radius`}
+              onClick={() => loginGoogle(callbackGoogleLoginPopup)}
+            >
               <GoogleLogo className="mx-3" />
               {/* <img
                 className="googlelogo"

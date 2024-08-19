@@ -1,61 +1,17 @@
 .backToListBtn {
   a {
-    color: #b29564;
+    color: var(--primary2);
     text-decoration: none;
   }
   a:hover {
-    color: #d7b375;
+    color: var(--primary-light);
   }
 }
 .main {
   max-width: 144rem;
   color: var(--primary2);
   .section1 {
-    .left {
-      .swiper {
-        width: 100%;
-        height: 50rem;
-        margin-left: auto;
-        margin-right: auto;
-      }
-      .swiper-slide {
-        background-size: cover;
-        background-position: center;
-      }
-      // mySwiper2 大圖部分
-      .mySwiper2 {
-        max-height: 90%;
-        width: 100%;
-      }
-      // mySwiper 小圖部分
-      .mySwiper {
-        height: 20%;
-        box-sizing: border-box;
-        padding: 10px 0;
-        margin: 10px 0;
-        .swiper-wraper.swiper-slide {
-          width: 25%;
-          height: 100%;
-          opacity: 0.4;
-        }
-        .swiper-wraper.swiper-slide-thumb-active {
-          opacity: 1;
-        }
-      }
-      // .mySwiper .swiper-slide {
-      //   width: 25%;
-      //   height: 100%;
-      //   opacity: 0.4;
-      // }
-
-      .swiper-slide img {
-        display: block;
-        width: 100%;
-        height: 100%;
-      }
-    }
     .right {
-      height: 100%;
       .star-group {
         img {
           width: 2.5rem;
@@ -67,19 +23,32 @@
         height: auto;
       }
       .product-count {
-        > div {
+        > div,
+        > button {
           font-size: 2.4rem;
           width: 5rem;
           border: 0.1rem solid var(--primary2);
         }
-        > div:first-child {
+        .add,
+        .minus {
+          border-radius: 0;
+          color: var(--primary2);
+          padding: 0;
+        }
+        > button:first-child {
           background-color: #a1a1a17e;
         }
       }
       .cart-btn {
+        color: var(--primary2);
         font-size: 2.4rem;
         width: 100%;
         border: 0.1rem solid var(--primary2);
+        border-radius: 0;
+        padding: 0;
+      }
+      .cart-btn:hover {
+        background-color: var(--primary-deep);
       }
     }
   }
@@ -131,6 +100,22 @@
     }
     .more-btn {
       border: 0.1rem solid var(--primary2);
+      button {
+        border-radius: 0;
+        color: var(--primary2);
+        &:hover {
+          color: var(--primary-light);
+        }
+      }
+    }
+    .goShooping {
+      margin-top: 2rem;
+      border: 0.1rem solid var(--primary2);
+      padding: 0.5rem;
+      color: var(--primary2);
+      &:hover {
+        color: var(--primary-light);
+      }
     }
   }
   .section4 {
@@ -139,12 +124,42 @@
     padding-top: 3rem;
     .rp-group {
       display: grid;
-      grid-template-columns: repeat(6, 22.5rem);
+      grid-template-columns: repeat(7, 25rem);
       gap: 1rem;
       overflow-x: scroll;
       .relation-product-card {
-        min-width: 22.5rem;
+        min-width: 25rem;
         border: 0.1rem solid var(--primary2);
+        .card-image {
+          height: 25rem;
+          overflow: hidden;
+          img {
+            width: 100%;
+            height: 25rem;
+            object-fit: cover;
+          }
+        }
+        .product-name {
+          p {
+            transition: 0.5s;
+            color: var(--primary2);
+            &:hover {
+              color: var(--primary-light);
+            }
+          }
+        }
+      }
+      .relationProductBtn {
+        text-decoration: none;
+        color: var(--primary2);
+        transition: 0.5s;
+        &:hover {
+          color: var(--primary-light);
+        }
+        > div {
+          padding: 1rem;
+          border: 0.1rem solid var(--primary2);
+        }
       }
     }
     .rp-group::-webkit-scrollbar {
@@ -153,215 +168,226 @@
       background-color: #003e52;
     }
     .rp-group::-webkit-scrollbar-thumb {
-      background-color: #b29564;
+      background-color: var(--primary2);
+      height: 1rem;
+      border-radius: 1rem;
+    }
+  }
+  // 所有評論 modal
+  .moreArea {
+    background-color: var(--primary-deep);
+    button {
+      background-color: var(--primary2);
+      color: var(--primary-deep);
+    }
+    .modalBody::-webkit-scrollbar {
+      width: 1rem;
+      background-color: #003e52;
+    }
+    .modalBody::-webkit-scrollbar-thumb {
+      background-color: var(--primary2);
       height: 1px;
       border-radius: 1rem;
     }
   }
-}
 
-@media screen and (max-width: 1200px) {
-  .main {
-    .section1 {
-      h1 {
-        font-size: 2.8rem;
-      }
-      h3 {
-        font-size: 2rem;
-      }
-      h5 {
-        font-size: 1.6rem;
-      }
-      .right {
-        .star-group {
-          img {
-            width: 2rem;
-            height: auto;
+  @media screen and (max-width: 1200px) {
+    .main {
+      .section1 {
+        h1 {
+          font-size: 2.8rem;
+        }
+        h3 {
+          font-size: 2rem;
+        }
+        h5 {
+          font-size: 1.6rem;
+        }
+        .right {
+          .star-group {
+            img {
+              width: 2rem;
+              height: auto;
+            }
           }
-        }
-        .like-heart {
-          width: 3rem;
-          height: auto;
-        }
-        .like-text {
-          text-wrap: nowrap;
-          font-size: 2.4rem;
-        }
-        .product-count {
-          > div {
-            font-size: 2.4rem;
-            width: 7rem;
-          }
-        }
-        .cart-btn {
-          font-size: 2.4rem;
-        }
-      }
-    }
-    .section2 {
-      .descript-title {
-        font-size: 2rem;
-      }
-      .descript {
-        font-size: 1.6rem;
-      }
-    }
-  }
-}
-@media screen and (max-width: 992px) {
-  .main {
-    .section1 {
-      h1 {
-        font-size: 3.2rem;
-      }
-      h3 {
-        font-size: 2rem;
-      }
-      h5 {
-        font-size: 1.6rem;
-      }
-      .right {
-        .star-group {
-          img {
-            width: 2rem;
-            height: auto;
-          }
-        }
-        .heart-btn {
-          width: 100%;
-
           .like-heart {
-            width: 2rem;
+            width: 3rem;
             height: auto;
           }
           .like-text {
             text-wrap: nowrap;
-            font-size: 1.6rem;
+            font-size: 2.4rem;
           }
           .product-count {
-            > div {
-              font-size: 1.6rem;
-              width: 3rem;
+            > div,
+            > button {
+              font-size: 2.4rem;
+              width: 7rem;
             }
           }
+          .cart-btn {
+            font-size: 2.4rem;
+          }
         }
-        .cart-btn {
+      }
+      .section2 {
+        .descript-title {
+          font-size: 2rem;
+        }
+        .descript {
           font-size: 1.6rem;
         }
       }
     }
-    .section2 {
-      .descript-title {
-        font-size: 2rem;
+  }
+  @media screen and (max-width: 992px) {
+    .main {
+      .section1 {
+        h1 {
+          font-size: 3.2rem;
+        }
+        h3 {
+          font-size: 2rem;
+        }
+        h5 {
+          font-size: 1.6rem;
+        }
+        .right {
+          .star-group {
+            img {
+              width: 2rem;
+              height: auto;
+            }
+          }
+          .heart-btn {
+            width: 100%;
+
+            .like-heart {
+              width: 2rem;
+              height: auto;
+            }
+            .like-text {
+              text-wrap: nowrap;
+              font-size: 1.6rem;
+            }
+            .product-count {
+              > div,
+              > button {
+                font-size: 1.6rem;
+                width: 5rem;
+              }
+            }
+          }
+          .cart-btn {
+            font-size: 1.6rem;
+          }
+        }
       }
-      .descript {
-        font-size: 1.6rem;
+      .section2 {
+        .descript-title {
+          font-size: 2rem;
+        }
+        .descript {
+          font-size: 1.6rem;
+        }
       }
     }
   }
-}
-@media screen and (max-width: 768px) {
-  .main {
-    .section1 {
-      h1 {
-        font-size: 2rem;
-      }
-      h3 {
-        font-size: 2rem;
-      }
-      h5 {
-        font-size: 1.6rem;
-      }
-      .right {
-        .star-group {
-          img {
-            width: 2rem;
-            height: auto;
-          }
-        }
-        .like-heart {
-          width: 2.4rem;
-          height: auto;
-        }
-        .like-text {
-          text-wrap: nowrap;
+  @media screen and (max-width: 768px) {
+    .main {
+      .section1 {
+        h1 {
           font-size: 2rem;
         }
-        .product-count {
-          > div {
+        h3 {
+          font-size: 2rem;
+        }
+        h5 {
+          font-size: 1.6rem;
+        }
+        .right {
+          .star-group {
+            img {
+              width: 2rem;
+              height: auto;
+            }
+          }
+          .like-heart {
+            width: 2.4rem;
+            height: auto;
+          }
+          .like-text {
+            text-wrap: nowrap;
             font-size: 2rem;
-            width: 5rem;
+          }
+          .product-count {
+            > div,
+            > button {
+              font-size: 2rem;
+              width: 5rem;
+            }
+          }
+          .cart-btn {
+            font-size: 2.4rem;
           }
         }
-        .cart-btn {
-          font-size: 2.4rem;
+      }
+      .section2 {
+        .descript-title {
+          font-size: 2.6rem;
         }
-      }
-    }
-    .section2 {
-      .descript-title {
-        font-size: 2.6rem;
-      }
-      .descript {
-        font-size: 1.6rem;
-      }
-    }
-    .section4 {
-      .section4-title {
-        font-size: 2.4rem;
+        .descript {
+          font-size: 1.6rem;
+        }
       }
     }
   }
-}
-@media screen and (max-width: 576px) {
-  .main {
-    .section1 {
-      h1 {
-        font-size: 2.8rem;
-      }
-      h3 {
-        font-size: 2rem;
-      }
-      h5 {
-        font-size: 1.6rem;
-      }
-      .right {
-        .star-group {
-          img {
-            width: 2rem;
-            height: auto;
-          }
+  @media screen and (max-width: 576px) {
+    .main {
+      .section1 {
+        h1 {
+          font-size: 2.8rem;
         }
-        .like-heart {
-          width: 2.4rem;
-          height: auto;
-        }
-        .like-text {
-          text-wrap: nowrap;
+        h3 {
           font-size: 2rem;
         }
-        .product-count {
-          > div {
+        h5 {
+          font-size: 1.6rem;
+        }
+        .right {
+          .star-group {
+            img {
+              width: 2rem;
+              height: auto;
+            }
+          }
+          .like-heart {
+            width: 2.4rem;
+            height: auto;
+          }
+          .like-text {
+            text-wrap: nowrap;
             font-size: 2rem;
-            width: 7rem;
+          }
+          .product-count {
+            > div,
+            > button {
+              font-size: 2rem;
+              width: 7rem;
+            }
+          }
+          .cart-btn {
+            font-size: 2.4rem;
           }
         }
-        .cart-btn {
-          font-size: 2.4rem;
+      }
+      .section2 {
+        .descript-title {
+          font-size: 2.6rem;
         }
-      }
-    }
-    .section2 {
-      .descript-title {
-        font-size: 2.6rem;
-      }
-      .descript {
-        font-size: 1.6rem;
-      }
-    }
-    .section4 {
-      .section4-title {
-        font-size: 2.4rem;
+        .descript {
+          font-size: 1.6rem;
+        }
       }
     }
   }
