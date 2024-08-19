@@ -12,6 +12,7 @@ export const useAuth = () => {
     try {
       const url = 'http://localhost:3005/api/my-auth/login'
       const formData = new FormData()
+      // formData.append('id', id)
       formData.append('email', email)
       formData.append('password', password)
 

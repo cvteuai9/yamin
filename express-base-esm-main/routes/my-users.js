@@ -142,9 +142,9 @@ router.post('/', upload.none(), async (req, res) => {
 // 更新使用者
 router.put('/:id', upload.none(), async (req, res) => {
   const [users] = await db.query('SELECT * FROM users')
-  const id = req.params.id
+  const id = parseInt(req.params.id)
   const { email, password, user_name } = req.body
-  let user = users.find((u) => u.member_id === id)
+  let user = users.find((u) => u.id === id)
   if (!user) {
     return res.status(404).json({
       status: 'fail',
@@ -152,13 +152,10 @@ router.put('/:id', upload.none(), async (req, res) => {
     })
   }
   await db.query(
-    'UPDATE users SET email = ?, password = ?, user_name = ? WHERE member_id = ?',
+    'UPDATE users SET email = ?, password = ?, user_name = ? WHERE id = ?',
     [email, password, user_name, id]
   )
-  res.status(200).json({
-    status: 'success',
-    message: '修改成功',
-  })
+  return res.json({ status: 'success', data: { user } })
 })
 
 router.delete('/:id', async (req, res) => {
