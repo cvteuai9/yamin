@@ -52,7 +52,7 @@ export default function List1() {
           console.log(error)
         })
       const favoriteProduct = await fetch(
-        'http://localhost:3005/api/my_products/favorites?id=1'
+        'http://localhost:3005/api/my_products/favorites?user_id=1'
       )
         .then((res) => res.json())
         .then((result) => result)

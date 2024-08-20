@@ -22,6 +22,11 @@
         width: 3rem;
         height: auto;
       }
+      .like-text {
+        display: inline;
+        text-wrap: nowrap;
+        color: var(--primary2);
+      }
       .product-count {
         > div,
         > button {
