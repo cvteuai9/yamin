@@ -12,23 +12,23 @@ export default function Leftnav({
       <div className="left-nav">
         <ul>
           <li>
-            <Link href="/test/julia/profile" className={`h5 ${fromProfile}`}>
+            <Link href="/member/profile" className={`h5 ${fromProfile}`}>
               個人檔案
             </Link>
           </li>
           <li>
-            <Link href="/test/julia/order" className={`h5 ${fromOrder}`}>
+            <Link href="/member/order" className={`h5 ${fromOrder}`}>
               購買訂單
             </Link>
           </li>
           <li>
-            <Link href="/test/julia/coupon" className={`h5 ${fromCupon}`}>
+            <Link href="/member/coupon" className={`h5 ${fromCupon}`}>
               優惠券
             </Link>
           </li>
           <li>
             <Link
-              href="/test/julia/favorite-p"
+              href="/member/favorite-p"
               className={`h5 ${fromFavorite}`}
             >
               我的收藏
