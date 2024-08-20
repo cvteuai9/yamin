@@ -42,7 +42,7 @@ router.get('/check', authenticate, async (req, res) => {
 
     // 執行原生 SQL 查詢
     const [rows] = await db.query(
-      'SELECT id, user_name, email FROM users WHERE id = ?',
+      'SELECT id, user_name, email,nick_name,phone,gender,birthday FROM users WHERE id = ?',
       [userId]
     )
 
@@ -98,8 +98,6 @@ router.post('/login', upload.none(), async (req, res) => {
     token,
     user_name: user.user_name,
   })
-  // console.log(result); //帳號密碼打錯result會顯示undefined，就是!user
-  // res.status(200).send("使用者登入："+account);
 })
 router.get(
   '/logout',

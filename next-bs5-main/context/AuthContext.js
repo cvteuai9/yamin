@@ -43,7 +43,6 @@ export const AuthProvider = ({ children }) => {
   ] // 需要驗證的頁面
 
   const handleCheckAuth = async () => {
-    if (!token) {
       const res = await checkAuth()
       if (res.data.status === 'success') {
         // console.log(res.data.data.user)
@@ -54,7 +53,6 @@ export const AuthProvider = ({ children }) => {
         setUser(null)
       }
       setLoading(false)
-    }
   }
 
   useEffect(() => (async () => {

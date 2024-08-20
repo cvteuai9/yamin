@@ -105,9 +105,9 @@ router.get('/search', async (req, res) => {
 router.get('/:id', authenticate, async (req, res) => {
   const [users] = await db.query('SELECT * FROM users')
   const id = parseInt(req.params.id) //路由參數使用方法
-  let user = users.find((u) => u.id === id)
+  let dbuser = users.find((u) => u.id === id)
   // console.log(users)
-  if (!user) {
+  if (!dbuser) {
     res.status(404).json({
       status: 'fail',
       message: '找不到使用者',
@@ -119,6 +119,7 @@ router.get('/:id', authenticate, async (req, res) => {
   //   message: '獲取使用者成功',
   //   user,
   // })
+  const { password, ...user } = dbuser
   return res.json({ status: 'success', data: { user } })
 })
 
@@ -143,7 +144,7 @@ router.post('/', upload.none(), async (req, res) => {
 router.put('/:id', upload.none(), async (req, res) => {
   const [users] = await db.query('SELECT * FROM users')
   const id = parseInt(req.params.id)
-  const { email, password, user_name } = req.body
+  const { email, user_name, nick_name, phone, birthday, gender } = req.body
   let user = users.find((u) => u.id === id)
   if (!user) {
     return res.status(404).json({
@@ -152,8 +153,8 @@ router.put('/:id', upload.none(), async (req, res) => {
     })
   }
   await db.query(
-    'UPDATE users SET email = ?, password = ?, user_name = ? WHERE id = ?',
-    [email, password, user_name, id]
+    'UPDATE users SET email = ?, user_name = ?,nick_name=?,phone=?,birthday=?,gender=? WHERE id = ?',
+    [email, user_name, nick_name, phone, birthday, gender, id]
   )
   return res.json({ status: 'success', data: { user } })
 })
