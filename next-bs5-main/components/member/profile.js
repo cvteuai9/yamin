@@ -1,5 +1,5 @@
 // NE為了測試修改過，如果有衝突麻煩再跟我說一下，感恩～
-import { useState, useEffect } from 'react'
+import { useState, useEffect,useCallback } from 'react'
 import Leftnav from '@/components/member/left-nav'
 import Link from 'next/link'
 import { useContext } from 'react'
@@ -19,7 +19,6 @@ export default function Profile() {
   // 錯誤訊息狀態
   const [errors, setErrors] = useState({
     email: '',
-    password: '',
     // agree: '', // 錯誤訊息用字串
   })
   const [formData, setFormData] = useState({
@@ -27,82 +26,42 @@ export default function Profile() {
     user_name: '',
     nick_name: '',
     gender: '',
+    birthday: '',
     phone: '',
     email: '',
     // 添加其他需要的字段
   })
-  const [userData, setUserData] = useState(null);
-  const getUserId = async () => {
+
+  const [isLoading, setIsLoading] = useState(true)
+
+  const getUserData = useCallback(async () => {
+    if (!user?.id) return
     try {
-      const res1 = await checkAuth(user.id);
-      console.log(res1);
-      if (res1.data.status === 'success') {
-        setUserData(res1.data.data.user);
+      setIsLoading(true)
+      const res = await checkAuth(user.id)
+      if (res.data.status === 'success') {
+        setFormData(res.data.data.user)
+        console.log(res.data.data.user);
       } else {
-        console.error('Failed to fetch user data');
+        console.error('Failed to fetch user data')
       }
     } catch (error) {
-      console.error('Error fetching user data:', error);
+      console.error('Error fetching user data:', error)
+    } finally {
+      setIsLoading(false)
     }
-  };
-  useEffect(() => {
-    if (user) {
-      getUserId();
-    }
-  }, [user]);
-  useEffect(() => {
-    // 當 user 數據加載完成時，初始化表單數據
-    if (userData) {
-      console.log(userData);
-      setFormData({
-        id: userData.id || '',
-        user_name: userData.user_name || '',
-        nick_name: userData.nick_name || '',
-        gender: userData.gender || '',
-        phone: userData.phone || '',
-        email: userData.email || '',
-      })
-    }
-  }, [userData])
-  // const id = Number(formData.id)
-  // console.log(id);
-  const getUser = async (e) => {
-    e.preventDefault()
-    let apiUrl = `http://localhost:3005/api/my-users/${formData.id}`
-    console.log(apiUrl);
-    console.log(formData);
-    const res = await fetch(apiUrl, {
-      method: 'PUT',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(formData)
-    })
-    const data = await res.json()
-    setFormData(data.data.user)
-    // setToken(data.token)
-    // console.log(user);
-  }
-  // const [currentuser, setCurrentuser] = useState([])
+  }, [user])
 
-  // const updateCurrentUser = async (id) => {
-  //   let apiUrl = `http://localhost:3005/api/my-users/${id}`
-  //   const res = await fetch(apiUrl,{
-  //     method:'PUT',
-  //     credentials: 'include',
-  //     body:
-  //   })
-  //   const data = await res.json()
-  //   setCurrentuser(data.data.user)
-  //   console.log(currentuser);
-  // }
+  useEffect(() => {
+    getUserData()
+  }, [getUserData])
+
   const handleFieldChange = (e) => {
     // console.log(e.target.name, e.target.value, e.target.type)
     setFormData({ ...formData, [e.target.name]: e.target.value })
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     // 阻擋表單預設送出行為
     e.preventDefault()
 
@@ -114,10 +73,10 @@ export default function Profile() {
       password: '',
     }
 
-    if (!user.user_name) {
+    if (!formData.user_name) {
       newErrors.user_name = '姓名為必填'
     }
-    if (!user.email) {
+    if (!formData.email) {
       newErrors.email = 'email為必填'
     }
 
@@ -130,7 +89,35 @@ export default function Profile() {
     // 有錯誤，不送到伺服器，跳出submit函式
     if (hasErrors) {
       return
+    }else{
+      try {
+        setIsLoading(true)
+        let apiUrl = `http://localhost:3005/api/my-users/${formData.id}`
+        const res = await fetch(apiUrl, {
+          method: 'PUT',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData)
+        })
+        const data = await res.json()
+        if (data.status === 'success') {
+          console.log(data.data.user);
+          setFormData(data.data.user)
+          setUser(prev => ({ ...prev, ...data.data.user }))
+          alert('資料更新成功')
+        } else {
+          alert('更新失敗，請稍後再試')
+        }
+      } catch (error) {
+        console.error('Error updating user data:', error)
+        alert('更新時發生錯誤')
+      } finally {
+        setIsLoading(false)
+      }
     }
+    
   }
   if (!user) {
     return <p>Loading...</p>
@@ -202,16 +189,20 @@ export default function Profile() {
                   className="profile-inputtext p2 goldenf"
                   type="text"
                   placeholder="請輸入你的暱稱"
+                  name='nick_name'
+                  value={formData.nick_name}
+                  onChange={handleFieldChange}
                 />
               </div>
               <div>
                 <p className="p whitef mt-5">性別&nbsp;(必填)</p>
-                <div className="profile-inputradio  ">
+                <div className="profile-inputradio">
                   <input
                     type="radio"
                     id="female"
                     name="gender"
-                    defaultValue="男"
+                    value="男性"
+                    checked={formData.gender === '男性'}
                     onChange={handleFieldChange}
                   />
                   <p className="p whitef ms-3">男</p>
@@ -220,7 +211,8 @@ export default function Profile() {
                     className="ms-3"
                     id="female"
                     name="gender"
-                    defaultValue="女"
+                    value="女性"
+                    checked={formData.gender === '女性'}
                     onChange={handleFieldChange}
                   />
                   <p className="p whitef ms-3">女</p>
@@ -230,8 +222,11 @@ export default function Profile() {
                 <p className="p whitef mt-5">生日</p>
                 <input
                   className="profile-inputtext p2 goldenf"
-                  type="text"
+                  type="date"
                   placeholder="請輸入你的生日"
+                  name='birthday'
+                  value={formData.birthday}
+                  onChange={handleFieldChange}
                 />
               </div>
               <p2 className="p2 whitef">* 請正確填寫，註冊成功後將無法修改</p2>
@@ -241,7 +236,8 @@ export default function Profile() {
                   className="profile-inputtext p2 goldenf"
                   type="text"
                   placeholder="請輸入你的手機"
-                  pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+                  // pattern="[0-9]{4}-[0-9]{3}-[0-9]{3}"
+                  name='phone'
                   value={formData.phone}
                   onChange={handleFieldChange}
                 />
@@ -261,7 +257,6 @@ export default function Profile() {
               <div className="profile-btns  ">
                 <button type="submit"
                   className="profile-checked  btn2 p"
-                  onClick={getUser}
                 >
                   確認
                 </button>
