@@ -45,6 +45,7 @@ router.get('/', async (req, res) => {
     const order = req.query.order || '1'
     const perpage = Number(req.query.perpage) || 12
     const page = Number(req.query.page) || 1
+    // 每頁第一筆資料索引 = (現在頁數 - 1) * 每頁顯示資料數量 -> 索引是從0開始計算
     const start = (page - 1) * perpage
     const end = perpage * page
     const price = [req.query.price][0].split(',') || []
@@ -129,6 +130,7 @@ router.get('/', async (req, res) => {
     const totalData = rows.length
     // 計算分頁資訊
     totalPage = Math.ceil(rows.length / perpage)
+    // 商品資料為 全部資料用slice方法切割 第一頁為 (start(0), end(12))
     product.data = rows.slice(start, end)
     product.totalPage = totalPage
     product.teaFilter = teaFilter
@@ -163,7 +165,7 @@ router.get('/:id', async (req, res) => {
     image.push(v.path)
     return image
   })
-  console.log(image)
+  // console.log(image)
   const product = { data: rows, images: image }
   return res.json(product)
 })

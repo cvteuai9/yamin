@@ -1,7 +1,8 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
-import Link from 'next/link'
 export default function CartThree() {
+  function getOrderDetail() {}
+
   return (
     <>
       <div className="container-fluid cart">
@@ -48,13 +49,10 @@ export default function CartThree() {
           </div>
           <div className="cartOkContent ">
             <h2 className="text-center mb-6">完成訂單</h2>
-
-            <Link
-              className="cartOk-Alink text-center px-5 h3"
-              href="http://localhost:3000/order"
-            >
+            <h3 className="text-center mb-6">您的訂單編號為:00000000000</h3>
+            <a href="" className="cartOk-Alink text-center h3">
               返回訂單列表
-            </Link>
+            </a>
           </div>
         </div>
       </div>
