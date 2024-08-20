@@ -15,6 +15,7 @@ import { avatarBaseUrl } from '@/configs'
 export default function Profile() {
   // 定義要在此頁呈現/編輯的會員資料初始物件
   const initUserProfile = {
+    id:'',
     user_name: '',
     nick_name: '',
     gender: '',
@@ -24,19 +25,20 @@ export default function Profile() {
     email: '',
   }
   const { auth } = useAuth()
+  console.log("auth",auth);
   const [userProfile, setUserProfile] = useState(initUserProfile)
   const [hasProfile, setHasProfile] = useState(false)
   const [selectedFile, setSelectedFile] = useState(null)
   const getUserData = async (id) => {
     const res = await getUserById(id)
 
-    console.log(res.data)
-    console.log(auth.userData);
+    console.log("res.data",res.data)
+    console.log("auth.userData",auth.userData);
 
     if (res.data.status === 'success') {
       // 以下為同步化目前後端資料庫資料，與這裡定義的初始化會員資料物件的資料
       const dbUser = res.data.data.user
-      console.log(dbUser);
+      console.log("dbUser ",dbUser); //有ＩＤ
       const dbUserProfile = { ...initUserProfile }
 
       for (const key in dbUserProfile) {
@@ -54,9 +56,9 @@ export default function Profile() {
       toast.error(`會員資料載入失敗`)
     }
   }
-  console.log(userProfile);
+  console.log("userProfile",userProfile);
   const { avatar, ...user } = userProfile
-  console.log(user);
+  console.log("user",user);
   // auth載入完成後向資料庫要會員資料
   useEffect(() => {
     if (auth.isAuth) {
@@ -91,7 +93,7 @@ export default function Profile() {
     let isUpdated = false
 
     const { avatar, ...user } = userProfile
-    console.log(`'user:'user`);
+    console.log('user:' ,auth.userData);
     const res = await updateProfile(auth.userData.id, user)
 
     // console.log(res.data)
