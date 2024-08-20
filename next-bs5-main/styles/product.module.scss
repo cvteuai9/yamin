@@ -169,6 +169,14 @@
               }
             }
             .product-icon {
+              button {
+                // 去除btn外框線
+                --bs-btn-border-width: 0;
+              }
+              img {
+                width: 2rem;
+                height: 2rem;
+              }
               img:hover {
                 transform: scale(1.2);
               }

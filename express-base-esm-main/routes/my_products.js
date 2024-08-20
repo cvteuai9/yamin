@@ -1,32 +1,3 @@
-// {
-// import express from 'express' // 資料庫使用
-// import sequelize from '#configs/db.js'
-// const { My_Products } = sequelize.models
-// const router = express.Router()
-
-// // GET - 得到所有會員資料
-// router.get('/', async function (req, res) {
-//   const my_product = await My_Products.findAll({ logging: console.log })
-//   // 處理如果沒找到資料
-
-//   // 標準回傳JSON
-//   return res.json(my_product)
-// })
-
-// // GET - 得到單筆資料(注意，有動態參數時要寫在GET區段最後面)
-// router.get('/:id', async function (req, res) {
-//   // 轉為數字
-//   const id = Number(req.params.id)
-
-//   const my_product = await My_Products.findByPk(id, {
-//     raw: true, // 只需要資料表中資料
-//   })
-
-//   return res.json(my_product)
-// })
-
-// export default router
-// }
 import express from 'express'
 import db from '#configs/mysql.js'
 const router = express.Router()
@@ -128,9 +99,12 @@ router.get('/', async (req, res) => {
     // 取出商品資料
     const [rows] = await db.query(queryCluse)
     const totalData = rows.length
+    // 將初始資料擴展一個紀錄是否被加入收藏的屬性值 fav，並設為false
+    const nextData = rows.map((v) => {
+      return { ...v, fav: false }
+    })
     // 計算分頁資訊
     totalPage = Math.ceil(rows.length / perpage)
-    // 商品資料為 全部資料用slice方法切割 第一頁為 (start(0), end(12))
     product.data = rows.slice(start, end)
     product.totalPage = totalPage
     product.teaFilter = teaFilter
@@ -142,10 +116,154 @@ router.get('/', async (req, res) => {
     return res.status(200).json({ status: 'success', product: product })
   } catch (error) {
     console.error('Error executing query', error)
-    res.status(500).json({ error: 'Internal Server Error' })
+    return res.status(404).json({ error: 'All Product Not Found' })
   }
 })
 
+// 取得相關產品
+router.get('/relation_product/:id', async (req, res) => {
+  try {
+    const currentProductID = Number(req.params.id)
+    const product = await db.execute(
+      `SELECT tea_id FROM my_products WHERE id = ?`,
+      [currentProductID]
+    )
+    // console.log(product[0][0].tea_id)
+    const { tea_id } = product[0][0]
+    const [rows] = await db.execute(
+      'SELECT id, product_name, price, paths FROM my_products WHERE tea_id = ?',
+      [tea_id]
+    )
+    // 設定亂數取資料，Set物件可讓你儲存任何類型的唯一值（unique）
+    // Set 對象是數值的收集器。你可以按插入順序迭代收集器中的元素。在 Set 裡的元素只會出現一次；意即在 Set 裡的元素都是獨一無二
+    let randomNumber = new Set()
+    // 設定一個while迴圈產生隨機亂數
+    // !!
+    while (randomNumber.size < Math.min(rows.length, 6)) {
+      randomNumber.add(Math.floor(Math.random() * rows.length))
+    }
+    // 將隨機亂數陣列的值(v)當作rows的索引，再將rows[v]的物件值放到relation_product中，對應的索引(i)位置
+    let relation_product = []
+    // !!
+    randomNumber.forEach((v, i) => {
+      relation_product.push(rows[v])
+    })
+    // console.log(randomNumber)
+    // console.log(relation_product)
+    return res.status(200).json(relation_product)
+  } catch (error) {
+    console.log(error)
+    return res.status(404).json({ error: 'Relation Product Not Found' })
+  }
+})
+
+// 請求收藏資料
+router.get('/favorites', async (req, res) => {
+  try {
+    const user_id = req.query.id || 0
+    const [rows] = await db.execute(
+      `SELECT product_id FROM favorites WHERE user_id = ?`,
+      [user_id]
+    )
+    let favoriteProduct = []
+    rows.map((v) => {
+      return favoriteProduct.push(v.product_id)
+    })
+    // console.log(rows)
+    return res.status(200).json(favoriteProduct)
+  } catch (error) {
+    console.log(error)
+    return res.status(404).json({ error: 'Favorite Product Not Found' })
+  }
+})
+
+router.put('/favorites', async (req, res) => {
+  try {
+    const user_id = req.query.user_id
+    const product_id = req.query.product_id
+    await db.execute(
+      'INSERT INTO favorites (user_id, product_id) VALUES( ?, ?)',
+      [user_id, product_id]
+    )
+  } catch (error) {
+    console.log(error)
+    return res.status(400).json({ error: 'Invalid input data' })
+  }
+})
+
+router.delete('/favorites', async (req, res) => {
+  try {
+    const user_id = req.query.user_id
+    const product_id = req.query.product_id
+    await db.execute(
+      'DELETE FROM favorites WHERE user_id = ? && product_id = ?',
+      [user_id, product_id]
+    )
+  } catch (error) {
+    console.log(error)
+    return res.status(400).json({ error: 'Product Not Found' })
+  }
+})
+
+router.get('/reviews/:id', async (req, res) => {
+  try {
+    const id = Number(req.params.id)
+    const [rows] = await db.query(
+      `SELECT id,comment, rating ,created_at FROM reviews WHERE product_id = ${id} ORDER BY created_at DESC`
+    )
+    // console.log(rows.length)
+    // 設定各星級佔存
+    let a = 0,
+      b = 0,
+      c = 0,
+      d = 0,
+      e = 0
+    // 計算各星級數量
+    rows.map((v, i) => {
+      switch (v.rating) {
+        case 1:
+          a++
+          break
+        case 2:
+          b++
+          break
+        case 3:
+          c++
+          break
+        case 4:
+          d++
+          break
+        case 5:
+          e++
+          break
+      }
+    })
+    // 計算總星級數， toFixed(1) 取到小數點第一位(四捨五入)
+    let allRating = (
+      (a * 1 + b * 2 + c * 3 + d * 4 + e * 5) /
+      rows.length
+    ).toFixed(1)
+    // 計算各星級 % 數
+    const starArray = [
+      Math.round((e / rows.length) * 100),
+      Math.round((d / rows.length) * 100),
+      Math.round((c / rows.length) * 100),
+      Math.round((b / rows.length) * 100),
+      Math.round((a / rows.length) * 100),
+    ]
+    const reviews = {}
+    reviews.allData = rows
+    reviews.someData = rows.slice(0, 3)
+    reviews.eachRating = starArray
+    reviews.allRating = allRating
+    reviews.allLength = rows.length
+    // console.log(reviews)
+    return res.status(200).json(reviews)
+  } catch (error) {
+    console.log(error)
+    return res.status(404).json({ error: 'Reviews Not Found' })
+  }
+})
 router.get('/:id', async (req, res) => {
   const id = Number(req.params.id)
   const [rows] = await db.query(
@@ -165,7 +283,7 @@ router.get('/:id', async (req, res) => {
     image.push(v.path)
     return image
   })
-  // console.log(image)
+  console.log(image)
   const product = { data: rows, images: image }
   return res.json(product)
 })
