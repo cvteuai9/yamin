@@ -62,9 +62,21 @@ export default function Detail() {
       const apiURL = new URL(`http://localhost:3005/api/my_products/${id}`)
       const res = await fetch(apiURL)
       const data = await res.json()
-      setProduct(data.data[0])
+      let productThis = data.data[0]
+      const favURL = new URL(
+        `http://localhost:3005/api/my_products/favorites?user_id=1`
+      )
+      const resFav = await fetch(favURL)
+      const dataFav = await resFav.json()
+      if (dataFav.includes(productThis.product_id)) {
+        productThis.fav = true
+      } else {
+        productThis.fav = false
+      }
+      console.log(productThis)
+      setProduct(productThis)
       setImage(data.images)
-      console.log(data)
+      // console.log(data)
     } catch (error) {
       console.log(error)
     }
@@ -117,6 +129,27 @@ export default function Detail() {
         setProductCount(1)
       }
     }
+  }
+  async function handleFavToggle(product) {
+    if (product.fav === false) {
+      fetch(
+        `http://localhost:3005/api/my_products/favorites?user_id=1&product_id=${product.product_id}`,
+        { method: 'PUT' }
+      )
+        .then((res) => res.json())
+        .then((result) => console.log(result))
+        .catch((error) => console.log(error))
+    } else {
+      fetch(
+        `http://localhost:3005/api/my_products/favorites?user_id=1&product_id=${product.product_id}`,
+        { method: 'DELETE' }
+      )
+        .then((res) => res.json())
+        .then((result) => console.log(result))
+        .catch((error) => console.log(error))
+    }
+    const tmp = { ...product, fav: !product.fav }
+    setProduct(tmp)
   }
   useEffect(() => {
     // console.log(router.query)
@@ -250,12 +283,35 @@ export default function Detail() {
                   className={`${styles['heart-btn']} d-flex flex-row flex-lg-column gap-3 gap-xl-5 justify-content-between justify-content-lg-end align-items-center align-items-lg-start`}
                 >
                   <div className="d-flex gap-0 gap-md-3">
-                    <img
-                      className={`${styles['like-heart']}`}
-                      src="/images/product/list1/heart.svg"
-                      alt=""
-                    />
-                    <h3 className={`m-0 ${styles['like-text']}`}>加入收藏</h3>
+                    <button
+                      type="button"
+                      className="btn d-flex"
+                      onClick={() => handleFavToggle(product)}
+                    >
+                      {product.fav ? (
+                        <>
+                          <img
+                            className={`${styles['like-heart']}`}
+                            src="/images/product/list1/heart-fill.svg"
+                            alt=""
+                          />
+                          <h3 className={`m-0 ${styles['like-text']}`}>
+                            已收藏
+                          </h3>
+                        </>
+                      ) : (
+                        <>
+                          <img
+                            className={`${styles['like-heart']}`}
+                            src="/images/product/list1/heart.svg"
+                            alt=""
+                          />
+                          <h3 className={`m-0 ${styles['like-text']}`}>
+                            加入收藏
+                          </h3>
+                        </>
+                      )}
+                    </button>
                   </div>
                   <div
                     className={`${styles['product-count']} d-flex text-center`}

@@ -12,11 +12,61 @@ import Leftnav from '@/components/member/left-nav'
 import SearchNav from './search-nav'
 import Link from 'next/link'
 import styles from '@/components/member/fav/favorite.module.scss'
+import { func } from 'prop-types'
 export default function FavoriteP() {
+  const filterArray = ['金額由小到大', '金額由大到小']
+  const router = useRouter()
+  const [product, setProduct] = useState([])
+  const [order, setOrder] = useState('')
+  const [page, setPage] = useState(1)
+  const [userID, setUserID] = useState(1)
+  const [totalCount, setTotalCount] = useState(0)
+  const [totalPage, setTotalPage] = useState(0)
+  const pageArray = new Array(totalPage).fill(0).map((v,i) => i)
   function handleOption(e) {
     const value = e.target.getAttribute('data-value')
-    console.log(value)
+    // console.log(value);
+    setOrder(value)
   }
+  async function handleFavCancel(id) {
+    // console.log(id);
+    const agreeDelete = confirm('您確定要移除此收藏商品?')
+    if(agreeDelete){
+      await fetch(
+        `http://localhost:3005/api/my_products/favorites?user_id=1&product_id=${id}`,
+        { method: 'DELETE' }
+      )
+        .then((res) => res.json())
+        .then((result) => {
+          if(result.message){
+            getFavProduct()
+          }
+        })
+        .catch((error) => console.log(error))
+    }
+  }
+  async function getFavProduct() {
+    const url = new URL('http://localhost:3005/api/my_products/my-favorite')
+    let searchParams = new URLSearchParams({
+      order: order,
+      page: page,
+      type: 'product',
+      user_id: userID,
+    })
+    url.search = searchParams
+    const res = await fetch(url)
+    const favProduct = await res.json()
+    setProduct(favProduct.data)
+    setTotalCount(favProduct.totalCount)
+    setTotalPage(favProduct.totalPage)
+  }
+  useEffect(() => {
+    if (router.isReady) {
+      getFavProduct()
+    }
+    // console.log(product)
+    // console.log(totalPage);
+  }, [router.isReady, order, page, totalCount, totalPage])
   return (
     <>
       {/* 標題 & 篩選 */}
@@ -56,30 +106,22 @@ export default function FavoriteP() {
                           <FaAngleDown className={option['icon']} />
                         </p>
                         <ul className="ul1">
-                          <li>
+                        {filterArray.map((v,i) => {
+                          return (
+                            <li key={i}>
                             <a
                               href="#"
-                              data-value="date_asc"
+                              data-value={`${i+1}`}
                               onClick={(e) => {
                                 e.preventDefault()
                                 handleOption(e)
                               }}
                             >
-                              依金額排序
+                              {v}
                             </a>
                           </li>
-                          <li>
-                            <a
-                              href="#"
-                              data-value="views_desc"
-                              onClick={(e) => {
-                                e.preventDefault()
-                                handleOption(e)
-                              }}
-                            >
-                              依評分排序
-                            </a>
-                          </li>
+                          )
+                        })}
                         </ul>
                       </label>
                     </div>
@@ -89,317 +131,167 @@ export default function FavoriteP() {
             </div>
             {/* 標題 */}
             <div className={`${styles['favoritep-cards']} low mt-5`}>
-              <div className={`${styles['favoritep-pcard']}`}>
-                <div className={`${styles['favoritep-imgbox']}`}>
-                  <img src="/images/favorite/tea.jpg" alt="" />
-                  <div className={`${styles['favoritep-fabtn']}`} type="button">
-                    <img
-                      id="like2"
-                      src="/images/favorite/heart-fill.svg"
-                      width="20px"
-                      alt="加入收藏"
-                    />
-                  </div>
-                </div>
-                <div className={`${styles['favoritep-cardtext']}`}>
-                  <p className="whitef50 p2">
-                    精品原葉丨三峽碧螺 40g–精裝盒
-                    <br />
-                    品牌 : 七三茶堂
-                    <br />
-                    茶種 : 綠茶
-                    <br />
-                    產區 : 三峽區
-                    <br />
-                    重量 : 40kg
-                    <br />
-                    <br />
-                    <span className="p goldenf">NT$650</span>
-                  </p>
-                  <div
-                    type="button"
-                    className={`${styles['favoritep-cardbtn']}`}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width={16}
-                      height={16}
-                      style={{ color: '#fff' }}
-                      fill="currentColor"
-                      className="bi bi-cart3"
-                      viewBox="0 0 16 16"
-                    >
-                      <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l.84 4.479 9.144-.459L13.89 4zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-              <div className={`${styles['favoritep-pcard']}`}>
-                <div className={`${styles['favoritep-imgbox']}`}>
-                  <img src="/images/favorite/tea.jpg" alt="" />
-                  <div className={`${styles['favoritep-fabtn']}`} type="button">
-                    <img
-                      id="like2"
-                      src="/images/favorite/heart-fill.svg"
-                      width="20px"
-                      alt="加入收藏"
-                    />
-                  </div>
-                </div>
-                <div className={`${styles['favoritep-cardtext']}`}>
-                  <p className="whitef50 p2">
-                    精品原葉丨三峽碧螺 40g–精裝盒
-                    <br />
-                    品牌 : 七三茶堂
-                    <br />
-                    茶種 : 綠茶
-                    <br />
-                    產區 : 三峽區
-                    <br />
-                    重量 : 40kg
-                    <br />
-                    <br />
-                    <span className="p goldenf">NT$650</span>
-                  </p>
-                  <div
-                    type="button"
-                    className={`${styles['favoritep-cardbtn']}`}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width={16}
-                      height={16}
-                      style={{ color: '#fff' }}
-                      fill="currentColor"
-                      className="bi bi-cart3"
-                      viewBox="0 0 16 16"
-                    >
-                      <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l.84 4.479 9.144-.459L13.89 4zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-              <div className={`${styles['favoritep-pcard']}`}>
-                <div className={`${styles['favoritep-imgbox']}`}>
-                  <img src="/images/favorite/tea.jpg" alt="" />
-                  <div className={`${styles['favoritep-fabtn']}`} type="button">
-                    <img
-                      id="like2"
-                      src="/images/favorite/heart-fill.svg"
-                      width="20px"
-                      alt="加入收藏"
-                    />
-                  </div>
-                </div>
-                <div className={`${styles['favoritep-cardtext']}`}>
-                  <p className="whitef50 p2">
-                    精品原葉丨三峽碧螺 40g–精裝盒
-                    <br />
-                    品牌 : 七三茶堂
-                    <br />
-                    茶種 : 綠茶
-                    <br />
-                    產區 : 三峽區
-                    <br />
-                    重量 : 40kg
-                    <br />
-                    <br />
-                    <span className="p goldenf">NT$650</span>
-                  </p>
-                  <div
-                    type="button"
-                    className={`${styles['favoritep-cardbtn']}`}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width={16}
-                      height={16}
-                      style={{ color: '#fff' }}
-                      fill="currentColor"
-                      className="bi bi-cart3"
-                      viewBox="0 0 16 16"
-                    >
-                      <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l.84 4.479 9.144-.459L13.89 4zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-              <div className={`${styles['favoritep-pcard']}`}>
-                <div className={`${styles['favoritep-imgbox']}`}>
-                  <img src="/images/favorite/tea.jpg" alt="" />
-                  <div className={`${styles['favoritep-fabtn']}`} type="button">
-                    <img
-                      id="like2"
-                      src="/images/favorite/heart-fill.svg"
-                      width="20px"
-                      alt="加入收藏"
-                    />
-                  </div>
-                </div>
-                <div className={`${styles['favoritep-cardtext']}`}>
-                  <p className="whitef50 p2">
-                    精品原葉丨三峽碧螺 40g–精裝盒
-                    <br />
-                    品牌 : 七三茶堂
-                    <br />
-                    茶種 : 綠茶
-                    <br />
-                    產區 : 三峽區
-                    <br />
-                    重量 : 40kg
-                    <br />
-                    <br />
-                    <span className="p goldenf">NT$650</span>
-                  </p>
-                  <div
-                    type="button"
-                    className={`${styles['favoritep-cardbtn']}`}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width={16}
-                      height={16}
-                      style={{ color: '#fff' }}
-                      fill="currentColor"
-                      className="bi bi-cart3"
-                      viewBox="0 0 16 16"
-                    >
-                      <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l.84 4.479 9.144-.459L13.89 4zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-              <div className={`${styles['favoritep-pcard']}`}>
-                <div className={`${styles['favoritep-imgbox']}`}>
-                  <img src="/images/favorite/tea.jpg" alt="" />
-                  <div className={`${styles['favoritep-fabtn']}`} type="button">
-                    <img
-                      id="like2"
-                      src="/images/favorite/heart-fill.svg"
-                      width="20px"
-                      alt="加入收藏"
-                    />
-                  </div>
-                </div>
-                <div className={`${styles['favoritep-cardtext']}`}>
-                  <p className="whitef50 p2">
-                    精品原葉丨三峽碧螺 40g–精裝盒
-                    <br />
-                    品牌 : 七三茶堂
-                    <br />
-                    茶種 : 綠茶
-                    <br />
-                    產區 : 三峽區
-                    <br />
-                    重量 : 40kg
-                    <br />
-                    <br />
-                    <span className="p goldenf">NT$650</span>
-                  </p>
-                  <div
-                    type="button"
-                    className={`${styles['favoritep-cardbtn']}`}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width={16}
-                      height={16}
-                      style={{ color: '#fff' }}
-                      fill="currentColor"
-                      className="bi bi-cart3"
-                      viewBox="0 0 16 16"
-                    >
-                      <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l.84 4.479 9.144-.459L13.89 4zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-              <div className={`${styles['favoritep-pcard']}`}>
-                <div className={`${styles['favoritep-imgbox']}`}>
-                  <img src="/images/favorite/tea.jpg" alt="" />
-                  <div className={`${styles['favoritep-fabtn']}`} type="button">
-                    <img
-                      id="like2"
-                      src="/images/favorite/heart-fill.svg"
-                      width="20px"
-                      alt="加入收藏"
-                    />
-                  </div>
-                </div>
-                <div className={`${styles['favoritep-cardtext']}`}>
-                  <p className="whitef50 p2">
-                    精品原葉丨三峽碧螺 40g–精裝盒
-                    <br />
-                    品牌 : 七三茶堂
-                    <br />
-                    茶種 : 綠茶
-                    <br />
-                    產區 : 三峽區
-                    <br />
-                    重量 : 40kg
-                    <br />
-                    <br />
-                    <span className="p goldenf">NT$650</span>
-                  </p>
-                  <div
-                    type="button"
-                    className={`${styles['favoritep-cardbtn']}`}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width={16}
-                      height={16}
-                      style={{ color: '#fff' }}
-                      fill="currentColor"
-                      className="bi bi-cart3"
-                      viewBox="0 0 16 16"
-                    >
-                      <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l.84 4.479 9.144-.459L13.89 4zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
+              {product.length > 0 ? (
+                product.map((v, i) => {
+                  return (
+                    <div className={`${styles['favoritep-pcard']}`} key={i}>
+                      <div className={`${styles['favoritep-imgbox']}`}>
+                        <img
+                          src={`/images/product/list1/products-images/${v.paths}`}
+                          alt=""
+                        />
+                        <button
+                          className={`${styles['favoritep-fabtn']}`}
+                          type="button"
+                          onClick={() => handleFavCancel(v.id)}
+                        >
+                          <img
+                            id="like2"
+                            src="/images/favorite/heart-fill.svg"
+                            width="20px"
+                            alt="移除收藏"
+                          />
+                        </button>
+                      </div>
+                      <div className={`${styles['favoritep-cardtext']}`}>
+                        <div className="goldenf d-flex flex-column justify-content-between">
+                          <p className="fw-bold fs-3 m-0">{v.product_name}</p>
+                          <div>
+                            <p className="m-0">品牌 : {v.brand_name}</p>
+                            <p className="m-0">茶種 : {v.tea_name}</p>
+                            <p className="m-0">茶品型態 : {v.style_name}</p>
+                            <p className="m-0">重量 : {v.weight}</p>
+                          </div>
+                          <p className="m-0">NT$ {v.price}</p>
+                        </div>
+                        <div
+                          type="button"
+                          className={`${styles['favoritep-cardbtn']}`}
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width={16}
+                            height={16}
+                            style={{ color: '#fff' }}
+                            fill="currentColor"
+                            className="bi bi-cart3"
+                            viewBox="0 0 16 16"
+                          >
+                            <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l.84 4.479 9.144-.459L13.89 4zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2" />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })
+              ) : (
+                <div></div>
+              )}
             </div>
 
             {/* 頁碼 */}
-            <div className="pageitem">
-              <ul className="ps-0 mt-5">
-                <li className="pt-2 pb-2">
-                  <img
-                    src="/images/favorite/leftbtn.svg"
+            {product.length > 0 ? (
+              <div className={`${styles['page-choose']} text-center mt-5`}>
+                <div className="d-flex gap-3 justify-content-center pb-3">
+                  {/* 上一頁 */}
+                  <button
                     type="button"
-                    alt=""
-                  />
-                </li>
-                <li className="p" type="button">
-                  1
-                </li>
-                <li className="p" type="button">
-                  2
-                </li>
-                <li className="p" type="button">
-                  3
-                </li>
-                <li className="p" type="button">
-                  4
-                </li>
-                <li className="p" type="button">
-                  5
-                </li>
-                <li className="pt-2 pb-2">
-                  <img
-                    src="/images/favorite/rightbtn.svg"
+                    className={`btn`}
+                    onClick={(e) => {
+                      const preNum = page - 1 !== 0 ? page - 1 : 1
+                      setPage(preNum)
+                    }}
+                  >
+                    <img
+                      src="/images/product/list1/page-left-arrow.svg"
+                      alt=""
+                    />
+                  </button>
+                  <div className="d-flex gap-3 align-items-center justify-content-center px-3">
+                    {pageArray.map((v, index) => {
+                      {
+                        /* 如果分頁等於分頁數字按鈕，加上current樣式 */
+                      }
+                      if (page === index + 1) {
+                        return (
+                          <div
+                            className={`${styles['page-number']} ${styles.current}`}
+                            key={index}
+                          >
+                            <button
+                              type="button"
+                              className={`btn m-0`}
+                              onClick={(e) => {
+                                setPage(Number(e.target.innerText))
+                              }}
+                            >
+                              {v + 1}
+                            </button>
+                          </div>
+                        )
+                      } else {
+                        if (index + 1 - page >= 3 || index + 1 - page <= -3) {
+                          return (
+                            <div
+                              className={`${styles['page-number']} d-none`}
+                              key={index}
+                            >
+                              <button
+                                type="button"
+                                className={`btn m-0`}
+                                onClick={(e) => {
+                                  setPage(Number(e.target.innerText))
+                                }}
+                              >
+                                {v + 1}
+                              </button>
+                            </div>
+                          )
+                        } else {
+                          return (
+                            <div
+                              className={`${styles['page-number']}`}
+                              key={index}
+                            >
+                              <button
+                                type="button"
+                                className={`btn m-0`}
+                                onClick={(e) => {
+                                  setPage(Number(e.target.innerText))
+                                }}
+                              >
+                                {v + 1}
+                              </button>
+                            </div>
+                          )
+                        }
+                      }
+                    })}
+                  </div>
+                  {/* 下一頁 */}
+                  <button
                     type="button"
-                    alt=""
-                  />
-                </li>
-              </ul>
-              <img
-                src="/images/favorite/line.svg"
-                alt=""
-                style={{ width: '20rem' }}
-              />
-            </div>
+                    className={`btn`}
+                    onClick={(e) => {
+                      const nextNum =
+                        page + 1 <= totalPage ? page + 1 : totalPage
+                      setPage(nextNum)
+                    }}
+                  >
+                    <img
+                      src="/images/product/list1/page-right-arrow.svg"
+                      alt=""
+                    />
+                  </button>
+                </div>
+                <img
+                  src="/images/product/list1/page-choose-bottom-line.svg"
+                  alt=""
+                />
+              </div>
+            ) : (
+              <div></div>
+            )}
           </div>
         </div>
         {/* 頁碼 */}
