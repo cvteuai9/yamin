@@ -125,7 +125,7 @@ router.post(
   async function (req, res) {
     // req.file 即上傳來的檔案(avatar這個檔案)
     // req.body 其它的文字欄位資料…
-    // console.log(req.file, req.body)
+    console.log(req.file, req.body)
 
     if (req.file) {
       const id = req.user.id
