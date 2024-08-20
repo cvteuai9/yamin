@@ -7,15 +7,15 @@ import {
   formatFormData,
 } from '@/hooks/cartCheckNumber'
 
-const PaymentForm = (formData, onChange) => {
+const PaymentForm = ({ formData = {}, handleChange }) => {
   // 測試
   const showCard = useRef(null)
   // 測試結束
   const [state, setState] = useState({
-    cardnumber: '',
-    cardexpiry: '',
-    cvc: '',
-    cardholder: '',
+    cardnumber: formData.cardNumber || '',
+    cardexpiry: formData.expireDate || '',
+    cvc: formData.cvc || '',
+    cardholder: formData.cardHolder || '',
     focus: '',
   })
 
@@ -39,16 +39,18 @@ const PaymentForm = (formData, onChange) => {
 
   const handleInputChange = (evt) => {
     let { name, value } = evt.target
-    if (name === 'cardnumber') {
-      evt.target.value = formatCreditCardNumber(evt.target.value)
-    } else if (name === 'cardexpiry') {
-      evt.target.value = formatExpirationDate(evt.target.value)
-    } else if (name === 'cvc') {
-      evt.target.value = formatCVC(evt.target.value)
-    }
+    let formattedValue = value
 
-    setState((prev) => ({ ...prev, [name]: evt.target.value }))
-    onChange({ target: { name, value: evt.target.value } })
+    if (name === 'cardnumber') {
+      formattedValue = formatCreditCardNumber(value)
+    } else if (name === 'cardexpiry') {
+      formattedValue = formatExpirationDate(value)
+    } else if (name === 'cvc') {
+      formattedValue = formatCVC(value)
+    }
+    const updateState = { ...state, [name]: formattedValue }
+    setState(updateState)
+    handleChange(evt)
   }
 
   const handleInputFocus = (evt) => {
@@ -118,6 +120,7 @@ const PaymentForm = (formData, onChange) => {
               name="cardholder"
               maxLength={19}
               className="cardHolderInput"
+              value={state.cardholder}
               onChange={handleInputChange}
               onFocus={handleInputFocus}
             />
@@ -132,6 +135,7 @@ const PaymentForm = (formData, onChange) => {
                 placeholder="Valid Thru"
                 pattern="\d\d/\d\d"
                 required
+                value={state.cardexpiry}
                 onChange={handleInputChange}
                 onFocus={handleInputFocus}
                 className="monthInput"
@@ -146,6 +150,7 @@ const PaymentForm = (formData, onChange) => {
                 maxLength={4}
                 className="cvvInput"
                 pattern="\d{3,4}"
+                value={state.cvc}
                 onChange={handleInputChange}
                 onFocus={handleInputFocus}
               />

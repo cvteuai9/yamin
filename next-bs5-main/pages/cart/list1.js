@@ -17,7 +17,7 @@ export default function List1() {
         <p>
           {productName + '已成功加入購物車!'}
           <br />
-          <Link href="/cart/cartOne">前往購物車</Link>
+          <Link href="http://localhost:3000/cart/yamin-cart">前往購物車</Link>
         </p>
       </>
     )
@@ -473,9 +473,8 @@ export default function List1() {
                             <button
                               className="btn"
                               onClick={() => {
-                                const item = { ...v, qty: 1 }
                                 notify(v.product_name)
-                                addItem(item)
+                                addItem(v)
                               }}
                             >
                               <img

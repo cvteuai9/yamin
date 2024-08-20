@@ -1,9 +1,7 @@
 import { useEffect } from 'react'
 // 樣式
-import '@/styles/public.css'
 import '@/styles/globals.scss'
-// import '@/styles/product.scss'
-import '@/styles/carousel.scss'
+import '@/styles/product.scss'
 import '@/styles/cart.scss'
 import '@/styles/loader.scss'
 import '@/styles/Normalize.scss'
@@ -15,6 +13,8 @@ import '@/styles/order/PayCard.scss'
 import '@fortawesome/fontawesome-free/css/all.min.css'
 import 'react-credit-cards-2/dist/es/styles-compiled.css'
 
+// 載入雅名購物車
+import { YaminCartProvider } from '@/hooks/yamin-use-cart'
 // 載入購物車context
 import { CartProvider } from '@/hooks/use-cart-state'
 // 載入認証用context
@@ -40,7 +40,11 @@ export default function MyApp({ Component, pageProps }) {
   return (
     <AuthProvider>
       <LoaderProvider close={2} CustomLoader={CatLoader}>
-        <CartProvider>{getLayout(<Component {...pageProps} />)}</CartProvider>
+        <CartProvider>
+          <YaminCartProvider>
+            {getLayout(<Component {...pageProps} />)}
+          </YaminCartProvider>
+        </CartProvider>
       </LoaderProvider>
     </AuthProvider>
   )

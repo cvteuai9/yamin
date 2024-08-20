@@ -1,99 +1,18 @@
 import { useState, useEffect, useRef } from 'react'
 import PaymentForm from '@/components/cart/testCard-2'
 import { YaminUseCart } from '@/hooks/yamin-use-cart'
-import Cards from 'react-credit-cards-2'
-import { useRouter } from 'next/router'
-
-import {
-  formatCVC,
-  formatExpirationDate,
-  formatCreditCardNumber,
-  formatFormData,
-} from '@/hooks/cartCheckNumber'
 export default function CartTwo() {
   const { cart, items, increment, decrement, removeItem } = YaminUseCart()
-  // let testLocl = JSON.parse(localStorage.getItem('cart'))
-  const router = useRouter()
   const formRef = useRef(null)
-  const form2Re2 = useRef(null)
   const [formData, setFormData] = useState({
-    // productId: getlocl,
-    amount: '',
-    totalPrice: '',
-    userId: 12,
     username: '',
     email: '',
     phone: '',
     delivery: '',
     address: '',
     note: '',
-    payState: '',
-    cardnumber: '',
-    cardholder: '',
-    cardexpiry: '',
-    cvc: '',
-    state: 1,
-  })
-  useEffect(() => {
-    formData.amount = cart.totalItems
-    formData.totalPrice = cart.totalPrice
-  }, [cart.totalItems, cart.totalPrice])
-  // 信用卡部分
-  // 測試
-  const showCard = useRef(null)
-  // 測試結束
-  const [state, setState] = useState({
-    cardnumber: '',
-    cardexpiry: '',
-    cvc: '',
-    cardholder: '',
-    focus: '',
   })
 
-  const PostformData = new FormData()
-
-  const handleCardPayChange = (e) => {
-    if (e.target.checked) {
-      showCard.current.classList.remove('d-none')
-      setFormData({ ...formData, [e.target.name]: e.target.value })
-    }
-  }
-
-  const handleLinePayChange = (e) => {
-    if (e.target.checked) {
-      showCard.current.classList.add('d-none')
-      setFormData({ ...formData, [e.target.name]: e.target.value })
-    }
-  }
-
-  const handleGreenPayChange = (e) => {
-    if (e.target.checked) {
-      showCard.current.classList.add('d-none')
-      setFormData({ ...formData, [e.target.name]: e.target.value })
-    }
-  }
-
-  const handleInputChange = (evt) => {
-    let { name, value } = evt.target
-    let formattedValue = value
-
-    if (name === 'cardnumber') {
-      evt.target.value = formatCreditCardNumber(evt.target.value)
-    } else if (name === 'cardexpiry') {
-      evt.target.value = formatExpirationDate(evt.target.value)
-    } else if (name === 'cvc') {
-      evt.target.value = formatCVC(evt.target.value)
-    }
-    // const updateState = { ...state, [name]: formattedValue }
-    setFormData({ ...formData, [name]: value })
-    setState((prev) => ({ ...prev, [name]: evt.target.value }))
-    console.log(formData)
-  }
-
-  const handleInputFocus = (evt) => {
-    setState((prev) => ({ ...prev, focus: evt.target.name }))
-  }
-  //信用卡end
   const [errors, setErrors] = useState({})
   const inputRefs = {
     username: useRef(null),
@@ -105,10 +24,7 @@ export default function CartTwo() {
 
   const handleChange = (event) => {
     const { name, value } = event.target
-
     setFormData({ ...formData, [name]: value })
-
-    console.log('111', formData)
   }
 
   const validateForm = () => {
@@ -137,6 +53,20 @@ export default function CartTwo() {
       valid = false
     }
 
+    // 信用卡資料驗證
+    if (!formData.cardNumber) {
+      newErrors.cardNumber = '卡號是必填項'
+      valid = false
+    }
+    if (!formData.cardHolder) {
+      newErrors.cardHolder = '持卡人姓名是必填項'
+      valid = false
+    }
+    if (!formData.expireDate) {
+      newErrors.expireDate = '到期日期是必填項'
+      valid = false
+    }
+
     setErrors(newErrors)
     if (!valid) {
       const firstErrorField = Object.keys(newErrors)[0]
@@ -147,73 +77,15 @@ export default function CartTwo() {
 
   const handleSubmit = (event) => {
     event.preventDefault()
-
     // formRef.current.submit()
     if (validateForm()) {
-      PostformData.append('username', formData.username)
-      PostformData.append('email', formData.email)
-      PostformData.append('phone', formData.phone)
-      PostformData.append('delivery', formData.delivery)
-      PostformData.append('address', formData.address)
-      PostformData.append('note', formData.note)
-      PostformData.append('payState', formData.payState)
-      PostformData.append('cardnumber', formData.cardnumber)
-      PostformData.append('cardholder', formData.cardholder)
-      PostformData.append('cardexpiry', formData.cardexpiry)
-      PostformData.append('cvc', formData.cvc)
-      PostformData.append('amount', formData.amount)
-      PostformData.append('totalPrice', formData.totalPrice)
-      PostformData.append('userId', formData.userId)
-      PostformData.append('cartItem', cart)
-      items.forEach((item) => {
-        PostformData.append(
-          `items[${item.id}][product_name]`,
-          item.product_name
-        )
-        PostformData.append('PproductId', [{ productId: item.id }])
-        PostformData.append(`productId[${item.id}]`, `productId[${item.id}]`)
-        // PostformData.append(`items[${item.id}][price]`, item.price)
-        // PostformData.append(`items[${item.id}][qty]`, item.qty)
-        PostformData.append(`items[${item.id}][subtotal]`, item.subtotal)
-      })
-      const orderData = items.map((v) => {
-        return [v.id]
-      })
-
-      // console.log(cartItems)
-      PostformData.append('allProductId', orderData)
-      PostformData.append('state', formData.state)
-
-      for (const [key, value] of PostformData.entries()) {
-        console.log('123', (PostformData[key] = value))
-      }
-      const params = new URLSearchParams(formData).toString()
-      const url = 'http://localhost:3005/api/yamin_cart'
-      fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(PostformData),
-      })
-        .then((response) => response.json())
-        .then((result) => {
-          console.log('testurl', url)
-          console.log('success', result)
-        })
-        .catch((error) => {
-          console.error(error)
-        })
-      console.log('取得', PostformData.get('username'))
+      formRef.current.submit()
       console.log('表單提交成功', formData)
 
       // Perform form submission or additional actions here
     } else {
       console.log('表單提交失敗')
     }
-
-    // router.push('http://localhost:3000/cart/cartThree')
-    localStorage.removeItem('cart')
   }
 
   // test
@@ -288,9 +160,7 @@ export default function CartTwo() {
           </div>
 
           {items.length === 0 ? (
-            <div className="checkCart">
-              <h1>購物車為空</h1>
-            </div>
+            <h1>購物車為空</h1>
           ) : (
             items.map((v, i) => {
               return (
@@ -324,9 +194,7 @@ export default function CartTwo() {
           )}
           {/* 390的list */}
           {items.length === 0 ? (
-            <div className="checkCartMd">
-              <h1>購物車為空</h1>
-            </div>
+            <h1>購物車為空</h1>
           ) : (
             items.map((v, i) => {
               return (
@@ -551,117 +419,7 @@ export default function CartTwo() {
         {/* 收件人資訊end */}
         {/* 付款資訊 */}
         <h2 className="text-center mb-5">付款資訊</h2>
-        {/* 信用卡 */}
-
-        <div className="cartSubTotalBor mb-5 h5">
-          <div className="cartGoBuyAllOption m-4">
-            <div className="cartGoBuyOption mb-5">
-              <input
-                type="radio"
-                id="cartBuy-card"
-                name="payState"
-                value="cardPay"
-                className="cartBuyInput cartBuy-card"
-                onChange={handleCardPayChange}
-              />
-              <label htmlFor="">信用卡支付</label>
-            </div>
-            <div className="cartGoBuyOption mb-5">
-              <input
-                type="radio"
-                id="cartBuy-linepay"
-                name="payState"
-                value="line"
-                className="cartBuyInput cartBuy-linepay"
-                onChange={handleLinePayChange}
-              />
-              <label htmlFor="">linepay</label>
-            </div>
-            <div className="cartGoBuyOption mb-5">
-              <input
-                type="radio"
-                id="cartBuy-green"
-                name="payState"
-                value="ecpay"
-                className="cartBuyInput cartBuy-green"
-                onChange={handleGreenPayChange}
-              />
-              <label htmlFor="">綠界金流</label>
-            </div>
-          </div>
-
-          <div
-            ref={showCard}
-            className="cardContainerAll d-none d-flex align-items-center  "
-          >
-            <div className="CardForm h5">
-              <div className="cardInputBox">
-                <label htmlFor="">卡號</label>
-                <input
-                  type="tel"
-                  name="cardnumber"
-                  maxLength={22}
-                  pattern="[\d| ]{16,22}"
-                  className="cardNumberInput"
-                  value={state.cardnumber}
-                  onChange={handleInputChange}
-                  onFocus={handleInputFocus}
-                />
-              </div>
-              <div className="cardInputBox">
-                <label htmlFor="">姓名</label>
-                <input
-                  type="text"
-                  name="cardholder"
-                  maxLength={19}
-                  className="cardHolderInput"
-                  onChange={handleInputChange}
-                  onFocus={handleInputFocus}
-                />
-              </div>
-              <div className="CardflexBox">
-                <div className="cardInputBox">
-                  <label htmlFor="">Expiration MM</label>
-                  <input
-                    type="tel"
-                    name="cardexpiry"
-                    className="form-control"
-                    placeholder="Valid Thru"
-                    pattern="\d\d/\d\d"
-                    required
-                    onChange={handleInputChange}
-                    onFocus={handleInputFocus}
-                    className="monthInput"
-                  />
-                </div>
-
-                <div className="cardInputBox">
-                  <label htmlFor="">CVV</label>
-                  <input
-                    type="text"
-                    name="cvc"
-                    maxLength={4}
-                    className="cvvInput"
-                    pattern="\d{3,4}"
-                    onChange={handleInputChange}
-                    onFocus={handleInputFocus}
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="cardContainer">
-              <Cards
-                number={state.cardnumber}
-                expiry={state.cardexpiry}
-                cvc={state.cvc}
-                name={state.cardholder}
-                focused={state.focus}
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* 信用卡end */}
+        <PaymentForm></PaymentForm>
         {/* 付款資訊end */}
         <div className="text-center">
           <button
