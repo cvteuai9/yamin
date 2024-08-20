@@ -2,7 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import multer from 'multer'
 import moment from 'moment'
-import jwt from 'jsonwebtoken'
+import jsonwebtoken from 'jsonwebtoken'
 import authenticate from '#middlewares/authenticate.js'
 import { v4 as uuidv4 } from 'uuid'
 const router = express.Router()
@@ -13,7 +13,7 @@ router.use(express.json())
 import db from '#configs/mysql.js'
 
 // 定義安全的私鑰字串
-const secretKey = process.env.ACCESS_TOKEN_SECRET
+const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET
 
 // const blackList = []
 const upload = multer()
@@ -78,132 +78,31 @@ router.post('/login', upload.none(), async (req, res) => {
     })
     return
   }
-  // 登入成功送出的內容
-  const token = jwt.sign(
-    {
-      // account: user.account,
-      id: user.id,
-      user_name: user.user_name,
-      email: user.email,
-      // head: user.head,
-    },
-    secretKey,
-    {
-      // 讓token有期限:expiresIn多少時間後會過期
-      expiresIn: '30m',
-    }
-  )
-  res.status(200).json({
+  // 存取令牌(access token)只需要id和username就足夠，其它資料可以再向資料庫查詢
+  const returnUser = {
+    id: user.id,
+    username: user.username,
+    google_uid: user.google_uid,
+  }
+
+  // 產生存取令牌(access token)，其中包含會員資料
+  const accessToken = jsonwebtoken.sign(returnUser, accessTokenSecret, {
+    expiresIn: '3d',
+  })
+
+  // 使用httpOnly cookie來讓瀏覽器端儲存access token
+  res.cookie('accessToken', accessToken, { httpOnly: true })
+
+  // 傳送access token回應(例如react可以儲存在state中使用)
+  res.json({
     status: 'success',
-    token,
-    user_name: user.user_name,
+    data: { accessToken },
   })
 })
-router.get(
-  '/logout',
-  (req, res, next) => {
-    // 匿名的function:(req,res,next)=>{}
-    checkToken(req, res, next)
-  },
-  (req, res) => {
-    const { user_name, email } = req.decoded
-
-    if (!email) {
-      res.status(400).json({
-        status: 'fail',
-        message: '登出失敗，請稍後再試',
-      })
-      return
-    }
-    const token = jwt.sign(
-      {
-        user_name: undefined,
-        email: undefined,
-      },
-      secretKey,
-      {
-        expiresIn: '-1s',
-      }
-    )
-    res.status(200).json({
-      status: 'success',
-      message: '登出成功',
-      token,
-    })
-  }
-)
-router.post('/glogout', authenticate, (req, res) => {
+router.post('/logout', authenticate, (req, res) => {
   // 清除cookie
   res.clearCookie('accessToken', { httpOnly: true })
   res.json({ status: 'success', data: null })
 })
-
-router.get(
-  '/status',
-  (req, res, next) => {
-    checkToken(req, res, next)
-  },
-  (req, res) => {
-    const { id, user_name, email } = req.decoded
-    if (!email) {
-      res.status(400).json({
-        status: 'fail',
-        message: '驗證錯誤，請重新登入',
-      })
-      return
-    }
-    const token = jwt.sign(
-      {
-        id,
-        user_name,
-        email,
-      },
-      secretKey,
-      {
-        expiresIn: '30m',
-      }
-    )
-    res.status(200).json({
-      status: 'success',
-      message: '使用者於登入狀態',
-      token,
-    })
-  }
-)
-
-function checkToken(req, res, next) {
-  let token = req.get('Authorization')
-
-  if (token && token.indexOf('Bearer ') === 0) {
-    token = token.slice(7)
-    // 開發中會用blackList測試
-    // 類似session的做法
-    // 不是很保險，因為伺服器重啟blackList就會消失
-    // if (blackList.includes(token)) {
-    //   return res.status(401).json({
-    //     status: 'error',
-    //     message: '登入驗證失效，請重新登入',
-    //   })
-    // }
-    jwt.verify(token, secretKey, (error, decoded) => {
-      if (error) {
-        console.error('Token verification failed:', error.message)
-        res.status(401).json({
-          status: 'error',
-          message: '登入驗證失效，請重新登入',
-        })
-        return
-      }
-      req.decoded = decoded // 有拿到資料就拿
-      console.log('Decoded token:', req.decoded)
-      next() //有中間鍵middleware可以繞出去
-    })
-  } else {
-    res.status(401).json({
-      status: 'error',
-      message: '沒有驗證資料,請重新登入',
-    })
-  }
-}
 
 export default router

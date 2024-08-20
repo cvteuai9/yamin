@@ -1,13 +1,13 @@
 // import styles from '@/components/member/ordered.module.css'
 import Leftnav from '@/components/member/left-nav'
 import Link from 'next/link'
-import { useContext } from 'react'
-import { AuthContext } from '@/context/AuthContext'
+import { useAuth } from '@/hooks/my-use-auth'
+
 export default function Ordered() {
-  const { user } = useContext(AuthContext)
-  if (!user) {
-    return <p>Loading...</p> 
-  }
+  const { auth } = useAuth()
+
+  if (!auth.isAuth) return <></>
+
   return (
     <>
       <div className="container">

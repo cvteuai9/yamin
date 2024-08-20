@@ -7,25 +7,24 @@ import Star from '@/components/star/star'
 import GoogleLogo from '@/components/icons/google-logo'
 import { RiEyeLine } from 'react-icons/ri'
 import { RiEyeOffLine } from 'react-icons/ri'
-import { useAuth, initUserData } from '@/hooks/useAuth'
+import { useAuth, initUserData } from '@/hooks/my-use-auth'
 import useFirebase from '@/hooks/use-firebase'
 import { useRouter } from 'next/router'
 import {
+  login,
   googleLogin,
   parseJwt,
   getUserById,
 } from '@/services/my-user'
-import { useContext } from 'react'
-import { AuthContext } from '@/context/AuthContext'
+import toast, { Toaster } from 'react-hot-toast'
+
+
 
 // import { useAuth } from '@/hooks/use-auth'
 // import GoogleLogo from '@/components/icons/google-logo'
 
 export default function LoginForm() {
-  // const [email, setEmail] = useState('')
-  // const [password, setPassword] = useState('')
-  const { token, setGUser, handleCheckAuth } = useContext(AuthContext)
-  console.log(token);
+  const { auth,setAuth } = useAuth()
 
   const { loginGoogle } = useFirebase()
   // const { auth, setAuth } = useAuth()
@@ -33,8 +32,9 @@ export default function LoginForm() {
 
   // 處理google登入後，要向伺服器進行登入動作
   const callbackGoogleLoginPopup = async (providerData) => {
-    console.log(providerData)// 如果目前react(next)已經登入中，不需要再作登入動作
-
+    console.log(providerData)
+    // 如果目前react(next)已經登入中，不需要再作登入動作
+    if (auth.isAuth) return
     // 向伺服器進行登入動作(向本地端伺服器去登入)
     const res = await googleLogin(providerData)
 
@@ -57,13 +57,15 @@ export default function LoginForm() {
             userData[key] = dbUser[key] || ''
           }
         }
-        console.log(userData);
-        // setUser(userData) 沒有密碼，不能跟login去併用
-        await handleCheckAuth()
-
+        // 設定到全域狀態中
+        setAuth({
+          isAuth: true,
+          userData,
+        })
       }
     }
   }
+
 
   const [user, setUser] = useState({
     email: '',
@@ -77,13 +79,58 @@ export default function LoginForm() {
     password: '',
     // agree: '', // 錯誤訊息用字串
   })
-  const { login } = useAuth()
+  //---------fetch-token方法login----------
+  // const { login } = useAuth()
 
-  const onLogin = async (e) => {
-    // e.preventDefault() // 防止表單默認提交行為
-    const user_name = await login(user.email, user.password)
-    if (user_name) {
-      alert(`歡迎回來，${user_name}！`)
+  // const onLogin = async (e) => {
+  //   // e.preventDefault() // 防止表單默認提交行為
+  //   const user_name = await login(user.email, user.password)
+  //   if (user_name) {
+  //     alert(`歡迎回來，${user_name}！`)
+  //   }
+  // }
+  //---------fetch-token方法login----------
+
+
+
+  const handleLogin = async () => {
+    const res = await login(user)
+
+    console.log(res.data)
+
+    if (res.data.status === 'success') {
+      // 從JWT存取令牌中解析出會員資料
+      // 注意JWT存取令牌中只有id, username, google_uid, line_uid在登入時可以得到
+      const jwtUser = parseJwt(res.data.data.accessToken)
+      console.log(jwtUser)
+
+      const res1 = await getUserById(jwtUser.id)
+      console.log(res1.data)
+
+      if (res1.data.status === 'success') {
+        // 只需要initUserData中的定義屬性值，詳見use-auth勾子
+        const dbUser = res1.data.data.user
+        const userData = { ...initUserData }
+
+        for (const key in userData) {
+          if (Object.hasOwn(dbUser, key)) {
+            userData[key] = dbUser[key]
+          }
+        }
+
+        // 設定到全域狀態中
+        setAuth({
+          isAuth: true,
+          userData,
+        })
+
+        toast.success('已成功登入')
+      } else {
+        toast.error('登入後無法得到會員資料')
+        // 這裡可以讓會員登出，因為這也算登入失敗，有可能會造成資料不統一
+      }
+    } else {
+      toast.error(`登入失敗`)
     }
   }
 
@@ -241,7 +288,7 @@ export default function LoginForm() {
                 <button
                   className={`${styles['btn-in']} mt-4`}
                   type="submit"
-                  onClick={onLogin}
+                  onClick={handleLogin}
                 >
                   登入
                 </button>

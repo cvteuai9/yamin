@@ -109,6 +109,75 @@ export const AuthProvider = ({ children }) => {
     }
   }, [router.isReady, router.pathname, user, loading]);
 
+
+
+
+  useEffect(() => {
+    // 立即執行函數
+    ; (async () => {
+      if (token) {
+        const result = await checkToken(token)
+        console.log(result)
+        if (result.email) {
+          setUser(result)
+        } else {
+          setUser(null)
+        }
+      }
+    })()
+  }, [token])
+
+  // useEffect不能下await , 所以用()()立即執行函數
+  useEffect(() => {
+    const oldToken = localStorage.getItem('nextNeToken')
+    if (oldToken && !token) {
+      ; (async () => {
+        try {
+          const url = 'http://localhost:3005/api/my-auth/status'
+          const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${oldToken}`,
+            },
+          })
+          const result = await response.json()
+          if (result.status === 'success') {
+            setToken(result.token)
+            localStorage.setItem('nextNeToken', result.token)
+          } else {
+            throw new Error(result.message)
+          }
+        } catch (error) {
+          // setAuthError(error.message)
+          localStorage.removeItem('nextNeToken')
+        }
+      })()
+    }
+  }, [])
+
+  const checkToken = async (token) => {
+    const secretKey = 'thisisverstrongaccesstokensecre'
+    let decoded
+    try {
+      decoded = await new Promise((resolve, reject) => {
+        // console.log(token)
+        jwt.verify(token, secretKey, (error, data) => {
+          if (error) {
+            return reject(error)
+          }
+          resolve(data)
+          // console.log(data);
+        })
+      })
+    } catch (err) {
+      // console.log(err)
+      decoded = {}
+    }
+
+    return decoded
+  }
+
+
   return (
     <AuthContext.Provider value={{ user, setUser, token, setToken, guser, setGUser, setLoading, handleCheckAuth }}>
       {children}
