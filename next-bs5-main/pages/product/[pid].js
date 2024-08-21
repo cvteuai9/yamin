@@ -6,6 +6,8 @@ import { IoArrowBackCircle } from 'react-icons/io5'
 // Import Swiper React components
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { FaArrowAltCircleRight } from 'react-icons/fa'
+import { YaminUseCart } from '@/hooks/yamin-use-cart'
+import toast, { Toaster } from 'react-hot-toast'
 
 // 以下為  {商品圖輪播套件}
 // Import Swiper styles
@@ -18,6 +20,23 @@ import { Autoplay, FreeMode, Navigation, Thumbs } from 'swiper/modules'
 // 以上為  {商品圖輪播套件}
 
 export default function Detail() {
+const { addItem = () => {} } = YaminUseCart()
+
+const notify = (productName) => {
+  toast.success(
+    <>
+      <p>
+        {productName + '已成功加入購物車!'}
+        <br />
+        <Link href="/cart/cartOne">前往購物車</Link>
+      </p>
+    </>
+  )
+}
+
+
+
+
   const [productCount, setProductCount] = useState(1)
   const [thumbsSwiper, setThumbsSwiper] = useState(null)
   const [review, setReview] = useState([])
@@ -337,7 +356,15 @@ export default function Detail() {
                     </button>
                   </div>
                 </div>
-                <button className={`btn ${styles['cart-btn']} text-center`}>
+                <button
+                  className={`btn ${styles['cart-btn']} text-center`}
+                  onClick={() => {
+                    const item = { ...product, qty: productCount }
+                    console.log(item)
+                    notify(product.product_name)
+                    addItem(item)
+                  }}
+                >
                   加入購物車
                 </button>
               </div>
@@ -694,6 +721,7 @@ export default function Detail() {
             </Link>
           </div>
         </div>
+        <Toaster />
       </div>
     </>
   )

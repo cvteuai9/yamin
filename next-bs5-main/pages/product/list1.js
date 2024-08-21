@@ -4,8 +4,25 @@ import { useRouter } from 'next/router'
 import styles from '@/styles/product.module.scss'
 import Link from 'next/link'
 import { func } from 'prop-types'
+import { YaminUseCart } from '@/hooks/yamin-use-cart'
+import toast, { Toaster } from 'react-hot-toast'
 
 export default function List1() {
+  const { addItem = () => {} } = YaminUseCart()
+
+  const notify = (productName) => {
+    toast.success(
+      <>
+        <p>
+          {productName + '已成功加入購物車!'}
+          <br />
+          <Link href="/cart/cartOne">前往購物車</Link>
+        </p>
+      </>
+    )
+  }
+
+
   const router = useRouter()
   const { showLoader, hideLoader, loading, delay } = useLoader() // 頁面載入等候畫面
   //宣告 filter array(用來顯示篩選條件checkbox選項)
@@ -483,10 +500,20 @@ export default function List1() {
                                 />
                               )}
                             </button>
-                            <img
-                              src="/images/product/list1/shooping-cart.svg"
-                              alt=""
-                            />
+                            <button
+                              className="btn"
+                              onClick={() => {
+                                const item = { ...v, qty: 1 }
+                                console.log(item)
+                                notify(v.product_name)
+                                addItem(item)
+                              }}
+                            >
+                              <img
+                                src="/images/product/list1/shooping-cart.svg"
+                                alt=""
+                              />
+                            </button>
                           </div>
                           <div>
                             <p className="m-0">
