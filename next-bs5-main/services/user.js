@@ -4,7 +4,7 @@ import useSWR from 'swr'
 /**
  * 檢查會員狀態使用
  */
-export const checkAuth = async () => {
+export const checkAuth = async (id = 1) => {
   return await axiosInstance.get('/auth/check')
 }
 /**
@@ -81,7 +81,7 @@ export const resetPassword = async (email = '', password = '', token = '') => {
  * 註冊用
  */
 export const register = async (user = {}) => {
-  return await axiosInstance.post('/users', user)
+  return await axiosInstance.post('/my-users', user)
 }
 /**
  * 修改會員一般資料用(排除password, username, email)

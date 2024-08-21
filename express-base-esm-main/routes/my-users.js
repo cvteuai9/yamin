@@ -133,7 +133,7 @@ router.post('/', upload.none(), async (req, res) => {
     'INSERT INTO users (member_id, email, password, user_name) VALUES (?, ?, ?, ?)',
     [member_id, email, password, user_name]
   )
-  res.status(201).json({
+  return res.status(201).json({
     status: 'success',
     message: '註冊成功',
     member_id,
@@ -195,7 +195,7 @@ router.put('/:id/profile', authenticate, async function (req, res) {
   }
 
   // 查詢資料庫目前的資料
-  const dbUser = await db.query('SELECT FROM users WHERE id = ?', [id])
+  const dbUser = await db.query('SELECT * FROM users WHERE id = ?', [id])
 
   // null代表不存在
   if (!dbUser) {
@@ -219,7 +219,7 @@ router.put('/:id/profile', authenticate, async function (req, res) {
   }
 
   // 更新成功後，找出更新的資料，updatedUser為更新後的會員資料
-  const updatedUser = await db.query('SELECT FROM users WHERE id = ?', [id])
+  const updatedUser = await db.query('users WHERE id = ?', [id])
 
   // password資料不需要回應給瀏覽器
   // delete updatedUser.password
