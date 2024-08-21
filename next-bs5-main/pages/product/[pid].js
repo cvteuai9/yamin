@@ -68,7 +68,7 @@ export default function Detail() {
       )
       const resFav = await fetch(favURL)
       const dataFav = await resFav.json()
-      if (dataFav.includes(productThis.product_id)) {
+      if (dataFav.includes(productThis.id)) {
         productThis.fav = true
       } else {
         productThis.fav = false
@@ -133,7 +133,7 @@ export default function Detail() {
   async function handleFavToggle(product) {
     if (product.fav === false) {
       fetch(
-        `http://localhost:3005/api/my_products/favorites?user_id=1&product_id=${product.product_id}`,
+        `http://localhost:3005/api/my_products/favorites?user_id=1&product_id=${product.id}`,
         { method: 'PUT' }
       )
         .then((res) => res.json())
@@ -141,7 +141,7 @@ export default function Detail() {
         .catch((error) => console.log(error))
     } else {
       fetch(
-        `http://localhost:3005/api/my_products/favorites?user_id=1&product_id=${product.product_id}`,
+        `http://localhost:3005/api/my_products/favorites?user_id=1&product_id=${product.id}`,
         { method: 'DELETE' }
       )
         .then((res) => res.json())
