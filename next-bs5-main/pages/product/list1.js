@@ -8,7 +8,6 @@ import { YaminUseCart } from '@/hooks/yamin-use-cart'
 import toast, { Toaster } from 'react-hot-toast'
 
 export default function List1() {
-  const router = useRouter()
   const { addItem = () => {} } = YaminUseCart()
 
   const notify = (productName) => {
@@ -22,7 +21,6 @@ export default function List1() {
       </>
     )
   }
-
 
   const router = useRouter()
   const { showLoader, hideLoader, loading, delay } = useLoader() // 頁面載入等候畫面
