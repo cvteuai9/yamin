@@ -20,6 +20,7 @@ import { compareHash } from '#db-helpers/password-hash.js'
 const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET
 
 // 檢查登入狀態用
+// authenticate 中間件會在請求進入路由處理程序之前執行，用來確保用戶已經登入並且有權訪問該路由。
 router.get('/check', authenticate, async (req, res) => {
   // 查詢資料庫目前的資料
   const user = await User.findByPk(req.user.id, {
@@ -27,7 +28,7 @@ router.get('/check', authenticate, async (req, res) => {
   })
 
   // 不回傳密碼值
-  delete user.password
+  // delete user.password
   return res.json({ status: 'success', data: { user } })
 })
 

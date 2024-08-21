@@ -101,7 +101,7 @@ router.get('/', async (req, res) => {
 
   // 分頁用
   const page = Number(req.query.page) || 1
-  const perpage = Number(req.query.perpage) || 10
+  const perpage = Number(req.query.perpage) || 20
   const offset = (page - 1) * perpage
   const limit = perpage
 

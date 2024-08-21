@@ -45,12 +45,12 @@ export default async function (sequelize) {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      img: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
       valid: {
         type: DataTypes.INTEGER(1),
+        allowNull: true,
+      },
+      img: {
+        type: DataTypes.STRING,
         allowNull: true,
       },
     },
