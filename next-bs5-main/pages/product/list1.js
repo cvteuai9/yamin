@@ -9,7 +9,7 @@ import toast, { Toaster } from 'react-hot-toast'
 
 export default function List1() {
   const { addItem = () => {} } = YaminUseCart()
-
+  const router = useRouter()
   const notify = (productName) => {
     toast.success(
       <>

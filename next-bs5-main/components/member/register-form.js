@@ -77,6 +77,7 @@ export default function RegisterForm() {
           isAuth: true,
           userData,
         })
+        console.log(auth);
       }
     }
   }
