@@ -23,8 +23,6 @@ export default function List1() {
     )
   }
 
-
-  const router = useRouter()
   const { showLoader, hideLoader, loading, delay } = useLoader() // 頁面載入等候畫面
   //宣告 filter array(用來顯示篩選條件checkbox選項)
   const priceArray = ['$500 以下', '$500 ~ $1000', '$1000 以上']
