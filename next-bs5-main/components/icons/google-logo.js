@@ -1,4 +1,4 @@
-export default function GoogleLogo({ size = '36', className }) {
+export default function GoogleLogo({ size = '25', className }) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
