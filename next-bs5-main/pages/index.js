@@ -2,25 +2,53 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import PlaceholderText from '@/components/common/placeholder-text'
-import { useContext } from 'react'
-import { AuthContext } from '@/context/AuthContext'
-import useAuth from '@/hooks/useAuth'
+import useFirebase from '@/hooks/use-firebase'
+import { checkAuth, login, logout, getUserById } from '@/services/my-user'
+import toast, { Toaster } from 'react-hot-toast'
+import {initUserData, useAuth } from '@/hooks/my-use-auth'
 export default function Home() {
-  const { user } = useContext(AuthContext)
-  const { logout } = useAuth()
-  // console.log(user)
+  const { auth,setAuth } = useAuth()
+
+  const { loginGoogle, logoutFirebase } = useFirebase()
+  // 處理登出
+  const handleLogout = async () => {
+    // firebase logout(注意，這並不會登出google帳號，是登出firebase的帳號)
+    logoutFirebase()
+
+    const res = await logout()
+
+    // 成功登出後，回復初始會員狀態
+    if (res.data.status === 'success') {
+      toast.success('已成功登出')
+
+      setAuth({
+        isAuth: false,
+        userData: initUserData,
+      })
+    } else {
+      toast.error(`登出失敗`)
+    }
+  }
+  if (!auth.isAuth) return <>
+    <main>
+        <p className="testlogin">首頁</p>
+        <a href="/member/profile">會員資料</a>
+        <a href="/member/order">會員訂單</a>
+      </main>
+  </>
   return (
     <>
       <main>
-        {user && user.user_name && (
           <>
             {/* <Image src={user.head} width={100} height={100} /> */}
-            <p className="testlogin">{user.user_name}</p>
-            <button className="btn btn-primary" onClick={logout}>
+            <p className="testlogin">{auth.userData.user_name}</p>
+            <button className="btn btn-primary" onClick={handleLogout}>
               登出
             </button>
           </>
-        )}
+        <p className="testlogin">首頁</p>
+        <a href="/member/profile">會員資料</a>
+        <a href="/member/order">會員訂單</a>
       </main>
       {/* <h1 className="mb-3 display-5 fw-bold text-body-emphasis">
         Next + Bootstrap5 範例

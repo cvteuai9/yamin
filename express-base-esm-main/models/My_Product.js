@@ -9,10 +9,6 @@ export default async function (sequelize) {
         primaryKey: true,
         autoIncrement: true,
       },
-      name: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
       picture: {
         type: DataTypes.STRING,
         allowNull: true,
@@ -20,6 +16,10 @@ export default async function (sequelize) {
       stock: {
         type: DataTypes.INTEGER,
         allowNull: true,
+      },
+      name: {
+        type: DataTypes.STRING,
+        allowNull: false,
       },
       price: {
         type: DataTypes.INTEGER,
