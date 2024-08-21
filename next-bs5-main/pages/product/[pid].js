@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { IoArrowBackCircle } from 'react-icons/io5'
 // Import Swiper React components
 import { Swiper, SwiperSlide } from 'swiper/react'
+import { FaArrowAltCircleRight } from 'react-icons/fa'
 
 // 以下為  {商品圖輪播套件}
 // Import Swiper styles
@@ -20,6 +21,7 @@ export default function Detail() {
   const [productCount, setProductCount] = useState(1)
   const [thumbsSwiper, setThumbsSwiper] = useState(null)
   const [review, setReview] = useState([])
+  const [allReviews, setAllReviews] = useState([])
   // eachRating各星級的評價%數陣列 => [0, 0, 12, 15, 73]
   //                                 ^^ ^^ ^^  ^^  ^^
   //                           星級   1  2   3   4  5
@@ -30,6 +32,7 @@ export default function Detail() {
   const [allLength, setAllLength] = useState('0')
   const router = useRouter()
   const [image, setImage] = useState([])
+  const [relationProduct, setRelationProduct] = useState([])
   const allRatingStar = new Array(Math.floor(Number(allRatingScore))).fill(0)
   const allRatingUnfillStar = new Array(
     5 - Math.floor(Number(allRatingScore))
@@ -55,24 +58,59 @@ export default function Detail() {
   })
   // 取得特定id商品資料的函式
   async function getProduct(id) {
-    const apiURL = new URL(`http://localhost:3005/api/my_products/${id}`)
-    const res = await fetch(apiURL)
-    const data = await res.json()
-    setProduct(data.data[0])
-    setImage(data.images)
+    try {
+      const apiURL = new URL(`http://localhost:3005/api/my_products/${id}`)
+      const res = await fetch(apiURL)
+      const data = await res.json()
+      let productThis = data.data[0]
+      const favURL = new URL(
+        `http://localhost:3005/api/my_products/favorites?user_id=1`
+      )
+      const resFav = await fetch(favURL)
+      const dataFav = await resFav.json()
+      if (dataFav.includes(productThis.product_id)) {
+        productThis.fav = true
+      } else {
+        productThis.fav = false
+      }
+      console.log(productThis)
+      setProduct(productThis)
+      setImage(data.images)
+      // console.log(data)
+    } catch (error) {
+      console.log(error)
+    }
   }
   // 取得評論的函式
   async function getReviews(id) {
-    const apiURL = new URL(
-      `http://localhost:3005/api/my_products/reviews/${id}`
-    )
-    const res = await fetch(apiURL)
-    const data = await res.json()
-    if (data.allLength !== 0) {
-      setReview(data.data)
-      setEachRating(data.eachRating)
-      setAllRating(data.allRating)
-      setAllLength(JSON.stringify(data.allLength))
+    try {
+      const apiURL = new URL(
+        `http://localhost:3005/api/my_products/reviews/${id}`
+      )
+      const res = await fetch(apiURL)
+      const data = await res.json()
+      if (data.allLength !== 0) {
+        setReview(data.someData)
+        setAllReviews(data.allData)
+        setEachRating(data.eachRating)
+        setAllRating(data.allRating)
+        setAllLength(JSON.stringify(data.allLength))
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  // 取得相關產品
+  async function getRelationProduct(id) {
+    try {
+      const apiURL = new URL(
+        `http://localhost:3005/api/my_products/relation_product/${id}`
+      )
+      const res = await fetch(apiURL)
+      const data = await res.json()
+      setRelationProduct(data)
+    } catch (error) {
+      console.log(error)
     }
   }
   // 處理商品數量加減的函式
@@ -92,25 +130,48 @@ export default function Detail() {
       }
     }
   }
+  async function handleFavToggle(product) {
+    if (product.fav === false) {
+      fetch(
+        `http://localhost:3005/api/my_products/favorites?user_id=1&product_id=${product.product_id}`,
+        { method: 'PUT' }
+      )
+        .then((res) => res.json())
+        .then((result) => console.log(result))
+        .catch((error) => console.log(error))
+    } else {
+      fetch(
+        `http://localhost:3005/api/my_products/favorites?user_id=1&product_id=${product.product_id}`,
+        { method: 'DELETE' }
+      )
+        .then((res) => res.json())
+        .then((result) => console.log(result))
+        .catch((error) => console.log(error))
+    }
+    const tmp = { ...product, fav: !product.fav }
+    setProduct(tmp)
+  }
   useEffect(() => {
     // console.log(router.query)
     if (router.isReady) {
-      // console.log(router.query)x`
+      // console.log(router.query)`
       getProduct(router.query.pid)
       getReviews(router.query.pid)
+      getRelationProduct(router.query.pid)
     }
     // eslint-disable-next-line
-  }, [router.isReady])
+  }, [router.isReady, router.query.pid])
+
   return (
     <>
       {/* 返回商品列表頁按鈕 */}
       <div className={`${styles.backToListBtn}`}>
-        <h1>
+        <h3>
           <Link href={`/product/list1`}>
-            <IoArrowBackCircle className="display-2" />
+            <IoArrowBackCircle className="display-4" />
             返回產品列表
           </Link>
-        </h1>
+        </h3>
       </div>
       {/* main ---START--- */}
       <div className={`${styles.main} container-fluid`}>
@@ -122,7 +183,6 @@ export default function Detail() {
           <div
             className={`${styles.left} col-12 col-sm-5 col-lg-4 p-0 p-md-3 p-xl-5`}
           >
-            <h4>全部商品 / 茶種 / 綠茶 / 精品原葉|三峽碧螺春</h4>
             <Swiper
               style={{
                 '--swiper-navigation-color': '#d7b375',
@@ -177,7 +237,7 @@ export default function Detail() {
             className={`${styles.right} col-12 col-sm-5 col-lg-6 d-flex flex-column justify-content-between gap-3 gap-xl-5 ps-3 p-md-3 p-xl-5`}
           >
             <div className="d-flex flex-column gap-3 gap-xl-5">
-              <h1 className="fw-bold">{`${product.product_name}`}</h1>
+              <h3 className="fw-bold">{`${product.product_name}`}</h3>
               <div className="d-flex gap-3">
                 {/* 商品評論 */}
                 <div
@@ -215,20 +275,43 @@ export default function Detail() {
               </div>
 
               {/* 商品價格 */}
-              <h1>
+              <h2>
                 NT$ <span>{product.price}</span>
-              </h1>
+              </h2>
               <div className="d-flex gap-3 flex-column flex-lg-row align-items-end">
                 <div
                   className={`${styles['heart-btn']} d-flex flex-row flex-lg-column gap-3 gap-xl-5 justify-content-between justify-content-lg-end align-items-center align-items-lg-start`}
                 >
                   <div className="d-flex gap-0 gap-md-3">
-                    <img
-                      className={`${styles['like-heart']}`}
-                      src="/images/product/list1/heart.svg"
-                      alt=""
-                    />
-                    <h2 className={`m-0 ${styles['like-text']}`}>加入收藏</h2>
+                    <button
+                      type="button"
+                      className="btn d-flex"
+                      onClick={() => handleFavToggle(product)}
+                    >
+                      {product.fav ? (
+                        <>
+                          <img
+                            className={`${styles['like-heart']}`}
+                            src="/images/product/list1/heart-fill.svg"
+                            alt=""
+                          />
+                          <h3 className={`m-0 ${styles['like-text']}`}>
+                            已收藏
+                          </h3>
+                        </>
+                      ) : (
+                        <>
+                          <img
+                            className={`${styles['like-heart']}`}
+                            src="/images/product/list1/heart.svg"
+                            alt=""
+                          />
+                          <h3 className={`m-0 ${styles['like-text']}`}>
+                            加入收藏
+                          </h3>
+                        </>
+                      )}
+                    </button>
                   </div>
                   <div
                     className={`${styles['product-count']} d-flex text-center`}
@@ -260,7 +343,7 @@ export default function Detail() {
               </div>
             </div>
             <div>
-              <h3>運送方式</h3>
+              <h5>運送方式</h5>
               <p className="p2">
                 配送方式：常溫宅配 <br />
                 1.
@@ -284,13 +367,13 @@ export default function Detail() {
               className={`d-flex justify-content-center align-items-center mb-3 gap-3`}
             >
               <img src="/images/product/list1/dash.svg" alt="" />
-              <h1 className={`text-center ${styles['descript-title']} m-0`}>
+              <h3 className={`text-center ${styles['descript-title']} m-0`}>
                 商品描述
-              </h1>
+              </h3>
               <img src="/images/product/list1/dash.svg" alt="" />
             </div>
 
-            <h3 className={`${styles.descript}`}>{product.description}</h3>
+            <h5 className={`${styles.descript}`}>{product.description}</h5>
           </div>
           <div className="col-12 col-sm-5 p-0">
             <img
@@ -306,7 +389,7 @@ export default function Detail() {
             className={`d-flex justify-content-center align-items-center gap-3`}
           >
             <img src="/images/product/list1/dash.svg" alt="" />
-            <h1 className={`${styles['section3-title']} m-0`}>顧客評價</h1>
+            <h3 className={`${styles['section3-title']} m-0`}>顧客評價</h3>
             <img src="/images/product/list1/dash.svg" alt="" />
           </div>
           {/* 如果沒有人評論，則顯示防呆訊息 */}
@@ -358,18 +441,18 @@ export default function Detail() {
                         className="row justify-content-center justify-content-md-start align-items-center mb-3"
                         key={i}
                       >
-                        <h3 className="col-1 m-0 text-end">
+                        <h5 className="col-1 m-0 text-end">
                           {eachRating.length - i}
-                        </h3>
+                        </h5>
                         <div className={`col-6 ${styles['review-rating-bar']}`}>
                           <div
                             className={`${styles['rating-bar']}`}
                             style={{ width: `${v}%` }}
                           />
                         </div>
-                        <h3 className="col-1 m-0">
+                        <h5 className="col-1 m-0">
                           <span>{v}</span>%
-                        </h3>
+                        </h5>
                       </div>
                     )
                   })}
@@ -393,7 +476,7 @@ export default function Detail() {
                             alt=""
                           />
                         </div>
-                        <h3 className="text-center">陳浩南</h3>
+                        <h5 className="text-center">陳浩南</h5>
                       </div>
                       <div>
                         <div
@@ -430,8 +513,112 @@ export default function Detail() {
                 })}
               </div>
               <div className="d-flex justify-content-center">
-                <div className={`${styles['more-btn']} py-3 px-3`}>
-                  <h3 className="m-0">查看更多</h3>
+                <div className={`${styles['more-btn']}`}>
+                  <button
+                    type="button"
+                    className="btn h5 m-0"
+                    data-bs-toggle="modal"
+                    data-bs-target="#moreBtnModal"
+                  >
+                    查看更多
+                  </button>
+                </div>
+              </div>
+              <div
+                className="modal fade"
+                id="moreBtnModal"
+                tabindex="-1"
+                aria-labelledby="exampleModalLabel"
+                aria-hidden="true"
+              >
+                {/* 顯示所有評論的modal */}
+                <div className="modal-dialog modal-lg modal-dialog-scrollable">
+                  <div className={`modal-content ${styles.moreArea}`}>
+                    <div className="modal-header d-flex justify-content-between">
+                      <h5 className="modal-title" id="exampleModalLabel">
+                        {product.product_name} 的所有評論
+                      </h5>
+                      <button
+                        type="button"
+                        className="btn-close m-0"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"
+                      ></button>
+                    </div>
+                    {/* 所有此商品的評論 */}
+                    <div className={`modal-body ${styles.modalBody}`}>
+                      <div className={`${styles['review-area']} mt-5`}>
+                        {allReviews.map((v, i) => {
+                          const starArray = new Array(v.rating).fill(0)
+                          const starArrayUnfill = new Array(5 - v.rating).fill(
+                            0
+                          )
+                          return (
+                            <div
+                              className={`${styles['review-card']} d-flex flex-row gap-5 mb-3`}
+                              key={v.id}
+                            >
+                              <div className="d-flex flex-column gap-3">
+                                <div className={`${styles.avatar}`}>
+                                  <img
+                                    className="img-fluid object-fit-cover"
+                                    src="/images/product/list1/boy3.png"
+                                    alt=""
+                                  />
+                                </div>
+                                <h5 className="text-center">陳浩南</h5>
+                              </div>
+                              <div>
+                                <div
+                                  className={`${styles['review-star-group']} d-flex gap-3`}
+                                >
+                                  {starArray.map((v, i) => {
+                                    return (
+                                      <img
+                                        src="/images/product/list1/Star.svg"
+                                        alt=""
+                                        key={i}
+                                      />
+                                    )
+                                  })}
+                                  {starArrayUnfill.map((v, i) => {
+                                    return (
+                                      <img
+                                        src="/images/product/list1/Star-unfill.svg"
+                                        alt=""
+                                        key={i}
+                                      />
+                                    )
+                                  })}
+                                </div>
+                                <div
+                                  className={`${styles['review-text']} mt-3`}
+                                >
+                                  <p>{v.comment}</p>
+                                </div>
+                                <div
+                                  className={`${styles['review-date']} mt-3 fs-5`}
+                                >
+                                  {v.created_at}
+                                </div>
+                              </div>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    </div>
+                    {/* 確認按鈕 */}
+                    <div class="modal-footer">
+                      <button
+                        type="button"
+                        class="btn btn-primary fs-4"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"
+                      >
+                        確認
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </>
@@ -439,10 +626,10 @@ export default function Detail() {
             <>
               {/* 如果商品沒有評論，會顯示以下防呆訊息 */}
               <div className="text-center my-5 fw-bold">
-                <div className="display-2">此商品還沒有人評論過...</div>
+                <div className="display-3">此商品還沒有人評論過...</div>
                 <div className="mt-3">
                   <Link
-                    className={`${styles.goShooping} text-decoration-none fs-1`}
+                    className={`${styles.goShooping} text-decoration-none fs-2`}
                     href="/product/list1"
                   >
                     點我去逛逛
@@ -458,124 +645,53 @@ export default function Detail() {
             className={`d-flex justify-content-center align-items-center gap-3 mb-5`}
           >
             <img src="/images/product/list1/dash.svg" alt="" />
-            <h1 className={`${styles['section4-title']} m-0`}>相關產品</h1>
+            <h3 className={`${styles['section4-title']} m-0`}>相關產品</h3>
             <img src="/images/product/list1/dash.svg" alt="" />
           </div>
           <div className={`${styles['rp-group']} my-3 py-3`}>
-            <div className={`${styles['relation-product-card']} pb-3`}>
-              <div className={`${styles['card-image']} pb-3`}>
-                <img
-                  className="img-fluid object-fit-cover"
-                  src="/images/product/list1/image_0537.jpg"
-                  alt=""
-                />
+            {relationProduct.map((v, i) => {
+              return (
+                <>
+                  <div
+                    className={`${styles['relation-product-card']} pb-1 d-flex flex-column gap-3 justify-content-between`}
+                    key={i}
+                  >
+                    <div className="d-flex flex-column gap-2">
+                      <div className={`${styles['card-image']} pb-3`}>
+                        <Link href={`/product/${v.id}`}>
+                          <img
+                            src={`/images/product/list1/products-images/${v.paths}`}
+                            alt=""
+                          />
+                        </Link>
+                      </div>
+                      <div className={`${styles['product-name']} px-3`}>
+                        <Link
+                          href={`/product/${v.id}`}
+                          className="text-decoration-none"
+                        >
+                          <p className="fw-bold">{v.product_name}</p>
+                        </Link>
+                      </div>
+                    </div>
+                    <div className={`${styles['card-bottom']} px-3`}>
+                      <p className="m-0">
+                        NT$ <span>{v.price}</span>
+                      </p>
+                    </div>
+                  </div>
+                </>
+              )
+            })}
+            <Link
+              className={`${styles.relationProductBtn} d-flex justify-contnet-center align-items-center`}
+              href="/product/list1"
+            >
+              <div className="fs-1 d-flex justify-contnet-center align-items-center">
+                <FaArrowAltCircleRight />
+                &ensp;點我查看更多
               </div>
-              <div className={`${styles['card-body']} px-3`}>
-                <div className={`${styles['product-name']}`}>
-                  <p>果韻烏龍茶(深焙) Deep Roasted Oolong Tea - 150g</p>
-                </div>
-                <div className={`${styles['card-bottom']}`}>
-                  <p className="m-0">
-                    NT$ <span>650</span>
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className={`${styles['relation-product-card']} pb-3`}>
-              <div className={`${styles['card-image']} pb-3`}>
-                <img
-                  className="img-fluid object-fit-cover"
-                  src="/images/product/list1/image_0537.jpg"
-                  alt=""
-                />
-              </div>
-              <div className={`${styles['card-body']} px-3`}>
-                <div className={`${styles['product-name']}`}>
-                  <p>果韻烏龍茶(深焙) Deep Roasted Oolong Tea - 150g</p>
-                </div>
-                <div className={`${styles['card-bottom']}`}>
-                  <p className="m-0">
-                    NT$ <span>650</span>
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className={`${styles['relation-product-card']} pb-3`}>
-              <div className={`${styles['card-image']} pb-3`}>
-                <img
-                  className="img-fluid object-fit-cover"
-                  src="/images/product/list1/image_0537.jpg"
-                  alt=""
-                />
-              </div>
-              <div className={`${styles['card-body']} px-3`}>
-                <div className={`${styles['product-name']}`}>
-                  <p>果韻烏龍茶(深焙) Deep Roasted Oolong Tea - 150g</p>
-                </div>
-                <div className={`${styles['card-bottom']}`}>
-                  <p className="m-0">
-                    NT$ <span>650</span>
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className={`${styles['relation-product-card']} pb-3`}>
-              <div className={`${styles['card-image']} pb-3`}>
-                <img
-                  className="img-fluid object-fit-cover"
-                  src="/images/product/list1/image_0537.jpg"
-                  alt=""
-                />
-              </div>
-              <div className={`${styles['card-body']} px-3`}>
-                <div className={`${styles['product-name']}`}>
-                  <p>果韻烏龍茶(深焙) Deep Roasted Oolong Tea - 150g</p>
-                </div>
-                <div className={`${styles['card-bottom']}`}>
-                  <p className="m-0">
-                    NT$ <span>650</span>
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className={`${styles['relation-product-card']} pb-3`}>
-              <div className={`${styles['card-image']} pb-3`}>
-                <img
-                  className="img-fluid object-fit-cover"
-                  src="/images/product/list1/image_0537.jpg"
-                  alt=""
-                />
-              </div>
-              <div className={`${styles['card-body']} px-3`}>
-                <div className={`${styles['product-name']}`}>
-                  <p>果韻烏龍茶(深焙) Deep Roasted Oolong Tea - 150g</p>
-                </div>
-                <div className={`${styles['card-bottom']}`}>
-                  <p className="m-0">
-                    NT$ <span>650</span>
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className={`${styles['relation-product-card']} pb-3`}>
-              <div className={`${styles['card-image']} pb-3`}>
-                <img
-                  className="img-fluid object-fit-cover"
-                  src="/images/product/list1/image_0537.jpg"
-                  alt=""
-                />
-              </div>
-              <div className={`${styles['card-body']} px-3`}>
-                <div className={`${styles['product-name']}`}>
-                  <p>果韻烏龍茶(深焙) Deep Roasted Oolong Tea - 150g</p>
-                </div>
-                <div className={`${styles['card-bottom']}`}>
-                  <p className="m-0">
-                    NT$ <span>650</span>
-                  </p>
-                </div>
-              </div>
-            </div>
+            </Link>
           </div>
         </div>
       </div>
