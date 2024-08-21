@@ -6,6 +6,8 @@ import { IoArrowBackCircle } from 'react-icons/io5'
 // Import Swiper React components
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { FaArrowAltCircleRight } from 'react-icons/fa'
+import { YaminUseCart } from '@/hooks/yamin-use-cart'
+import toast, { Toaster } from 'react-hot-toast'
 
 // 以下為  {商品圖輪播套件}
 // Import Swiper styles
@@ -18,6 +20,20 @@ import { Autoplay, FreeMode, Navigation, Thumbs } from 'swiper/modules'
 // 以上為  {商品圖輪播套件}
 
 export default function Detail() {
+  const { addItem = () => {} } = YaminUseCart()
+
+  const notify = (productName) => {
+    toast.success(
+      <>
+        <p>
+          {productName + '已成功加入購物車!'}
+          <br />
+          <Link href="/cart/cartOne">前往購物車</Link>
+        </p>
+      </>
+    )
+  }
+
   const [productCount, setProductCount] = useState(1)
   const [thumbsSwiper, setThumbsSwiper] = useState(null)
   const [review, setReview] = useState([])
@@ -62,9 +78,21 @@ export default function Detail() {
       const apiURL = new URL(`http://localhost:3005/api/my_products/${id}`)
       const res = await fetch(apiURL)
       const data = await res.json()
-      setProduct(data.data[0])
+      let productThis = data.data[0]
+      const favURL = new URL(
+        `http://localhost:3005/api/my_products/favorites?user_id=1`
+      )
+      const resFav = await fetch(favURL)
+      const dataFav = await resFav.json()
+      if (dataFav.includes(productThis.id)) {
+        productThis.fav = true
+      } else {
+        productThis.fav = false
+      }
+      // console.log(productThis)
+      setProduct(productThis)
       setImage(data.images)
-      console.log(data)
+      // console.log(data)
     } catch (error) {
       console.log(error)
     }
@@ -118,36 +146,26 @@ export default function Detail() {
       }
     }
   }
-  // 取得評論的函式
-  async function getReviews(id) {
-    const apiURL = new URL(
-      `http://localhost:3005/api/my_products/reviews/${id}`
-    )
-    const res = await fetch(apiURL)
-    const data = await res.json()
-    if (data.allLength !== 0) {
-      setReview(data.data)
-      setEachRating(data.eachRating)
-      setAllRating(data.allRating)
-      setAllLength(JSON.stringify(data.allLength))
-    }
-  }
-  // 處理商品數量加減的函式
-  function handleProductCount(e) {
-    if (e.target.id === 'add') {
-      if (productCount + 1 <= 99) {
-        setProductCount(productCount + 1)
-      } else {
-        alert('商品數量最多為99')
-      }
+  async function handleFavToggle(product) {
+    if (product.fav === false) {
+      fetch(
+        `http://localhost:3005/api/my_products/favorites?user_id=1&product_id=${product.id}`,
+        { method: 'PUT' }
+      )
+        .then((res) => res.json())
+        .then((result) => console.log(result))
+        .catch((error) => console.log(error))
     } else {
-      if (productCount - 1 > 0) {
-        setProductCount(productCount - 1)
-      } else {
-        alert('商品數量最少為1')
-        setProductCount(1)
-      }
+      fetch(
+        `http://localhost:3005/api/my_products/favorites?user_id=1&product_id=${product.id}`,
+        { method: 'DELETE' }
+      )
+        .then((res) => res.json())
+        .then((result) => console.log(result))
+        .catch((error) => console.log(error))
     }
+    const tmp = { ...product, fav: !product.fav }
+    setProduct(tmp)
   }
   useEffect(() => {
     // console.log(router.query)
@@ -281,12 +299,35 @@ export default function Detail() {
                   className={`${styles['heart-btn']} d-flex flex-row flex-lg-column gap-3 gap-xl-5 justify-content-between justify-content-lg-end align-items-center align-items-lg-start`}
                 >
                   <div className="d-flex gap-0 gap-md-3">
-                    <img
-                      className={`${styles['like-heart']}`}
-                      src="/images/product/list1/heart.svg"
-                      alt=""
-                    />
-                    <h3 className={`m-0 ${styles['like-text']}`}>加入收藏</h3>
+                    <button
+                      type="button"
+                      className="btn d-flex"
+                      onClick={() => handleFavToggle(product)}
+                    >
+                      {product.fav ? (
+                        <>
+                          <img
+                            className={`${styles['like-heart']}`}
+                            src="/images/product/list1/heart-fill.svg"
+                            alt=""
+                          />
+                          <h3 className={`m-0 ${styles['like-text']}`}>
+                            已收藏
+                          </h3>
+                        </>
+                      ) : (
+                        <>
+                          <img
+                            className={`${styles['like-heart']}`}
+                            src="/images/product/list1/heart.svg"
+                            alt=""
+                          />
+                          <h3 className={`m-0 ${styles['like-text']}`}>
+                            加入收藏
+                          </h3>
+                        </>
+                      )}
+                    </button>
                   </div>
                   <div
                     className={`${styles['product-count']} d-flex text-center`}
@@ -312,7 +353,15 @@ export default function Detail() {
                     </button>
                   </div>
                 </div>
-                <button className={`btn ${styles['cart-btn']} text-center`}>
+                <button
+                  className={`btn ${styles['cart-btn']} text-center`}
+                  onClick={() => {
+                    const item = { ...product, qty: productCount }
+                    console.log(item)
+                    notify(product.product_name)
+                    addItem(item)
+                  }}
+                >
                   加入購物車
                 </button>
               </div>
@@ -669,6 +718,7 @@ export default function Detail() {
             </Link>
           </div>
         </div>
+        <Toaster />
       </div>
     </>
   )

@@ -7,6 +7,7 @@ import { YaminUseCart } from '@/hooks/yamin-use-cart'
 import toast, { Toaster } from 'react-hot-toast'
 
 export default function List1() {
+  const router = useRouter()
   const { addItem = () => {} } = YaminUseCart()
 
   const notify = (productName) => {
@@ -142,10 +143,10 @@ export default function List1() {
     // 每次filter有更動時都會將頁數導回第一頁
     setPage(1)
   }
-  useEffect(() => {
-    // 第一次進入頁面才會有loading畫面
-    showLoader()
-  }, [])
+  // useEffect(() => {
+  //   // 第一次進入頁面才會有loading畫面
+  //   showLoader()
+  // }, [])
   // 當count、order值改變時，設定新網址參數並重新抓取資料
   useEffect(() => {
     if (router.isReady) {

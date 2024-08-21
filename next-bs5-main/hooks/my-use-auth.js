@@ -26,37 +26,24 @@ export const AuthProvider = ({ children }) => {
   })
   const [hasCheckedAuth, setHasCheckedAuth] = useState(false)
 
-  useEffect(() => {
-    if (router.isReady && !hasCheckedAuth) {
-      if (!auth.isAuth) {
-        handleCheckAuth()
-      }
-      setHasCheckedAuth(true) // 標記已經執行過檢查
-    }
-    // eslint-disable-next-line
-  }, [router.isReady]);
-
-  // 我的最愛清單使用
-  const [favorites, setFavorites] = useState([])
-
   // 得到我的最愛
-  const handleGetFavorites = async () => {
-    const res = await getFavs()
-    //console.log(res.data)
-    if (res.data.status === 'success') {
-      setFavorites(res.data.data.favorites)
-    }
-  }
+  // const handleGetFavorites = async () => {
+  //   const res = await getFavs()
+  //   //console.log(res.data)
+  //   if (res.data.status === 'success') {
+  //     setFavorites(res.data.data.favorites)
+  //   }
+  // }
 
-  useEffect(() => {
-    if (auth.isAuth) {
-      // 成功登入後要執行一次向伺服器取得我的最愛清單
-      handleGetFavorites()
-    } else {
-      // 登出時要設回空陣列
-      setFavorites([])
-    }
-  }, [auth])
+  // useEffect(() => {
+  //   if (auth.isAuth) {
+  //     // 成功登入後要執行一次向伺服器取得我的最愛清單
+  //     handleGetFavorites()
+  //   } else {
+  //     // 登出時要設回空陣列
+  //     setFavorites([])
+  //   }
+  // }, [auth])
 
   // 登入頁路由
   const loginRoute = '/member/login'
@@ -71,6 +58,22 @@ export const AuthProvider = ({ children }) => {
     '/member/order/review',
     '/member/fav/',
   ]
+  useEffect(() => {
+    if (
+      router.isReady &&
+      !hasCheckedAuth &&
+      protectedRoutes.includes(router.pathname)
+    ) {
+      if (!auth.isAuth) {
+        handleCheckAuth()
+      }
+      setHasCheckedAuth(true) // 標記已經執行過檢查
+    }
+    // eslint-disable-next-line
+  }, [router.isReady]);
+
+  // 我的最愛清單使用
+  const [favorites, setFavorites] = useState([])
   const [userIntention, setUserIntention] = useState(null)
 
   useEffect(() => {
