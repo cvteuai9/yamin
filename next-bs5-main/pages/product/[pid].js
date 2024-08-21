@@ -20,22 +20,19 @@ import { Autoplay, FreeMode, Navigation, Thumbs } from 'swiper/modules'
 // 以上為  {商品圖輪播套件}
 
 export default function Detail() {
-const { addItem = () => {} } = YaminUseCart()
+  const { addItem = () => {} } = YaminUseCart()
 
-const notify = (productName) => {
-  toast.success(
-    <>
-      <p>
-        {productName + '已成功加入購物車!'}
-        <br />
-        <Link href="/cart/cartOne">前往購物車</Link>
-      </p>
-    </>
-  )
-}
-
-
-
+  const notify = (productName) => {
+    toast.success(
+      <>
+        <p>
+          {productName + '已成功加入購物車!'}
+          <br />
+          <Link href="/cart/cartOne">前往購物車</Link>
+        </p>
+      </>
+    )
+  }
 
   const [productCount, setProductCount] = useState(1)
   const [thumbsSwiper, setThumbsSwiper] = useState(null)
