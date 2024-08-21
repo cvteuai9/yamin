@@ -1,47 +1,40 @@
 import React, { useState, useContext, createContext, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import axiosInstance from '@/services/axios-instance'
-import { checkAuth, getFavs } from '@/services/user'
+import { checkAuth, getFavs } from '@/services/my-user'
 
 const AuthContext = createContext({ auth: {}, setUser: {} })
-
-// 註: 如果使用google登入會多幾個欄位(iat, exp是由jwt token來的)
-// 上面資料由express來(除了password之外)
-//   {
-//     "id": 1,
-//     "name": "哈利",
-//     "username": "herry",
-//     "email": "herry@test.com",
-//     "birth_date": "1980-07-13",
-//     "sex": "男",
-//     "phone": "0906102808",
-//     "postcode": "330",
-//     "address": "桃園市桃園區劉南路377號18樓",
-//     "google_uid": null,
-//     "line_uid": null,
-//     "photo_url": null,
-//     "line_access_token": null,
-//     "created_at": "2023-11-01T14:12:59.000Z",
-//     "updated_at": "2023-11-01T14:12:59.000Z",
-//     "iat": 1698852277,
-//     "exp": 1698938677
-// }
 
 // 初始化會員狀態(登出時也要用)
 // 只需要必要的資料即可，沒有要多個頁面或元件用的資料不需要加在這裡
 // !!注意JWT存取令牌中只有id, username, google_uid, line_uid在登入時可以得到
 export const initUserData = {
-  id: '',
+  id: 0,
   user_name: '',
   google_uid: '',
+  // line_uid: '',
+  // name: '',
   email: '',
 }
 
 export const AuthProvider = ({ children }) => {
+  const router = useRouter()
+
   const [auth, setAuth] = useState({
     isAuth: false,
     userData: initUserData,
   })
+  const [hasCheckedAuth, setHasCheckedAuth] = useState(false)
+
+  useEffect(() => {
+    if (router.isReady && !hasCheckedAuth) {
+      if (!auth.isAuth) {
+        handleCheckAuth()
+      }
+      setHasCheckedAuth(true) // 標記已經執行過檢查
+    }
+    // eslint-disable-next-line
+  }, [router.isReady]);
 
   // 我的最愛清單使用
   const [favorites, setFavorites] = useState([])
@@ -65,17 +58,64 @@ export const AuthProvider = ({ children }) => {
     }
   }, [auth])
 
-  const router = useRouter()
-
   // 登入頁路由
-  const loginRoute = '/test/user'
+  const loginRoute = '/member/login'
   // 隱私頁面路由，未登入時會，檢查後跳轉至登入頁
   const protectedRoutes = [
-    '/test/user/status',
-    '/test/user/profile',
-    '/test/user/profile-password',
+    '/product/cart',
+    '/member/profile',
+    '/member/changeps',
+    '/member/order',
+    '/member/order/info',
+    '/member/coupon',
+    '/member/order/review',
+    '/member/fav/',
   ]
+  const [userIntention, setUserIntention] = useState(null)
 
+  useEffect(() => {
+    // 當原有想訪問的頁面，儲存到storedIntention然後userIntention
+    const storedIntention = localStorage.getItem('userIntention')
+    if (storedIntention) {
+      setUserIntention(storedIntention)
+      localStorage.removeItem('userIntention')
+    }
+  }, [])
+  // const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    if (router.isReady) {
+      if (!auth.isAuth) {
+        // 用戶未登入
+        if (protectedRoutes.includes(router.pathname)) {
+          // 如果嘗試訪問受保護的路由，保存意圖並重定向到登入頁
+          localStorage.setItem('userIntention', router.pathname)
+          router.push(loginRoute)
+        }
+      } else {
+        // 用戶已登入
+        if (
+          router.pathname === '/member/register' ||
+          router.pathname === '/member/login'
+        ) {
+          // 如果在登入或註冊頁，重定向到 profile
+          router.push('/member/profile')
+        } else {
+          // 檢查是否有登出前的重定向路徑或用戶意圖
+          const logoutRedirectPath = localStorage.getItem('logoutRedirectPath')
+          const storedIntention = localStorage.getItem('userIntention')
+
+          if (logoutRedirectPath) {
+            localStorage.removeItem('logoutRedirectPath')
+            router.push(logoutRedirectPath)
+          } else if (storedIntention) {
+            localStorage.removeItem('userIntention')
+            router.push(storedIntention)
+          }
+        }
+      }
+    }
+  }, [router.isReady, router.pathname, auth])
   // 檢查會員認証用
   // 每次重新到網站中，或重新整理，都會執行這個函式，用於向伺服器查詢取回原本登入會員的資料
   // 因為1.	JWT 記憶體儲存：
@@ -105,17 +145,6 @@ export const AuthProvider = ({ children }) => {
       }
     }
   }
-
-  // didMount(初次渲染)後，向伺服器要求檢查會員是否登入中
-  // useEffect(() => {
-  //   if (router.isReady && !auth.isAuth) {
-  //     handleCheckAuth()
-  //   }
-  //   // 下面加入router.pathname，是為了要在向伺服器檢查後，
-  //   // 如果有比對到是隱私路由，就執行跳轉到登入頁面工作
-  //   // 注意有可能會造成向伺服器要求多次，此為簡單的實作範例
-  //   // eslint-disable-next-line
-  // }, [router.isReady, router.pathname])
 
   return (
     <AuthContext.Provider

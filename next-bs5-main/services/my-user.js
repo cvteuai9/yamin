@@ -4,62 +4,30 @@ import useSWR from 'swr'
 /**
  * 檢查會員狀態使用
  */
-export const checkAuth = async (id = 1) => {
-  return await axiosInstance.get('/auth/check')
+export const checkAuth = async () => {
+  return await axiosInstance.get('/my-auth/check')
 }
 /**
  * Google Login(Firebase)登入用，providerData為登入後得到的資料
  */
 export const googleLogin = async (providerData = {}) => {
-  return await axiosInstance.post('/google-login', providerData)
+  return await axiosInstance.post('/my-google-login', providerData)
 }
 
-/**
- * LINE Login登入用，要求line登入的網址
- */
-export const lineLoginRequest = async () => {
-  // 向後端(express/node)伺服器要求line登入的網址，因密鑰的關係需要由後端產生
-  axiosInstance.get('/line-login/login').then((res) => {
-    console.log(res.data.url)
-    // 重定向到line 登入頁
-    if (res.data.url) {
-      window.location.href = res.data.url
-    }
-  })
-}
-/**
- * LINE Login登入用，處理line方登入後，向我們的伺服器進行登入動作。query為router.query
- */
-export const lineLoginCallback = async (query) => {
-  const qs = new URLSearchParams({
-    ...query,
-  }).toString()
-
-  return await axiosInstance.get(`/line-login/callback?${qs}`)
-}
-/**
- * LINE 登出用
- */
-export const lineLogout = async (line_uid) => {
-  return await axiosInstance.get(`/line-login/logout?line_uid=${line_uid}`)
-}
-/**
- * 登入用，loginData = { username, passsword }
- */
 export const login = async (loginData = {}) => {
-  return await axiosInstance.post('/auth/login', loginData)
+  return await axiosInstance.post('/my-auth/login', loginData)
 }
 /**
  * 登出用
  */
 export const logout = async () => {
-  return await axiosInstance.post('/auth/logout', {})
+  return await axiosInstance.post('/my-auth/logout', {})
 }
 /**
  * 載入會員id的資料用，需要登入後才能使用。此API路由會檢查JWT中的id是否符合本會員，不符合會失敗。
  */
 export const getUserById = async (id = 0) => {
-  return await axiosInstance.get(`/users/${id}`)
+  return await axiosInstance.get(`/my-users/${id}`)
 }
 /**
  * 忘記密碼/OTP 要求一次性密碼
