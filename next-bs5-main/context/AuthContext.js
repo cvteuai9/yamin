@@ -24,10 +24,10 @@ export const AuthProvider = ({ children }) => {
   const [userIntention, setUserIntention] = useState(null);
   
   // 避免在重定向到登入頁面之前，頁面內容已經開始渲染。
-  const [auth, setAuth] = useState({
-    isAuth: false,
-    userData: initUserData,
-  })
+  // const [auth, setAuth] = useState({
+  //   isAuth: false,
+  //   userData: initUserData,
+  // })
 
 
 

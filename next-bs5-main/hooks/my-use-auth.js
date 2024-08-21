@@ -5,7 +5,6 @@ import { checkAuth, getFavs } from '@/services/my-user'
 
 const AuthContext = createContext({ auth: {}, setUser: {} })
 
-
 // 初始化會員狀態(登出時也要用)
 // 只需要必要的資料即可，沒有要多個頁面或元件用的資料不需要加在這裡
 // !!注意JWT存取令牌中只有id, username, google_uid, line_uid在登入時可以得到
@@ -25,14 +24,14 @@ export const AuthProvider = ({ children }) => {
     isAuth: false,
     userData: initUserData,
   })
-  const [hasCheckedAuth, setHasCheckedAuth] = useState(false);
+  const [hasCheckedAuth, setHasCheckedAuth] = useState(false)
 
   useEffect(() => {
     if (router.isReady && !hasCheckedAuth) {
       if (!auth.isAuth) {
-        handleCheckAuth();
+        handleCheckAuth()
       }
-      setHasCheckedAuth(true); // 標記已經執行過檢查
+      setHasCheckedAuth(true) // 標記已經執行過檢查
     }
     // eslint-disable-next-line
   }, [router.isReady]);
@@ -59,7 +58,6 @@ export const AuthProvider = ({ children }) => {
     }
   }, [auth])
 
-
   // 登入頁路由
   const loginRoute = '/member/login'
   // 隱私頁面路由，未登入時會，檢查後跳轉至登入頁
@@ -73,48 +71,51 @@ export const AuthProvider = ({ children }) => {
     '/member/order/review',
     '/member/fav/',
   ]
-  const [userIntention, setUserIntention] = useState(null);
+  const [userIntention, setUserIntention] = useState(null)
 
   useEffect(() => {
     // 當原有想訪問的頁面，儲存到storedIntention然後userIntention
-    const storedIntention = localStorage.getItem('userIntention');
+    const storedIntention = localStorage.getItem('userIntention')
     if (storedIntention) {
-      setUserIntention(storedIntention);
-      localStorage.removeItem('userIntention');
+      setUserIntention(storedIntention)
+      localStorage.removeItem('userIntention')
     }
-  }, []);
+  }, [])
   // const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if ( router.isReady) {
+    if (router.isReady) {
       if (!auth.isAuth) {
         // 用戶未登入
         if (protectedRoutes.includes(router.pathname)) {
           // 如果嘗試訪問受保護的路由，保存意圖並重定向到登入頁
-          localStorage.setItem('userIntention', router.pathname);
-          router.push(loginRoute);
+          localStorage.setItem('userIntention', router.pathname)
+          router.push(loginRoute)
         }
       } else {
         // 用戶已登入
-        if (router.pathname === '/member/register' || router.pathname === '/member/login') {
+        if (
+          router.pathname === '/member/register' ||
+          router.pathname === '/member/login'
+        ) {
           // 如果在登入或註冊頁，重定向到 profile
-          router.push('/member/profile');
+          router.push('/member/profile')
         } else {
           // 檢查是否有登出前的重定向路徑或用戶意圖
-          const logoutRedirectPath = localStorage.getItem('logoutRedirectPath');
-          const storedIntention = localStorage.getItem('userIntention');
+          const logoutRedirectPath = localStorage.getItem('logoutRedirectPath')
+          const storedIntention = localStorage.getItem('userIntention')
 
           if (logoutRedirectPath) {
-            localStorage.removeItem('logoutRedirectPath');
-            router.push(logoutRedirectPath);
+            localStorage.removeItem('logoutRedirectPath')
+            router.push(logoutRedirectPath)
           } else if (storedIntention) {
-            localStorage.removeItem('userIntention');
-            router.push(storedIntention);
+            localStorage.removeItem('userIntention')
+            router.push(storedIntention)
           }
         }
       }
     }
-  }, [router.isReady, router.pathname, auth]);
+  }, [router.isReady, router.pathname, auth])
   // 檢查會員認証用
   // 每次重新到網站中，或重新整理，都會執行這個函式，用於向伺服器查詢取回原本登入會員的資料
   // 因為1.	JWT 記憶體儲存：
@@ -144,7 +145,6 @@ export const AuthProvider = ({ children }) => {
       }
     }
   }
-
 
   return (
     <AuthContext.Provider

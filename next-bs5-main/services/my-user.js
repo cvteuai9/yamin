@@ -14,41 +14,6 @@ export const googleLogin = async (providerData = {}) => {
   return await axiosInstance.post('/my-google-login', providerData)
 }
 
-// /**
-//  * LINE Login登入用，要求line登入的網址
-//  */
-// export const lineLoginRequest = async () => {
-//   // 向後端(express/node)伺服器要求line登入的網址，因密鑰的關係需要由後端產生
-//   axiosInstance.get('/line-login/login').then((res) => {
-//     console.log(res.data.url)
-//     // 重定向到line 登入頁
-//     if (res.data.url) {
-//       window.location.href = res.data.url
-//     }
-//   })
-// }
-// /**
-//  * LINE Login登入用，處理line方登入後，向我們的伺服器進行登入動作。query為router.query
-//  */
-// export const lineLoginCallback = async (query) => {
-//   const qs = new URLSearchParams({
-//     ...query,
-//   }).toString()
-
-//   return await axiosInstance.get(`/line-login/callback?${qs}`)
-// }
-// /**
-//  * LINE 登出用
-//  */
-// export const lineLogout = async (line_uid) => {
-//   return await axiosInstance.get(`/line-login/logout?line_uid=${line_uid}`)
-// }
-/**
- * 登入用，loginData = { username, passsword }
- * = {} 是為 loginData 提供了一個預設值。這意味著，如果在呼叫 login 函式時沒有傳遞任何參數，loginData 會自動設置為一個空物件 {}。
- */
-// 1. 防止錯誤：當你在呼叫 login 函式時，如果不小心沒有傳遞 loginData 參數，預設值 {} 可以確保函式仍能正常執行，而不會因為參數為 undefined 而出現錯誤。
-// 2.	靈活性：設置預設值讓這個函式在某些情況下變得更靈活。即使不需要傳遞任何資料，也可以簡單地呼叫 login()，而不會出錯。
 export const login = async (loginData = {}) => {
   return await axiosInstance.post('/my-auth/login', loginData)
 }
@@ -90,7 +55,7 @@ export const register = async (user = {}) => {
  * 修改會員一般資料用(排除password, username, email)
  */
 export const updateProfile = async (id = 0, user = {}) => {
-  return await axiosInstance.put(`/users/${id}/profile`, user)
+  return await axiosInstance.put(`/my-users/${id}/profile`, user)
 }
 /**
  * 修改會員頭像用，需要用FormData

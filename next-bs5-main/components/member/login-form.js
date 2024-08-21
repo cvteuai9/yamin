@@ -10,21 +10,14 @@ import { RiEyeOffLine } from 'react-icons/ri'
 import { useAuth, initUserData } from '@/hooks/my-use-auth'
 import useFirebase from '@/hooks/use-firebase'
 import { useRouter } from 'next/router'
-import {
-  login,
-  googleLogin,
-  parseJwt,
-  getUserById,
-} from '@/services/my-user'
+import { login, googleLogin, parseJwt, getUserById } from '@/services/my-user'
 import toast, { Toaster } from 'react-hot-toast'
-
-
 
 // import { useAuth } from '@/hooks/use-auth'
 // import GoogleLogo from '@/components/icons/google-logo'
 
 export default function LoginForm() {
-  const { auth,setAuth } = useAuth()
+  const { auth, setAuth } = useAuth()
 
   const { loginGoogle } = useFirebase()
   // const { auth, setAuth } = useAuth()
@@ -44,12 +37,12 @@ export default function LoginForm() {
       const jwtUser = await parseJwt(res.data.data.accessToken)
       console.log(jwtUser)
 
-      const res1 = await getUserById(jwtUser.id);
+      const res1 = await getUserById(jwtUser.id)
 
       if (res1.data.status === 'success') {
         // 只需要initUserData中的定義屬性值，詳見use-auth勾子
         const dbUser = res1.data.data.user
-        console.log(dbUser);
+        console.log(dbUser)
         const userData = { ...initUserData }
 
         for (const key in userData) {
@@ -65,7 +58,6 @@ export default function LoginForm() {
       }
     }
   }
-
 
   const [user, setUser] = useState({
     email: '',
@@ -90,8 +82,6 @@ export default function LoginForm() {
   //   }
   // }
   //---------fetch-token方法login----------
-
-
 
   const handleLogin = async () => {
     const res = await login(user)
@@ -212,18 +202,13 @@ export default function LoginForm() {
         <div className={`${styles['loginsignin']}`}>
           <div className={`${styles['signinsec1']} text-center mb-4 mt-4`}>
             <p className="mb-5">會員登入</p>
-            <a
+            <button
               className={`${styles['gfast']} btn btn-no-radius`}
               onClick={() => loginGoogle(callbackGoogleLoginPopup)}
             >
               <GoogleLogo className="mx-3" />
-              {/* <img
-                className="googlelogo"
-                src="/neimages/Google__G__logo.svg.webp"
-                alt=""
-              /> */}
               <p className="m-0 p-0">快速登入</p>
-            </a>
+            </button>
           </div>
           <img
             className={['img-fluid m-5', styles['orline']].join(' ')}
