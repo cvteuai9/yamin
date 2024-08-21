@@ -10,7 +10,6 @@ import Link from 'next/link'
 import PreviewUploadImage from '@/components/user/preview-upload-image'
 import { avatarBaseUrl } from '@/configs'
 
-console.log(auth);
 // 定義要在此頁呈現/編輯的會員資料初始物件
 const initUserProfile = {
   name: '',

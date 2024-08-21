@@ -17,6 +17,7 @@ export default async function applySeeds(sequelize) {
       pathToFileURL(path.join(seedsPath, filename))
     )
     const seeds = JSON.parse(data)
+    console.log('Processing JSON: ', seeds)
     const prop = filename.split('.')[0]
 
     await sequelize.models[prop].bulkCreate(seeds, {

@@ -8,8 +8,9 @@ import GoogleLogo from '@/components/icons/google-logo'
 import Image from 'next/image'
 import { RiEyeLine } from 'react-icons/ri'
 import { RiEyeOffLine } from 'react-icons/ri'
-import { register } from '@/services/user'
-import useAuth from '@/hooks/useAuth'
+import { register, login, parseJwt, getUserById } from '@/services/my-user'
+import { useAuth, initUserData } from '@/hooks/my-use-auth'
+import toast, { Toaster } from 'react-hot-toast'
 
 // Datepicker relies on browser APIs like document
 // dynamically load a component on the client side,
@@ -19,6 +20,7 @@ const InputDatePicker = dynamic(() => import('../common/input-date-picker'), {
 })
 
 export default function RegisterForm() {
+  const { auth, setAuth } = useAuth()
   const [user, setUser] = useState({
     user_name: '',
     email: '',
@@ -35,7 +37,54 @@ export default function RegisterForm() {
     confirmPassword: '',
     agree: '', // 錯誤訊息用字串
   })
-  const { login } = useAuth()
+  const handleRegister = async () => {
+    try {
+      const response = await register(user)
+
+      if (response.status === 201) {
+        alert('註冊成功')
+        // 你可以在這裡處理註冊成功後的邏輯，例如導航到登入頁面
+      }
+    } catch (error) {
+      console.error('註冊失敗', error)
+      alert('註冊失敗，請再試一次')
+    }
+    const res = await login(user)
+    if (res.data.status === 'success') {
+      // 從JWT存取令牌中解析出會員資料
+      // 注意JWT存取令牌中只有id, username, google_uid, line_uid在登入時可以得到
+      const jwtUser = parseJwt(res.data.data.accessToken)
+      console.log(jwtUser)
+
+      const res1 = await getUserById(jwtUser.id)
+      console.log(res1.data)
+
+      if (res1.data.status === 'success') {
+        // 只需要initUserData中的定義屬性值，詳見use-auth勾子
+        const dbUser = res1.data.data.user
+        const userData = { ...initUserData }
+
+        for (const key in userData) {
+          if (Object.hasOwn(dbUser, key)) {
+            userData[key] = dbUser[key]
+          }
+        }
+
+        // 設定到全域狀態中
+        setAuth({
+          isAuth: true,
+          userData,
+        })
+
+        toast.success('已成功登入')
+      } else {
+        toast.error('登入後無法得到會員資料')
+        // 這裡可以讓會員登出，因為這也算登入失敗，有可能會造成資料不統一
+      }
+    } else {
+      toast.error(`登入失敗`)
+    }
+  }
 
   // checkbox 呈現密碼用
   const [showPassword, setShowPassword] = useState(false)
@@ -54,7 +103,7 @@ export default function RegisterForm() {
 
   // 多欄位共用事件函式
   const handleFieldChange = (e) => {
-    console.log(e.target.name, e.target.value, e.target.type)
+    // console.log(e.target.name, e.target.value, e.target.type)
 
     if (e.target.name === 'agree') {
       setUser({ ...user, [e.target.name]: e.target.checked })
@@ -130,25 +179,11 @@ export default function RegisterForm() {
     // 有錯誤，不送到伺服器，跳出submit函式
     if (hasErrors) {
       return
+    } else {
+      handleRegister()
     }
     // 表單檢查 --- END
 
-    try {
-      // register在@/services/user
-      const response = await register(user)
-      const onLogin = () => {
-        console.log(user.email, user.password)
-        login(user.email, user.password)
-      }
-      if (response.status === 201) {
-        alert('註冊成功')
-        // 你可以在這裡處理註冊成功後的邏輯，例如導航到登入頁面
-        onLogin()
-      }
-    } catch (error) {
-      console.error('註冊失敗', error)
-      alert('註冊失敗，請再試一次')
-    }
     // 最後檢查完全沒問題才送到伺服器(ajax/fetch)
     // alert('送到伺服器去')
   }

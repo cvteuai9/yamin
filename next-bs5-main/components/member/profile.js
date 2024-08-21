@@ -15,7 +15,7 @@ import { avatarBaseUrl } from '@/configs'
 export default function Profile() {
   // 定義要在此頁呈現/編輯的會員資料初始物件
   const initUserProfile = {
-    id:'',
+    id: '',
     user_name: '',
     nick_name: '',
     gender: '',
@@ -25,20 +25,20 @@ export default function Profile() {
     email: '',
   }
   const { auth } = useAuth()
-  console.log("auth",auth);
+  console.log('auth', auth)
   const [userProfile, setUserProfile] = useState(initUserProfile)
   const [hasProfile, setHasProfile] = useState(false)
   const [selectedFile, setSelectedFile] = useState(null)
   const getUserData = async (id) => {
     const res = await getUserById(id)
 
-    console.log("res.data",res.data)
-    console.log("auth.userData",auth.userData);
+    // console.log('res.data', res.data)
+    // console.log('auth.userData', auth.userData)
 
     if (res.data.status === 'success') {
       // 以下為同步化目前後端資料庫資料，與這裡定義的初始化會員資料物件的資料
       const dbUser = res.data.data.user
-      console.log("dbUser ",dbUser); //有ＩＤ
+      // console.log('dbUser ', dbUser) //有ＩＤ
       const dbUserProfile = { ...initUserProfile }
 
       for (const key in dbUserProfile) {
@@ -56,9 +56,9 @@ export default function Profile() {
       toast.error(`會員資料載入失敗`)
     }
   }
-  console.log("userProfile",userProfile);
+  // console.log('userProfile', userProfile)
   const { avatar, ...user } = userProfile
-  console.log("user",user);
+  // console.log('user', user)
   // auth載入完成後向資料庫要會員資料
   useEffect(() => {
     if (auth.isAuth) {
@@ -76,8 +76,6 @@ export default function Profile() {
     }
   }, [userProfile])
 
-
-
   const handleFieldChange = (e) => {
     setUserProfile({ ...userProfile, [e.target.name]: e.target.value })
   }
@@ -93,7 +91,7 @@ export default function Profile() {
     let isUpdated = false
 
     const { avatar, ...user } = userProfile
-    console.log('user:' ,auth.userData);
+    // console.log('user:', auth.userData)
     const res = await updateProfile(auth.userData.id, user)
 
     // console.log(res.data)
@@ -116,10 +114,8 @@ export default function Profile() {
       toast.success('會員資料修改成功')
     } else {
       toast.error('會員資料修改失敗')
-      console.log(res.data);
+      console.log(res.data)
     }
-
-
   }
   if (!auth.isAuth) return <></>
 
@@ -178,7 +174,7 @@ export default function Profile() {
                 <input
                   className="profile-inputtext p2 goldenf"
                   type="text"
-                  name='user_name'
+                  name="user_name"
                   placeholder="請輸入你的真實姓名"
                   value={userProfile.user_name}
                   onChange={handleFieldChange}
@@ -190,7 +186,7 @@ export default function Profile() {
                   className="profile-inputtext p2 goldenf"
                   type="text"
                   placeholder="請輸入你的暱稱"
-                  name='nick_name'
+                  name="nick_name"
                   value={userProfile.nick_name}
                   onChange={handleFieldChange}
                 />
@@ -225,7 +221,7 @@ export default function Profile() {
                   className="profile-inputtext p2 goldenf"
                   type="date"
                   placeholder="請輸入你的生日"
-                  name='birthday'
+                  name="birthday"
                   value={userProfile.birthday}
                   onChange={handleFieldChange}
                 />
@@ -238,7 +234,7 @@ export default function Profile() {
                   type="text"
                   placeholder="請輸入你的手機"
                   // pattern="[0-9]{4}-[0-9]{3}-[0-9]{3}"
-                  name='phone'
+                  name="phone"
                   value={userProfile.phone}
                   onChange={handleFieldChange}
                 />
@@ -256,9 +252,7 @@ export default function Profile() {
               </div>
               {/* <span className="error">{errors.email}</span> */}
               <div className="profile-btns  ">
-                <button type="submit"
-                  className="profile-checked  btn2 p"
-                >
+                <button type="submit" className="profile-checked  btn2 p">
                   確認
                 </button>
                 <div type="button" className="profile-changepassword  btn1 p">
