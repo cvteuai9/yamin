@@ -1,16 +1,15 @@
 import { useEffect } from 'react'
 // 樣式
 import '@/styles/globals.scss'
-// import '@/styles/product.scss'
-import '@/styles/carousel.scss'
+import '@/styles/product.scss'
 import '@/styles/cart.scss'
 import '@/styles/loader.scss'
 import '@/styles/order/leftNav.scss'
 import '@/styles/cart/cartTest.scss'
 import '@/styles/order/order.scss'
 import '@/styles/order/PayCard.scss'
-// import '@fortawesome/fontawesome-free/css/all.min.css'
-// import 'react-credit-cards-2/dist/es/styles-compiled.css'
+import '@fortawesome/fontawesome-free/css/all.min.css'
+import 'react-credit-cards-2/dist/es/styles-compiled.css'
 
 import '@/styles/star.scss'
 import '@/styles/article.scss'
@@ -22,11 +21,14 @@ import '@/styles/course_style.scss'
 import '@/styles/Normalize.scss'
 import '@/styles/all.css'
 
+// 載入雅名購物車
+import { YaminCartProvider } from '@/hooks/yamin-use-cart'
 // 載入購物車context
 import { CartProvider } from '@/hooks/use-cart-state'
 // 載入認証用context
+import { AuthProvider } from '@/hooks/my-use-auth'
 // import { AuthProvider } from '@/hooks/use-auth'
-import { AuthProvider } from '@/context/AuthContext'
+// import { AuthProvider } from '@/context/AuthContext'
 // 載入動畫context
 import { LoaderProvider } from '@/hooks/use-loader'
 
@@ -52,7 +54,11 @@ export default function MyApp({ Component, pageProps }) {
       <LoaderProvider close={2} CustomLoader={CatLoader}>
         <CartProvider>
           <NextTopLoader height={5} color="#003445" />
-          {getLayout(<Component {...pageProps} />)}
+          
+          <YaminCartProvider>
+            {getLayout(<Component {...pageProps} />)}
+        
+          </YaminCartProvider>
         </CartProvider>
       </LoaderProvider>
     </AuthProvider>

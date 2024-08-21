@@ -1,38 +1,26 @@
 [
   {
     "id": 1,
-    "name": "七三茶堂"
+    "name": "Nike",
+    "img": "",
+    "info": "This is the description of the brand"
   },
   {
     "id": 2,
-    "name": "采樂茶業"
+    "name": "adidas",
+    "img": "",
+    "info": "This is the description of the brand"
   },
   {
     "id": 3,
-    "name": "豐曜-陶藝廊·茶空間"
+    "name": "PUMA",
+    "img": "",
+    "info": "This is the description of the brand"
   },
   {
     "id": 4,
-    "name": "GOOMO 谷毛茶行"
-  },
-  {
-    "id": 5,
-    "name": "老二茶舖 SecondCHA"
-  },
-  {
-    "id": 6,
-    "name": "小茶哉堂"
-  },
-  {
-    "id": 7,
-    "name": "鶴茗茶業"
-  },
-  {
-    "id": 8,
-    "name": "天下第一好茶"
-  },
-  {
-    "id": 9,
-    "name": "茶曉得"
+    "name": "New Balance",
+    "img": "",
+    "info": "This is the description of the brand"
   }
 ]
