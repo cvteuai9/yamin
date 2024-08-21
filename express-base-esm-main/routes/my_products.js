@@ -323,7 +323,7 @@ router.get('/:id', async (req, res) => {
   try {
     const id = Number(req.params.id)
     const [rows] = await db.query(
-      `SELECT my_products.id AS product_id, product_name, description, price, tea.name AS tea_name, brand.name AS brand_name, package_category.name AS pc_name, style.name AS style_name FROM my_products
+      `SELECT my_products.* , tea.name AS tea_name, brand.name AS brand_name, package_category.name AS pc_name, style.name AS style_name FROM my_products
       JOIN tea ON tea.id = my_products.tea_id 
       JOIN brand ON brand.id = my_products.brand_id 
       JOIN package_category ON package_category.id = my_products.package_id 

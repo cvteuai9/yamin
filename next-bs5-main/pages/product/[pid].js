@@ -73,7 +73,7 @@ export default function Detail() {
       } else {
         productThis.fav = false
       }
-      console.log(productThis)
+      // console.log(productThis)
       setProduct(productThis)
       setImage(data.images)
       // console.log(data)
