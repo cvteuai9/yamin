@@ -59,11 +59,7 @@ export const AuthProvider = ({ children }) => {
     '/member/fav/',
   ]
   useEffect(() => {
-    if (
-      !hasCheckedAuth &&
-      router.isReady &&
-      protectedRoutes.includes(router.pathname)
-    ) {
+    if (!hasCheckedAuth && router.isReady) {
       handleCheckAuth()
       setHasCheckedAuth(true)
     }
@@ -74,7 +70,7 @@ export const AuthProvider = ({ children }) => {
   const [userIntention, setUserIntention] = useState(null)
 
   useEffect(() => {
-    // 當原有想訪問的頁面，儲存到storedIntention然後userIntention
+    // 當原有想訪問的頁面，儲存到storedIntention然後移除userIntention，不會隨著重新整理而消失
     const storedIntention = localStorage.getItem('userIntention')
     if (storedIntention) {
       setUserIntention(storedIntention)

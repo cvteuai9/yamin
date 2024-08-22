@@ -71,8 +71,9 @@ router.post('/login', upload.none(), async (req, res) => {
   const { email, password } = req.body
 
   const user = rows.find((u) => u.email === email && u.password === password)
+
   if (!user) {
-    res.status(400).json({
+    res.json({
       status: 'fail',
       message: '使用者帳號密碼錯誤',
     })
