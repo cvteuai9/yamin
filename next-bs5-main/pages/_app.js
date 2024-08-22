@@ -16,6 +16,7 @@ import '@/styles/article.scss'
 import '@/styles/public.scss'
 import '@/styles/style.scss'
 import '@/styles/course_style.scss'
+import '@/styles/course_detail.scss'
 
 // Ju-掛載
 import '@/styles/Normalize.scss'
@@ -53,10 +54,9 @@ export default function MyApp({ Component, pageProps }) {
       <LoaderProvider close={2} CustomLoader={CatLoader}>
         <CartProvider>
           <NextTopLoader height={5} color="#003445" />
-          
+
           <YaminCartProvider>
             {getLayout(<Component {...pageProps} />)}
-        
           </YaminCartProvider>
         </CartProvider>
       </LoaderProvider>
