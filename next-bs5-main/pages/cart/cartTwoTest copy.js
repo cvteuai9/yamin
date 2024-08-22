@@ -178,17 +178,20 @@ export default function CartTwo() {
         // PostformData.append(`items[${item.id}][qty]`, item.qty)
         PostformData.append(`items[${item.id}][subtotal]`, item.subtotal)
       })
-      const orderData = items.map((v) => ({
-        product_id: v.id,
-        product_image: v.paths,
-        product_name: v.product_name,
-        product_unitprice: v.price,
-        product_qty: v.qty,
-        product_totalprice: v.subtotal,
-      }))
-      console.log('1153看', orderData)
+      const orderData = items.map((v) => {
+        return [
+          {
+            product_id: v.id,
+            product_image: v.paths,
+            product_name: v.product_name,
+            product_qty: v.qty,
+            product_unitprice: v.subtotal,
+          },
+        ]
+      })
+
       // console.log(cartItems)
-      PostformData.append('allProductId', JSON.stringify(orderData))
+      PostformData.append('allProductId', orderData)
       PostformData.append('state', formData.state)
 
       for (const [key, value] of PostformData.entries()) {
