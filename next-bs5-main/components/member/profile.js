@@ -9,7 +9,7 @@ import {
 } from '@/services/my-user'
 import { useAuth } from '@/hooks/my-use-auth'
 import toast, { Toaster } from 'react-hot-toast'
-import PreviewUploadImage from '@/components/user/preview-upload-image'
+import MyPreviewUploadImage from '@/components/user/my-preview-upload-image'
 import { avatarBaseUrl } from '@/configs'
 
 export default function Profile() {
@@ -21,7 +21,7 @@ export default function Profile() {
     gender: '',
     phone: '',
     birthday: null,
-    avatar: '',
+    user_image: '',
     email: '',
   }
   const { auth } = useAuth()
@@ -56,9 +56,6 @@ export default function Profile() {
       toast.error(`會員資料載入失敗`)
     }
   }
-  // console.log('userProfile', userProfile)
-  const { avatar, ...user } = userProfile
-  // console.log('user', user)
   // auth載入完成後向資料庫要會員資料
   useEffect(() => {
     if (auth.isAuth) {
@@ -90,7 +87,7 @@ export default function Profile() {
     // 更新會員資料用，排除avatar
     let isUpdated = false
 
-    const { avatar, ...user } = userProfile
+    const { user_image, ...user } = userProfile
     if (user.birthday === '') {
       user.birthday = null
     }
@@ -104,10 +101,11 @@ export default function Profile() {
       const formData = new FormData()
       // 對照server上的檔案名稱 req.files.avatar
       formData.append('avatar', selectedFile)
+      console.log(formData)
 
       const res2 = await updateProfileAvatar(formData)
 
-      // console.log(res2.data)
+      console.log(res2.data)
       if (res2.data.status === 'success') {
         toast.success('會員頭像修改成功')
       }
@@ -120,6 +118,7 @@ export default function Profile() {
       console.log(res.data)
     }
   }
+
   if (!auth.isAuth) return <></>
 
   return (
@@ -154,7 +153,17 @@ export default function Profile() {
             <p className="p whitef mt-5">
               請放心，你的電子郵件及所有與設計師溝通的訊息、檔案及相關購買資料，網站將依照個人資料保護法保障你的個人隱私！
             </p>
-            <form onSubmit={handleSubmit}>
+
+            {hasProfile ? (
+              <MyPreviewUploadImage
+                avatarImg={userProfile.user_image}
+                // uploadImg={updateProfileAvatar}
+                avatarBaseUrl={avatarBaseUrl}
+                // toast={toast}
+                setSelectedFile={setSelectedFile}
+                selectedFile={selectedFile}
+              />
+            ) : (
               <div>
                 <div className="profile-pic">
                   <div className="profile-picleft">
@@ -167,11 +176,15 @@ export default function Profile() {
                       選擇照片
                     </div>
                   </div>
-                  <div className="profile-picright">
-                    <img src="/images/favorite/user.svg" alt="" />
+                  <div>
+                    <div className="profile-picright">
+                      <img src="/images/favorite/user.svg" alt="" />
+                    </div>
                   </div>
                 </div>
               </div>
+            )}
+            <form onSubmit={handleSubmit}>
               <div>
                 <p className="p whitef mt-5">真實姓名（必填）</p>
                 <input
@@ -243,14 +256,15 @@ export default function Profile() {
                 />
               </div>
               <div>
-                <p className="p whitef mt-5">電子郵件（必填）</p>
+                <p className="p whitef mt-5">
+                  電子郵件（為登入帳號，不可修改）
+                </p>
                 <input
                   className="profile-inputtext p2 goldenf"
                   type="email"
                   name="email"
                   placeholder="請輸入你的電子郵件"
                   value={userProfile.email}
-                  onChange={handleFieldChange}
                 />
               </div>
               {/* <span className="error">{errors.email}</span> */}
