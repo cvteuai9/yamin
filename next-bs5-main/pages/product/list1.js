@@ -8,9 +8,8 @@ import { YaminUseCart } from '@/hooks/yamin-use-cart'
 import toast, { Toaster } from 'react-hot-toast'
 
 export default function List1() {
-  const router = useRouter()
   const { addItem = () => {} } = YaminUseCart()
-
+  const router = useRouter()
   const notify = (productName) => {
     toast.success(
       <>

@@ -20,7 +20,7 @@ export default function Profile() {
     nick_name: '',
     gender: '',
     phone: '',
-    birthday: '',
+    birthday: null,
     avatar: '',
     email: '',
   }
@@ -91,6 +91,9 @@ export default function Profile() {
     let isUpdated = false
 
     const { avatar, ...user } = userProfile
+    if (user.birthday === '') {
+      user.birthday = null
+    }
     // console.log('user:', auth.userData)
     const res = await updateProfile(auth.userData.id, user)
 
