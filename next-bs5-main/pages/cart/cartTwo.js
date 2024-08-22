@@ -162,7 +162,7 @@ export default function CartTwo() {
         {/* 收件人資訊 */}
         <h2 className="text-center mb-5">收件人資訊</h2>
         <div className="cartSubTotalBor py-5 mb-6 d-flex justify-content-center h5 cartInput-2">
-          <form action="" className="colorWhite CartformMdText">
+          <form action="" novalidate className="colorWhite CartformMdText">
             <div className="d-flex ">
               <div className="d-flex flex-column me-5 mb-5 ">
                 <label htmlFor="" className="mb-4">

@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { useCart } from '@/hooks/use-cart-state'
 import Image from 'next/image'
+import { Toaster } from 'react-hot-toast'
 
 // 商品範例
 import products from '@/data/product/Product.json'

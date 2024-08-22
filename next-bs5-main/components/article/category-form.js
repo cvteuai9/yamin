@@ -44,7 +44,7 @@ export default function CategoryForm() {
   }, [styles])
 
   return (
-    <main className="article-category" ref={sectionsRef}>
+    <main className={`${styles['article-category']}`} ref={sectionsRef}>
       <div className="container">
         <div className="d-flex justify-content-center">
           <img
@@ -55,7 +55,7 @@ export default function CategoryForm() {
         </div>
         <StarLarge />
         <div className="row px-xl-4">
-          <div className={`${styles['grid-item']} col-md-6`}>
+          <div className={`${styles['grid-item']} col-md-6 col-12`}>
             <h3>茶知識</h3>
             <div className={`${styles['category-section']}`}>
               <img src="/images/article/articlecategory/teaknow.jpg" alt="" />
@@ -70,7 +70,7 @@ export default function CategoryForm() {
               </div>
             </div>
           </div>
-          <div className={`${styles['grid-item']} col-md-6`}>
+          <div className={`${styles['grid-item']} col-md-6 col-12`}>
             <h3>茶創新</h3>
             <div className={`${styles['category-section']}`}>
               <img src="/images/article/articlecategory/teanew.jpg" alt="" />
@@ -85,7 +85,7 @@ export default function CategoryForm() {
           </div>
         </div>
         <div className="row px-xl-4">
-          <div className={`${styles['grid-item']} col-md-6`}>
+          <div className={`${styles['grid-item']} col-md-6 col-12`}>
             <h3>茶故事</h3>
             <div className={`${styles['category-section']}`}>
               <img src="/images/article/articlecategory/teastory.jpg" alt="" />
@@ -100,7 +100,7 @@ export default function CategoryForm() {
               </div>
             </div>
           </div>
-          <div className={`${styles['grid-item']} col-md-6`}>
+          <div className={`${styles['grid-item']} col-md-6 col-12`}>
             <h3>茶生活應用</h3>
             <div className={`${styles['category-section']}`}>
               <img src="/images/article/articlecategory/tealife.jpg" alt="" />

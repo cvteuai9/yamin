@@ -10,16 +10,25 @@ export const AuthContext = createContext({
   setToken: () => { },
   guser: null,
   setGUser: () => { },
-  handleCheckAuth: () => { }
+  handleCheckAuth: () => { },
+  userIntention:null,
+  setUserIntention: () => { },
   // 其他默認值
 })
 
 export const AuthProvider = ({ children }) => {
-  const [token, setToken] = useState(null)
+  // const [token, setToken] = useState(null)
   const [user, setUser] = useState(null)
-  const [guser, setGUser] = useState(null)
+  // const [guser, setGUser] = useState(null)
   const [loading, setLoading] = useState(true)
   const [userIntention, setUserIntention] = useState(null);
+  
+  // 避免在重定向到登入頁面之前，頁面內容已經開始渲染。
+  // const [auth, setAuth] = useState({
+  //   isAuth: false,
+  //   userData: initUserData,
+  // })
+
 
 
   const router = useRouter()
@@ -29,16 +38,15 @@ export const AuthProvider = ({ children }) => {
     // '/',
     '/product/cart',
     '/member/profile',
-    // '/member/changeps',
+    '/member/changeps',
     '/member/order',
-    // '/member/order/info',
-    // '/member/coupon',
-    // '/member/order/review',
-    // '/member/fav/',
+    '/member/order/info',
+    '/member/coupon',
+    '/member/order/review',
+    '/member/fav/',
   ] // 需要驗證的頁面
 
   const handleCheckAuth = async () => {
-    if (!token) {
       const res = await checkAuth()
       if (res.data.status === 'success') {
         // console.log(res.data.data.user)
@@ -49,7 +57,6 @@ export const AuthProvider = ({ children }) => {
         setUser(null)
       }
       setLoading(false)
-    }
   }
 
   useEffect(() => (async () => {
@@ -101,74 +108,6 @@ export const AuthProvider = ({ children }) => {
       }
     }
   }, [router.isReady, router.pathname, user, loading]);
-
-
-
-
-  useEffect(() => {
-    // 立即執行函數
-    ; (async () => {
-      if (token) {
-        const result = await checkToken(token)
-        // console.log(result)
-        if (result.email) {
-          setUser(result)
-        } else {
-          setUser(null)
-        }
-      }
-    })()
-  }, [token])
-
-  // useEffect不能下await , 所以用()()立即執行函數
-  useEffect(() => {
-    const oldToken = localStorage.getItem('nextNeToken')
-    if (oldToken && !token) {
-      ; (async () => {
-        try {
-          const url = 'http://localhost:3005/api/my-auth/status'
-          const response = await fetch(url, {
-            method: 'GET',
-            headers: {
-              Authorization: `Bearer ${oldToken}`,
-            },
-          })
-          const result = await response.json()
-          if (result.status === 'success') {
-            setToken(result.token)
-            localStorage.setItem('nextNeToken', result.token)
-          } else {
-            throw new Error(result.message)
-          }
-        } catch (error) {
-          // setAuthError(error.message)
-          localStorage.removeItem('nextNeToken')
-        }
-      })()
-    }
-  }, [])
-
-  const checkToken = async (token) => {
-    const secretKey = 'thisisverstrongaccesstokensecre'
-    let decoded
-    try {
-      decoded = await new Promise((resolve, reject) => {
-        // console.log(token)
-        jwt.verify(token, secretKey, (error, data) => {
-          if (error) {
-            return reject(error)
-          }
-          resolve(data)
-        })
-      })
-    } catch (err) {
-      // console.log(err)
-      decoded = {}
-    }
-
-    return decoded
-  }
-
 
   return (
     <AuthContext.Provider value={{ user, setUser, token, setToken, guser, setGUser, setLoading, handleCheckAuth }}>

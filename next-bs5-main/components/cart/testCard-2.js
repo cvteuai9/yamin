@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import Cards from 'react-credit-cards-2'
 import {
   formatCVC,
@@ -7,35 +7,48 @@ import {
   formatFormData,
 } from '@/hooks/cartCheckNumber'
 
-const PaymentForm = () => {
+const PaymentForm = (formData, onChange) => {
   // 測試
   const showCard = useRef(null)
   // 測試結束
   const [state, setState] = useState({
-    number: '',
-    expiry: '',
+    cardnumber: '',
+    cardexpiry: '',
     cvc: '',
-    name: '',
+    cardholder: '',
     focus: '',
   })
 
-  const handlePayChange = (e) => {
+  const handleCardPayChange = (e) => {
     if (e.target.checked) {
-      showCard.current.style.display = flex
+      showCard.current.classList.remove('d-none')
+    }
+  }
+
+  const handleLinePayChange = (e) => {
+    if (e.target.checked) {
+      showCard.current.classList.add('d-none')
+    }
+  }
+
+  const handleGreenPayChange = (e) => {
+    if (e.target.checked) {
+      showCard.current.classList.add('d-none')
     }
   }
 
   const handleInputChange = (evt) => {
     let { name, value } = evt.target
-    if (name === 'number') {
+    if (name === 'cardnumber') {
       evt.target.value = formatCreditCardNumber(evt.target.value)
-    } else if (name === 'expiry') {
+    } else if (name === 'cardexpiry') {
       evt.target.value = formatExpirationDate(evt.target.value)
     } else if (name === 'cvc') {
       evt.target.value = formatCVC(evt.target.value)
     }
 
     setState((prev) => ({ ...prev, [name]: evt.target.value }))
+    onChange({ target: { name, value: evt.target.value } })
   }
 
   const handleInputFocus = (evt) => {
@@ -49,8 +62,10 @@ const PaymentForm = () => {
           <input
             type="radio"
             id="cartBuy-card"
-            name="card"
+            name="payState"
+            value="cardPay"
             className="cartBuyInput cartBuy-card"
+            onChange={handleCardPayChange}
           />
           <label htmlFor="">信用卡支付</label>
         </div>
@@ -58,8 +73,10 @@ const PaymentForm = () => {
           <input
             type="radio"
             id="cartBuy-linepay"
-            name="card"
+            name="payState"
+            value="line"
             className="cartBuyInput cartBuy-linepay"
+            onChange={handleLinePayChange}
           />
           <label htmlFor="">linepay</label>
         </div>
@@ -67,8 +84,10 @@ const PaymentForm = () => {
           <input
             type="radio"
             id="cartBuy-green"
-            name="card"
+            name="payState"
+            value="ecpay"
             className="cartBuyInput cartBuy-green"
+            onChange={handleGreenPayChange}
           />
           <label htmlFor="">綠界金流</label>
         </div>
@@ -83,11 +102,11 @@ const PaymentForm = () => {
             <label htmlFor="">卡號</label>
             <input
               type="tel"
-              name="number"
+              name="cardnumber"
               maxLength={22}
               pattern="[\d| ]{16,22}"
               className="cardNumberInput"
-              value={state.number}
+              value={state.cardnumber}
               onChange={handleInputChange}
               onFocus={handleInputFocus}
             />
@@ -96,7 +115,7 @@ const PaymentForm = () => {
             <label htmlFor="">姓名</label>
             <input
               type="text"
-              name="name"
+              name="cardholder"
               maxLength={19}
               className="cardHolderInput"
               onChange={handleInputChange}
@@ -108,14 +127,14 @@ const PaymentForm = () => {
               <label htmlFor="">Expiration MM</label>
               <input
                 type="tel"
-                name="expiry"
+                name="cardexpiry"
                 className="form-control"
                 placeholder="Valid Thru"
                 pattern="\d\d/\d\d"
                 required
                 onChange={handleInputChange}
                 onFocus={handleInputFocus}
-                class="monthInput"
+                className="monthInput"
               />
             </div>
 
@@ -132,14 +151,13 @@ const PaymentForm = () => {
               />
             </div>
           </div>
-          <input type="submit" defaultValue="送出" className="submitBtn h5" />
         </form>
         <div class="cardContainer">
           <Cards
-            number={state.number}
-            expiry={state.expiry}
+            number={state.cardnumber}
+            expiry={state.cardexpiry}
             cvc={state.cvc}
-            name={state.name}
+            name={state.cardholder}
             focused={state.focus}
           />
         </div>

@@ -1,13 +1,26 @@
 // 老師註冊表單
-.teacher-register{
-  input{
+.teacher-register {
+  input {
     color: #000;
   }
 }
+.test-profileform {
+  color: white;
+}
 // 測試index
-.testlogin{
+.testlogin {
   color: var(--bg-text-color);
 }
+// 商品細節全域
+.articledetail {
+  h5,
+  p {
+    color: var(--bg-text-color);
+  }
+  font-family: 'B2Hana-Regular', sans-serif;
+  font-weight: 100;
+}
+
 /* ------商品細節頁右邊detail------ */
 
 .article_info {
@@ -84,7 +97,7 @@
     &:placeholder {
       color: var(--primary2);
       margin-left: 1rem;
-  }
+    }
   }
 
   .icon {
@@ -148,6 +161,12 @@
     }
   }
 
+  .article-text {
+    p {
+      color: var(--bg-text-color);
+    }
+  }
+
   .addbookmarks {
     cursor: pointer;
     border: 1px solid var(--primary2);
@@ -177,7 +196,7 @@
   .article-text {
     font-size: 2rem;
     line-height: 3.6rem;
-    p{
+    p {
       white-space: pre-line;
     }
   }
