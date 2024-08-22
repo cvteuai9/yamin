@@ -61,6 +61,10 @@ export default async function (sequelize) {
         type: DataTypes.INTEGER(1),
         allowNull: true,
       },
+      img: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
     },
     {
       tableName: 'course', //直接提供資料表名稱

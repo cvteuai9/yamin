@@ -105,9 +105,9 @@ router.get('/search', async (req, res) => {
 router.get('/:id', authenticate, async (req, res) => {
   const [users] = await db.query('SELECT * FROM users')
   const id = parseInt(req.params.id) //路由參數使用方法
-  let user = users.find((u) => u.id === id)
+  let dbuser = users.find((u) => u.id === id)
   // console.log(users)
-  if (!user) {
+  if (!dbuser) {
     res.status(404).json({
       status: 'fail',
       message: '找不到使用者',
@@ -119,6 +119,7 @@ router.get('/:id', authenticate, async (req, res) => {
   //   message: '獲取使用者成功',
   //   user,
   // })
+  const { password, ...user } = dbuser
   return res.json({ status: 'success', data: { user } })
 })
 
@@ -127,24 +128,27 @@ router.post('/', upload.none(), async (req, res) => {
   // 有安裝multer,就可以用upload.none()幫我們把表單的內容產生在req.body裡面
   // const [users] = await db.query('SELECT * FROM users')
   const { email, password, user_name } = req.body
-  let member_id = uuidv4()
+  // let member_id = uuidv4()
   await db.query(
-    'INSERT INTO users (member_id, email, password, user_name) VALUES (?, ?, ?, ?)',
-    [member_id, email, password, user_name]
+    // 'INSERT INTO users (member_id email, password, user_name) VALUES (?, ?, ?,?)',
+    'INSERT INTO users ( email, password, user_name) VALUES (?, ?, ?)',
+    [email, password, user_name]
+    // [member_id, email, password, user_name]
   )
-  res.status(201).json({
+  return res.status(201).json({
     status: 'success',
     message: '註冊成功',
-    member_id,
+    // member_id,
   })
 })
 
 // 更新使用者
 router.put('/:id', upload.none(), async (req, res) => {
   const [users] = await db.query('SELECT * FROM users')
-  const id = req.params.id
-  const { email, password, user_name } = req.body
-  let user = users.find((u) => u.member_id === id)
+  const id = parseInt(req.params.id)
+  let { email, user_name, nick_name, phone, birthday, gender } = req.body
+
+  let user = users.find((u) => u.id === id)
   if (!user) {
     return res.status(404).json({
       status: 'fail',
@@ -152,13 +156,10 @@ router.put('/:id', upload.none(), async (req, res) => {
     })
   }
   await db.query(
-    'UPDATE users SET email = ?, password = ?, user_name = ? WHERE member_id = ?',
-    [email, password, user_name, id]
+    'UPDATE users SET email = ?, user_name = ?,nick_name=?,phone=?,birthday=?,gender=? WHERE id = ?',
+    [email, user_name, nick_name, phone, birthday, gender, id]
   )
-  res.status(200).json({
-    status: 'success',
-    message: '修改成功',
-  })
+  return res.json({ status: 'success', data: { user } })
 })
 
 router.delete('/:id', async (req, res) => {
@@ -178,39 +179,55 @@ router.delete('/:id', async (req, res) => {
   })
 })
 
-function checkToken(req, res, next) {
-  let token = req.get('Authorization')
+// PUT - 更新會員資料(排除更新密碼)
+router.put('/:id/profile', authenticate, async function (req, res) {
+  const id = parseInt(req.params.id)
 
-  if (token && token.indexOf('Bearer ') === 0) {
-    token = token.slice(7)
-    // 開發中會用blackList測試
-    // 類似session的做法
-    // 不是很保險，因為伺服器重啟blackList就會消失
-    // if (blackList.includes(token)) {
-    //   return res.status(401).json({
-    //     status: 'error',
-    //     message: '登入驗證失效，請重新登入',
-    //   })
-    // }
-    jwt.verify(token, secretKey, (error, decoded) => {
-      if (error) {
-        console.error('Token verification failed:', error.message)
-        res.status(401).json({
-          status: 'error',
-          message: '登入驗證失效，請重新登入',
-        })
-        return
-      }
-      req.decoded = decoded // 有拿到資料就拿
-      console.log('Decoded token:', req.decoded)
-      next() //有中間鍵middleware可以繞出去
-    })
-  } else {
-    res.status(401).json({
-      status: 'error',
-      message: '沒有驗證資料,請重新登入',
-    })
+  // 檢查是否為授權會員，只有授權會員可以存取自己的資料
+  if (req.user.id !== id) {
+    return res.json({ status: 'error', message: '存取會員資料失敗' })
   }
-}
 
+  // user為來自前端的會員資料(準備要修改的資料)
+  const user = req.body
+  const { email, user_name, nick_name, phone, birthday, gender } = user
+
+  // 檢查從前端瀏覽器來的資料，哪些為必要(name, ...)
+  if (!id || !user.user_name) {
+    return res.json({ status: 'error', message: '缺少必要資料' })
+  }
+
+  // 查詢資料庫目前的資料
+  const dbUser = await db.query('SELECT * FROM users WHERE id = ?', [id])
+
+  // null代表不存在
+  if (!dbUser) {
+    return res.json({ status: 'error', message: '使用者不存在' })
+  }
+
+  // 有些特殊欄位的值沒有時要略過更新，不然會造成資料庫錯誤
+  // if (!user.birth_date) {
+  //   delete user.birth_date
+  // }
+
+  // 對資料庫執行update
+  const [affectedRows] = await db.query(
+    'UPDATE users SET email = ?, user_name = ?,nick_name=?,phone=?,birthday=?,gender=? WHERE id = ?',
+    [email, user_name, nick_name, phone, birthday, gender, id]
+  )
+
+  // 沒有更新到任何資料 -> 失敗或沒有資料被更新
+  if (!affectedRows) {
+    return res.json({ status: 'error', message: '更新失敗或沒有資料被更新' })
+  }
+
+  // 更新成功後，找出更新的資料，updatedUser為更新後的會員資料
+  const updatedUser = await db.query('SELECT * FROM users WHERE id = ?', [id])
+
+  // password資料不需要回應給瀏覽器
+  // delete updatedUser.password
+  //console.log(updatedUser)
+  // 回傳
+  return res.json({ status: 'success', data: { user: updatedUser } })
+})
 export default router

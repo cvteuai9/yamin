@@ -17,14 +17,6 @@ export default async function (sequelize) {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      brand_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-      },
-      cat_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-      },
       photos: {
         type: DataTypes.TEXT,
         allowNull: true,
@@ -41,15 +33,23 @@ export default async function (sequelize) {
         type: DataTypes.TEXT,
         allowNull: true,
       },
+      brand_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      cat_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
       color: {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      size: {
+      tag: {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      tag: {
+      size: {
         type: DataTypes.STRING,
         allowNull: true,
       },

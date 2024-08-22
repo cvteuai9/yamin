@@ -192,7 +192,12 @@ body {
   background-color: var(--primary2);
   border: 2px solid var(--primary);
 }
-
+.cartGoBuyOption {
+  display: flex;
+}
+.cartBuyInput {
+  margin-right: 8px;
+}
 .cartlistBorMd {
   display: none;
   padding-top: 16px;
@@ -211,11 +216,25 @@ body {
   height: 74px;
   object-fit: cover;
 }
+
+// test
+
+.error-message {
+  color: red;
+  font-size: 14px;
+  margin-top: 5px;
+}
+// test end
 /* 開始rwd部分 */
 .trashBoxMd {
-  margin-top: 55px;
+  margin-top: 95px;
 }
-
+.checkCart {
+  display: block;
+}
+.checkCartMd {
+  display: none;
+}
 @media (max-width: 790px) {
   .cartlistBorMd {
     display: flex;
@@ -235,5 +254,11 @@ body {
   }
   .cartSubTotalBor h5 {
     font-size: 1.6rem;
+  }
+  .checkCart {
+    display: none;
+  }
+  .checkCartMd {
+    display: block;
   }
 }

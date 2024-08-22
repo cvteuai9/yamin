@@ -19,6 +19,7 @@ export default function DetailForm() {
   const [topArticles, setTopArticles] = useState([]) // 儲存前五篇熱門文章
   const [newArticles, setNewArticles] = useState([]) // 儲存前五篇最新文章
 
+  console.log(id);
   const getArticle = async (id) => {
     // console.log(id);
     let apiUrl = `http://localhost:3005/api/my-articles/${id}`
@@ -27,6 +28,7 @@ export default function DetailForm() {
     const data = await res.json()
     setArticle(data.data.article)
   }
+  console.log(article);
 
   const getViews = async (id) => {
     let apiUrl = `http://localhost:3005/api/my-articles/${id}/views`

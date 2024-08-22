@@ -7,25 +7,17 @@ import Star from '@/components/star/star'
 import GoogleLogo from '@/components/icons/google-logo'
 import { RiEyeLine } from 'react-icons/ri'
 import { RiEyeOffLine } from 'react-icons/ri'
-import { useAuth, initUserData } from '@/hooks/useAuth'
+import { useAuth, initUserData } from '@/hooks/my-use-auth'
 import useFirebase from '@/hooks/use-firebase'
 import { useRouter } from 'next/router'
-import {
-  googleLogin,
-  parseJwt,
-  getUserById,
-} from '@/services/my-user'
-import { useContext } from 'react'
-import { AuthContext } from '@/context/AuthContext'
+import { login, googleLogin, parseJwt, getUserById } from '@/services/my-user'
+import toast, { Toaster } from 'react-hot-toast'
 
 // import { useAuth } from '@/hooks/use-auth'
 // import GoogleLogo from '@/components/icons/google-logo'
 
 export default function LoginForm() {
-  // const [email, setEmail] = useState('')
-  // const [password, setPassword] = useState('')
-  const { token, setGUser, handleCheckAuth } = useContext(AuthContext)
-  console.log(token);
+  const { auth, setAuth } = useAuth()
 
   const { loginGoogle } = useFirebase()
   // const { auth, setAuth } = useAuth()
@@ -33,8 +25,9 @@ export default function LoginForm() {
 
   // 處理google登入後，要向伺服器進行登入動作
   const callbackGoogleLoginPopup = async (providerData) => {
-    console.log(providerData)// 如果目前react(next)已經登入中，不需要再作登入動作
-
+    console.log(providerData)
+    // 如果目前react(next)已經登入中，不需要再作登入動作
+    if (auth.isAuth) return
     // 向伺服器進行登入動作(向本地端伺服器去登入)
     const res = await googleLogin(providerData)
 
@@ -44,12 +37,12 @@ export default function LoginForm() {
       const jwtUser = await parseJwt(res.data.data.accessToken)
       console.log(jwtUser)
 
-      const res1 = await getUserById(jwtUser.id);
+      const res1 = await getUserById(jwtUser.id)
 
       if (res1.data.status === 'success') {
         // 只需要initUserData中的定義屬性值，詳見use-auth勾子
         const dbUser = res1.data.data.user
-        console.log(dbUser);
+        console.log(dbUser)
         const userData = { ...initUserData }
 
         for (const key in userData) {
@@ -57,10 +50,11 @@ export default function LoginForm() {
             userData[key] = dbUser[key] || ''
           }
         }
-        console.log(userData);
-        // setUser(userData) 沒有密碼，不能跟login去併用
-        await handleCheckAuth()
-
+        // 設定到全域狀態中
+        setAuth({
+          isAuth: true,
+          userData,
+        })
       }
     }
   }
@@ -77,13 +71,57 @@ export default function LoginForm() {
     password: '',
     // agree: '', // 錯誤訊息用字串
   })
-  const { login } = useAuth()
+  //---------fetch-token方法login----------
+  // const { login } = useAuth()
 
-  const onLogin = async (e) => {
-    // e.preventDefault() // 防止表單默認提交行為
-    const user_name = await login(user.email, user.password)
-    if (user_name) {
-      alert(`歡迎回來，${user_name}！`)
+  // const onLogin = async (e) => {
+  //   // e.preventDefault() // 防止表單默認提交行為
+  //   const user_name = await login(user.email, user.password)
+  //   if (user_name) {
+  //     alert(`歡迎回來，${user_name}！`)
+  //   }
+  // }
+  //---------fetch-token方法login----------
+
+  const handleLogin = async () => {
+    try {
+      // console.log(user)
+      const res = await login(user)
+
+      // console.log(res.data)
+
+      if (res.data.status === 'success') {
+        const jwtUser = parseJwt(res.data.data.accessToken)
+        console.log(jwtUser)
+
+        const res1 = await getUserById(jwtUser.id)
+        console.log(res1.data)
+
+        if (res1.data.status === 'success') {
+          const dbUser = res1.data.data.user
+          const userData = { ...initUserData }
+
+          for (const key in userData) {
+            if (Object.hasOwn(dbUser, key)) {
+              userData[key] = dbUser[key]
+            }
+          }
+
+          setAuth({
+            isAuth: true,
+            userData,
+          })
+
+          toast.success('已成功登入')
+        } else {
+          toast.error('登入後無法得到會員資料')
+        }
+      } else {
+        toast.error(`登入失敗: ${res.data.message || '未知錯誤'}`)
+      }
+    } catch (error) {
+      // console.error(error)
+      alert('使用者帳號密碼錯誤')
     }
   }
 
@@ -148,6 +186,7 @@ export default function LoginForm() {
     }
     // 表單檢查 --- END
 
+    handleLogin()
     // 最後檢查完全沒問題才送到伺服器(ajax/fetch)
     alert('送到伺服器去')
   }
@@ -165,18 +204,13 @@ export default function LoginForm() {
         <div className={`${styles['loginsignin']}`}>
           <div className={`${styles['signinsec1']} text-center mb-4 mt-4`}>
             <p className="mb-5">會員登入</p>
-            <a
+            <button
               className={`${styles['gfast']} btn btn-no-radius`}
               onClick={() => loginGoogle(callbackGoogleLoginPopup)}
             >
               <GoogleLogo className="mx-3" />
-              {/* <img
-                className="googlelogo"
-                src="/neimages/Google__G__logo.svg.webp"
-                alt=""
-              /> */}
               <p className="m-0 p-0">快速登入</p>
-            </a>
+            </button>
           </div>
           <img
             className={['img-fluid m-5', styles['orline']].join(' ')}
@@ -241,7 +275,7 @@ export default function LoginForm() {
                 <button
                   className={`${styles['btn-in']} mt-4`}
                   type="submit"
-                  onClick={onLogin}
+                  // onClick={handleLogin}
                 >
                   登入
                 </button>
@@ -256,6 +290,7 @@ export default function LoginForm() {
           </div>
         </div>
       </div>
+      <Toaster />
     </main>
 
     // <main className={`form-member w-100 m-auto text-center`}>

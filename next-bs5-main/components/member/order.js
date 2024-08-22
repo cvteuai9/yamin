@@ -1,7 +1,13 @@
 // import styles from '@/components/member/ordered.module.css'
 import Leftnav from '@/components/member/left-nav'
 import Link from 'next/link'
+import { useAuth } from '@/hooks/my-use-auth'
+
 export default function Ordered() {
+  const { auth } = useAuth()
+
+  if (!auth.isAuth) return <></>
+
   return (
     <>
       <div className="container">

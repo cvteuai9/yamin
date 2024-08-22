@@ -42,11 +42,6 @@ const menuItems = [
     label: '關於我們',
     href: '/about',
   },
-  {
-    id: 6,
-    label: '登出',
-    href: '/about',
-  },
 ]
 
 export default function MainMenu({ currentRoute = '/' }) {

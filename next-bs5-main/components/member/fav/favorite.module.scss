@@ -199,6 +199,8 @@
     object-fit: cover;
   }
   & .favoritep-fabtn {
+    background-color: #ffffff00;
+    border: 0;
     position: absolute;
     width: 30px;
     bottom: 5px;
@@ -207,8 +209,11 @@
 }
 .favoritep-cardtext {
   padding: 10px;
-  line-height: 20px;
+  min-height: 22rem;
 
+  div:first-child {
+    height: 20rem;
+  }
   & .favoritep-cardbtn {
     position: absolute;
     bottom: 10px;
@@ -224,5 +229,32 @@
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+}
+.page-choose {
+  color: #b29564;
+  > div > div {
+    min-width: 21rem;
+  }
+  .current {
+    border: 1px solid #b29564;
+    border-radius: 100%;
+    background-color: #003445;
+  }
+  .page-number {
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    > button {
+      color: #b29564;
+      border-radius: 100%;
+      width: 3rem;
+      height: 3rem;
+      font-size: 1.6rem;
+      display: grid;
+      place-content: center;
+    }
   }
 }
