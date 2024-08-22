@@ -52,10 +52,12 @@ router.post('/', async function (req, res, next) {
       google_uid: dbuser.google_uid,
     }
   } else {
-    const member_id = uuidv4()
+    // const member_id = uuidv4()
     const [result] = await db.query(
-      'INSERT INTO users (member_id, email, user_name, google_uid) VALUES (?, ?, ?, ?)',
-      [member_id, email, displayName, google_uid]
+      // 'INSERT INTO users (member_id, email, user_name, google_uid) VALUES (?, ?, ?, ?)',
+      'INSERT INTO users ( email, user_name, google_uid) VALUES (?, ?, ?)',
+      // [member_id, email, displayName, google_uid]
+      [email, displayName, google_uid]
     )
     console.log(result)
 

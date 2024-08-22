@@ -2,8 +2,9 @@ import express from 'express'
 import db from '#configs/mysql.js'
 // import Yamin_order from '##/models/Yamin_order.js'
 const router = express.Router()
-import { Op } from 'sequelize'
+import { Op, UUIDV4 } from 'sequelize'
 import sequelize from '#configs/db.js'
+import moment from 'moment'
 const { YaminOrder, YaminOrderDetail } = sequelize.models
 /* GET home page. */
 router.post('/', async (req, res) => {
@@ -18,16 +19,21 @@ router.post('/', async (req, res) => {
   //     email: newUser.email,
   //   },
   // })
+  const today = moment().format()
+  // const uuid = shortUUID()
+  // const shortCode = uuid.new()
   const newOrder = req.body
   // console.log(newOrder)
   const testOrder = [...newOrder.allProductId]
   // console.log(testOrder)
 
   const orderQuery =
-    'INSERT INTO YaminOrder (user_id, amount, total_price, username, email, phone, delivery, address, note, pay_state, cardnumber, cardholder, cardexpiry, cvc) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
+    'INSERT INTO YaminOrder (state,order_uuid, user_id, amount, total_price, username, email, phone, delivery, address, note, pay_state, cardnumber, cardholder, cardexpiry, cvc,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
   const [yamintest] = await db.query(
     orderQuery,
     [
+      newOrder.state,
+      getRandomCode(),
       newOrder.userId,
       newOrder.amount,
       newOrder.totalPrice,
@@ -42,6 +48,8 @@ router.post('/', async (req, res) => {
       newOrder.cardholder,
       newOrder.cardexpiry,
       newOrder.cvc,
+      today,
+      today,
     ],
     (err, results) => {
       if (err) {
@@ -59,13 +67,13 @@ router.post('/', async (req, res) => {
   const testYamin = JSON.stringify(yamintest)
   console.log('12345', yamintest.insertId)
   if (yamintest.insertId) {
-    const orderDetailQuery =
-      'INSERT INTO YaminOrderDetail (order_id,course_id,product_id,quantity,price) VALUES(?,?,?,?,?)'
+    const orderProductDetailQuery =
+      'INSERT INTO YaminProductDetail (order_id,product_id,product_image,product_name,product_unit_price,product_quantity,product_total_price,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?)'
     const testorder = newOrder.allProductId.split(',')
     testorder.forEach((v) => {
       db.query(
-        orderDetailQuery,
-        [yamintest.insertId, '', v, newOrder.amount, newOrder.totalPrice],
+        orderProductDetailQuery,
+        [yamintest.insertId, '', v, today, today],
         (err, resultDetails) => {
           if (err) {
             console.log(err)
@@ -117,6 +125,16 @@ router.post('/', async (req, res) => {
   //   status: 'success',
   //   data: null,
   // })
+
+  function getRandomCode(length = 11) {
+    const min = Math.pow(10, length - 1)
+    const max = Math.pow(10, length) - 1
+    return Math.floor(Math.random() * (max - min + 1)) + min
+  }
 })
 
+// router.post('/', async (req, res) => {})
+router.get('/getOrder', async (req, res) => {
+  const searchOrderDetail = 'SE'
+})
 export default router

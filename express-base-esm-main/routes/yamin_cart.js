@@ -5,8 +5,10 @@ const router = express.Router()
 import { Op, UUIDV4 } from 'sequelize'
 import sequelize from '#configs/db.js'
 import moment from 'moment'
+// import { result } from 'lodash'
 const { YaminOrder, YaminOrderDetail } = sequelize.models
 /* GET home page. */
+router.use(express.json())
 router.post('/', async (req, res) => {
   // const [user, created] = await User.findOrCreate({
   //   where: {
@@ -23,10 +25,13 @@ router.post('/', async (req, res) => {
   // const uuid = shortUUID()
   // const shortCode = uuid.new()
   const newOrder = req.body
-  // console.log(newOrder)
+  // const resultOrder = newOrder.allProductId.
+  console.log(newOrder)
   const testOrder = [...newOrder.allProductId]
   // console.log(testOrder)
-
+  const ArrayProductOrderData = JSON.parse(req.body.allProductId)
+  const ArrayCourseOrderData = JSON.parse(req.body.allCourseId)
+  console.log('1140看', ArrayCourseOrderData)
   const orderQuery =
     'INSERT INTO YaminOrder (state,order_uuid, user_id, amount, total_price, username, email, phone, delivery, address, note, pay_state, cardnumber, cardholder, cardexpiry, cvc,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
   const [yamintest] = await db.query(
@@ -64,27 +69,86 @@ router.post('/', async (req, res) => {
       }
     }
   )
-  const testYamin = JSON.stringify(yamintest)
+  // const testYamin = JSON.stringify(yamintest)
   console.log('12345', yamintest.insertId)
   if (yamintest.insertId) {
-    const orderDetailQuery =
-      'INSERT INTO YaminOrderDetail (order_id,course_id,product_id,created_at,updated_at) VALUES(?,?,?,?,?)'
-    const testorder = newOrder.allProductId.split(',')
-    testorder.forEach((v) => {
-      db.query(
-        orderDetailQuery,
-        [yamintest.insertId, '', v, today, today],
-        (err, resultDetails) => {
-          if (err) {
-            console.log(err)
-            res.json({ err })
+    const orderProductDetailQuery =
+      'INSERT INTO YaminProductDetail (order_id,product_id,product_image,product_name,product_unitprice,product_quantity,product_totalprice,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?)'
+
+    const orderCourseDetailQuery =
+      'INSERT INTO YaminCourseDetail (order_id,course_id,course_image,course_name,course_unitprice,course_quantity,course_totalprice,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?)'
+    if (ArrayProductOrderData) {
+      ArrayProductOrderData.forEach((v) => {
+        db.query(
+          orderProductDetailQuery,
+          [
+            yamintest.insertId,
+            v.product_id,
+            v.product_image,
+            v.product_name,
+            v.product_unitprice,
+            v.product_qty,
+            v.product_totalprice,
+            today,
+            today,
+          ],
+          (err, resultProductDetails) => {
+            if (err) {
+              console.log(err)
+              res.json({ err })
+            }
+            if (resultProductDetails) {
+              res.json({ resultProductDetails })
+            }
           }
-          if (resultDetails) {
-            res.json({ resultDetails })
+        )
+      })
+    }
+    if (ArrayCourseOrderData) {
+      ArrayCourseOrderData.forEach((v) => {
+        db.query(
+          orderCourseDetailQuery,
+          [
+            yamintest.insertId,
+            v.course_id,
+            v.course_image,
+            v.course_name,
+            v.course_unitprice,
+            v.course_quantity,
+            v.course_totalprice,
+            today,
+            today,
+          ],
+          (err, resultCourseDetails) => {
+            if (err) {
+              console.log(err)
+              res.json({ err })
+            }
+            if (resultCourseDetails) {
+              res.json({ resultCourseDetails })
+            }
           }
-        }
-      )
-    })
+        )
+      })
+    }
+    // 最一開始的新增資料
+    // const testorder = newOrder.allProductId.split(',')
+    // console.log('0822看', testorder)
+    // testorder.forEach((v) => {
+    //   db.query(
+    //     orderProductDetailQuery,
+    //     [yamintest.insertId, '', v, today, today],
+    //     (err, resultDetails) => {
+    //       if (err) {
+    //         console.log(err)
+    //         res.json({ err })
+    //       }
+    //       if (resultDetails) {
+    //         res.json({ resultDetails })
+    //       }
+    //     }
+    //   )
+    // })
   }
   // 老師的寫法套用在我的訂單上
   // const [user, created] = await YaminOrder.findOrCreate({
