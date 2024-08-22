@@ -1,26 +1,37 @@
-import { DataTypes, DATE } from 'sequelize'
+import { DataTypes } from 'sequelize'
 
 export default async function (sequelize) {
   return sequelize.define(
-    'YaminOrderDetail',
+    'Member_comment',
     {
       id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
       },
-      OrderId: {
+      member_id: {
         type: DataTypes.INTEGER,
+        allowNull: false,
       },
-      Course_id: {
+      course_id: {
         type: DataTypes.INTEGER,
+        allowNull: true,
       },
-      Product_id: {
+      rating: {
         type: DataTypes.INTEGER,
+        allowNull: true,
+      },
+      comment: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+      },
+      date: {
+        type: DataTypes.DATE,
+        allowNull: true,
       },
     },
     {
-      tableName: 'YaminOrderDetail', //直接提供資料表名稱
+      tableName: 'member_comment', //直接提供資料表名稱
       timestamps: true, // 使用時間戳
       paranoid: false, // 軟性刪除
       underscored: true, // 所有自動建立欄位，使用snake_case命名

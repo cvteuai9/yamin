@@ -6,8 +6,28 @@ import locationData from '@/data/course-data/location.json'
 
 import categories from '@/data/course-data/category.json'
 // 引入本地的課程分類數據，這個 JSON 文件包含了所有可選擇的課程分類。
-
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import { YaminCourseCartProvider } from '@/hooks/yamin-use-Course-cart'
+import toast, { Toaster } from 'react-hot-toast'
+import { YaminCourseUseCart } from '@/hooks/yamin-use-Course-cart'
 export default function Course() {
+  // 購物車部分
+  const { addItem = () => {} } = YaminCourseUseCart()
+  const router = useRouter()
+  const notify = (CourseName) => {
+    toast.success(
+      <>
+        <p>
+          {CourseName + '已成功加入購物車!'}
+          <br />
+          <Link href="/cart/cartOne">前往購物車</Link>
+        </p>
+      </>
+    )
+  }
+
+  // 購物車部分結束
   // 定義並導出一個名為 Course 的 React 函數組件。
 
   const [courses, setCourses] = useState([])
@@ -164,7 +184,7 @@ export default function Course() {
           <div className="container mb-5">
             <div className="d-flex justify-content-center mb-1">
               <img
-                src="/images/yaming/course/上.png"
+                src="/images/yaming/course_detail/上.png"
                 alt=""
                 width={80}
                 height={8}
@@ -344,73 +364,84 @@ export default function Course() {
                   className="shane-course-card mb-3"
                   style={{ maxWidth: 1440 }}
                 >
-                  <div className="row mt-5">
-                    {/* 這邊是圖片 */}
-                    <div className="col-md-4 shane-course-activity_left ">
-                      <img
-                        src={v.img}
-                        className="img-fluid rounded-start"
-                        alt="..."
-                      />
-                    </div>
-
-                    <div className="col-md-8">
-                      <div className="shane-course-card-body position-relative px-3">
-                        <div className=" text-center justify-content-center position-absolute top-50 start-50 translate-middle">
-                          <img
-                            src="/images/yaming/course/LOGO 直向.png"
-                            alt=""
-                            width={150}
-                            height={240}
-                          />
-                        </div>
-                        <h3 className="card-title mt-3">{v.name}</h3>
-                        <p className="card-text mb-2">
-                          {getCategoryName(v.category_id)}
-                        </p>
-                        <p className="description">{v.description}</p>
-                        <p>
-                          {v.start_time} - {v.end_time}
-                        </p>
-                        <p>
-                          已經報名 {v.current_number} 個人 /人數限制{' '}
-                          {v.limit_people} 人
-                        </p>
-                        <div className="d-flex text-center">
-                          <img
-                            src="/images/yaming/course/geo-alt (1) 1.png"
-                            alt=""
-                            width="13px"
-                            height="13px"
-                            className="mt-2 me-2"
-                          />
-                          <p>{v.location}</p>
-                        </div>
-                        <h3 className="mt-3">${v.price}</h3>
-                        <div className="d-flex align-items-center mt-3 mb-2">
-                          <img
-                            src="/images/yaming/course/love.png"
-                            alt=""
-                            width={20}
-                            height={18}
-                            className="me-3"
-                          />
-                          <img
-                            src="/images/yaming/course/Group 115.png"
-                            alt=""
-                            width={20}
-                            height={18}
-                            className="me-3"
-                          />
-                          <div className="ms-3">
-                            <button type="button" className="btn rounded-pill">
-                              購買
-                            </button>
+                  <Link href={`/course/${v.id}`}>
+                    <div className="row mt-5">
+                      {/* 這邊是圖片 */}
+                      <div className="col-md-4 shane-course-activity_left ">
+                        <img
+                          src={v.img1}
+                          className="img-fluid rounded-start"
+                          alt="..."
+                        />
+                      </div>
+                      {/* 這邊是右邊的課程大致說明圖 */}
+                      <div className="col-md-8">
+                        <div className="shane-course-card-body position-relative px-3">
+                          <div className=" text-center justify-content-center position-absolute top-50 start-50 translate-middle">
+                            <img
+                              src="/images/yaming/course/LOGO 直向.png"
+                              alt=""
+                              width={150}
+                              height={240}
+                            />
+                          </div>
+                          <h3 className="card-title mt-3">{v.name}</h3>
+                          <p className="card-text mb-2">
+                            {getCategoryName(v.category_id)}
+                          </p>
+                          <p className="description">{v.description}</p>
+                          <p>
+                            {v.start_time} - {v.end_time}
+                          </p>
+                          <p>
+                            已經報名 {v.current_number} 個人 /人數限制{' '}
+                            {v.limit_people} 人
+                          </p>
+                          <div className="d-flex text-center">
+                            <img
+                              src="/images/yaming/course/geo-alt (1) 1.png"
+                              alt=""
+                              width="13px"
+                              height="13px"
+                              className="mt-2 me-2"
+                            />
+                            <p>{v.location}</p>
+                          </div>
+                          <h3 className="mt-3">${v.price}</h3>
+                          <div className="d-flex align-items-center mt-3 mb-2">
+                            <img
+                              src="/images/yaming/course/love.png"
+                              alt=""
+                              width={20}
+                              height={18}
+                              className="me-3"
+                            />
+                            <img
+                              src="/images/yaming/course/Group 115.png"
+                              alt=""
+                              width={20}
+                              height={18}
+                              className="me-3"
+                            />
+                            <div className="ms-3">
+                              <button
+                                type="button"
+                                className="btn rounded-pill"
+                                onClick={() => {
+                                  const item = { ...v, qty: 1 }
+                                  console.log(item)
+                                  notify(v.name)
+                                  addItem(item)
+                                }}
+                              >
+                                購買
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </Link>
                   {/* end */}
                 </div>
               )

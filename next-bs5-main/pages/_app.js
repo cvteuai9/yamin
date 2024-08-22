@@ -16,6 +16,7 @@ import '@/styles/article.scss'
 import '@/styles/public.scss'
 import '@/styles/style.scss'
 import '@/styles/course_style.scss'
+import '@/styles/course_detail.scss'
 
 // Ju-掛載
 import '@/styles/Normalize.scss'
@@ -23,12 +24,13 @@ import '@/styles/all.css'
 
 // 載入雅名購物車
 import { YaminCartProvider } from '@/hooks/yamin-use-cart'
+// 載入雅名課程購物車
+import { YaminCourseCartProvider } from '@/hooks/yamin-use-Course-cart'
 // 載入購物車context
 import { CartProvider } from '@/hooks/use-cart-state'
 // 載入認証用context
-import { AuthProvider } from '@/hooks/my-use-auth'
-// import { AuthProvider } from '@/hooks/use-auth'
-// import { AuthProvider } from '@/context/AuthContext'
+// import { AuthProvider } from '@/hooks/my-use-auth'
+import { AuthProvider } from '@/hooks/use-auth'
 // 載入動畫context
 import { LoaderProvider } from '@/hooks/use-loader'
 
@@ -55,9 +57,11 @@ export default function MyApp({ Component, pageProps }) {
       <LoaderProvider close={2} CustomLoader={CatLoader}>
         <CartProvider>
           <NextTopLoader height={5} color="#003445" />
-          <YaminCartProvider>
-            {getLayout(<Component {...pageProps} />)}
-          </YaminCartProvider>
+          <YaminCourseCartProvider localStorageKey="courseCart">
+            <YaminCartProvider>
+              {getLayout(<Component {...pageProps} />)}
+            </YaminCartProvider>
+          </YaminCourseCartProvider>
         </CartProvider>
       </LoaderProvider>
     </AuthProvider>

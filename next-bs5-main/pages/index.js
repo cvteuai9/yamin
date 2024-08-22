@@ -5,9 +5,9 @@ import PlaceholderText from '@/components/common/placeholder-text'
 import useFirebase from '@/hooks/use-firebase'
 import { checkAuth, login, logout, getUserById } from '@/services/my-user'
 import toast, { Toaster } from 'react-hot-toast'
-import {initUserData, useAuth } from '@/hooks/my-use-auth'
+import { initUserData, useAuth } from '@/hooks/my-use-auth'
 export default function Home() {
-  const { auth,setAuth } = useAuth()
+  const { auth, setAuth } = useAuth()
 
   const { loginGoogle, logoutFirebase } = useFirebase()
   // 處理登出
@@ -29,26 +29,30 @@ export default function Home() {
       toast.error(`登出失敗`)
     }
   }
-  if (!auth.isAuth) return <>
-    <main>
-        <p className="testlogin">首頁</p>
-        <a href="/member/profile">會員資料</a>
-        <a href="/member/order">會員訂單</a>
-      </main>
-  </>
+  if (!auth.isAuth){
+    return (
+      <>
+        <main>
+          <p className="testlogin">首頁</p>
+          <Link href="/member/profile">會員資料</Link>
+          <Link href="/member/order">會員訂單</Link>
+        </main>
+      </>
+    )
+  }
   return (
     <>
       <main>
-          <>
-            {/* <Image src={user.head} width={100} height={100} /> */}
-            <p className="testlogin">{auth.userData.user_name}</p>
-            <button className="btn btn-primary" onClick={handleLogout}>
-              登出
-            </button>
-          </>
+        <>
+          {/* <Image src={user.head} width={100} height={100} /> */}
+          <p className="testlogin">{auth.userData.user_name}</p>
+          <button className="btn btn-primary" onClick={handleLogout}>
+            登出
+          </button>
+        </>
         <p className="testlogin">首頁</p>
-        <a href="/member/profile">會員資料</a>
-        <a href="/member/order">會員訂單</a>
+        <Link href="/member/profile">會員資料</Link>
+        <Link href="/member/order">會員訂單</Link>
       </main>
       {/* <h1 className="mb-3 display-5 fw-bold text-body-emphasis">
         Next + Bootstrap5 範例

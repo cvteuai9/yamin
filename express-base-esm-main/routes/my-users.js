@@ -128,15 +128,17 @@ router.post('/', upload.none(), async (req, res) => {
   // 有安裝multer,就可以用upload.none()幫我們把表單的內容產生在req.body裡面
   // const [users] = await db.query('SELECT * FROM users')
   const { email, password, user_name } = req.body
-  let member_id = uuidv4()
+  // let member_id = uuidv4()
   await db.query(
-    'INSERT INTO users (member_id, email, password, user_name) VALUES (?, ?, ?, ?)',
-    [member_id, email, password, user_name]
+    // 'INSERT INTO users (member_id email, password, user_name) VALUES (?, ?, ?,?)',
+    'INSERT INTO users ( email, password, user_name) VALUES (?, ?, ?)',
+    [email, password, user_name]
+    // [member_id, email, password, user_name]
   )
   return res.status(201).json({
     status: 'success',
     message: '註冊成功',
-    member_id,
+    // member_id,
   })
 })
 
@@ -144,7 +146,8 @@ router.post('/', upload.none(), async (req, res) => {
 router.put('/:id', upload.none(), async (req, res) => {
   const [users] = await db.query('SELECT * FROM users')
   const id = parseInt(req.params.id)
-  const { email, user_name, nick_name, phone, birthday, gender } = req.body
+  let { email, user_name, nick_name, phone, birthday, gender } = req.body
+
   let user = users.find((u) => u.id === id)
   if (!user) {
     return res.status(404).json({
@@ -219,7 +222,7 @@ router.put('/:id/profile', authenticate, async function (req, res) {
   }
 
   // 更新成功後，找出更新的資料，updatedUser為更新後的會員資料
-  const updatedUser = await db.query('users WHERE id = ?', [id])
+  const updatedUser = await db.query('SELECT * FROM users WHERE id = ?', [id])
 
   // password資料不需要回應給瀏覽器
   // delete updatedUser.password

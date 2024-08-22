@@ -59,66 +59,51 @@ export const AuthProvider = ({ children }) => {
     '/member/fav/',
   ]
   useEffect(() => {
-    if (
-      router.isReady &&
-      !hasCheckedAuth &&
-      protectedRoutes.includes(router.pathname)
-    ) {
-      if (!auth.isAuth) {
-        handleCheckAuth()
-      }
-      setHasCheckedAuth(true) // 標記已經執行過檢查
+    if (!hasCheckedAuth && router.isReady) {
+      handleCheckAuth()
+      setHasCheckedAuth(true)
     }
-    // eslint-disable-next-line
-  }, [router.isReady]);
+  }, [router.isReady])
 
   // 我的最愛清單使用
   const [favorites, setFavorites] = useState([])
   const [userIntention, setUserIntention] = useState(null)
 
   useEffect(() => {
-    // 當原有想訪問的頁面，儲存到storedIntention然後userIntention
+    // 當原有想訪問的頁面，儲存到storedIntention然後移除userIntention，不會隨著重新整理而消失
     const storedIntention = localStorage.getItem('userIntention')
     if (storedIntention) {
       setUserIntention(storedIntention)
       localStorage.removeItem('userIntention')
     }
   }, [])
-  // const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (router.isReady) {
-      if (!auth.isAuth) {
-        // 用戶未登入
-        if (protectedRoutes.includes(router.pathname)) {
-          // 如果嘗試訪問受保護的路由，保存意圖並重定向到登入頁
+    if (!loading) {
+      if (typeof window !== 'undefined') {
+        console.log('Checking auth and pathname:', auth.isAuth, router.pathname)
+        if (!auth.isAuth && protectedRoutes.includes(router.pathname)) {
+          console.log('Not authenticated, redirecting to login...')
           localStorage.setItem('userIntention', router.pathname)
           router.push(loginRoute)
-        }
-      } else {
-        // 用戶已登入
-        if (
-          router.pathname === '/member/register' ||
-          router.pathname === '/member/login'
+        } else if (
+          auth.isAuth &&
+          (router.pathname === '/member/register' ||
+            router.pathname === '/member/login')
         ) {
-          // 如果在登入或註冊頁，重定向到 profile
-          router.push('/member/profile')
-        } else {
-          // 檢查是否有登出前的重定向路徑或用戶意圖
-          const logoutRedirectPath = localStorage.getItem('logoutRedirectPath')
+          console.log('Authenticated, redirecting to intention or profile...')
           const storedIntention = localStorage.getItem('userIntention')
-
-          if (logoutRedirectPath) {
-            localStorage.removeItem('logoutRedirectPath')
-            router.push(logoutRedirectPath)
-          } else if (storedIntention) {
-            localStorage.removeItem('userIntention')
+          if (storedIntention) {
             router.push(storedIntention)
+            localStorage.removeItem('userIntention')
+          } else {
+            router.push('/member/profile')
           }
         }
       }
     }
-  }, [router.isReady, router.pathname, auth])
+  }, [loading, router.isReady, router.pathname, auth])
   // 檢查會員認証用
   // 每次重新到網站中，或重新整理，都會執行這個函式，用於向伺服器查詢取回原本登入會員的資料
   // 因為1.	JWT 記憶體儲存：
@@ -126,9 +111,7 @@ export const AuthProvider = ({ children }) => {
   const handleCheckAuth = async () => {
     const res = await checkAuth()
 
-    // 伺服器api成功的回應為 { status:'success', data:{ user } }
     if (res.data.status === 'success') {
-      // 只需要initUserData的定義屬性值
       const dbUser = res.data.data.user
       const userData = { ...initUserData }
 
@@ -137,16 +120,15 @@ export const AuthProvider = ({ children }) => {
           userData[key] = dbUser[key] || ''
         }
       }
-      // 設到全域狀態中
       setAuth({ isAuth: true, userData })
     } else {
       console.warn(res.data)
-
-      // 在這裡實作隱私頁面路由的跳轉
       if (protectedRoutes.includes(router.pathname)) {
         router.push(loginRoute)
       }
     }
+
+    setLoading(false) // 認證檢查完成後停止加載狀態
   }
 
   return (
