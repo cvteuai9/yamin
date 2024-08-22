@@ -21,7 +21,7 @@ export default function FavoriteC() {
     <>
       <>
         {/* 標題 & 篩選 */}
-        <div className="container-fluid">
+        <div className="container-fluid" style={{maxWidth: 1440}}>
           <div className="row">
             <div className="titlenav">
               <img src="/images/favorite/title.svg" alt="" />
