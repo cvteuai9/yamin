@@ -30,6 +30,8 @@ export default function ListForm() {
       console.error('Failed to fetch articles:', error)
     }
   }, [])
+  console.log(articles);
+
 
   const getCategories = useCallback(async () => {
     try {
@@ -78,6 +80,7 @@ export default function ListForm() {
 
   // 使用 useMemo 優化排序
   const sortedArticles = useMemo(() => {
+    console.log(articles);
     const articlesCopy = [...articles]
     switch (sortOrder) {
       case 'date_desc':
@@ -92,6 +95,7 @@ export default function ListForm() {
         return articlesCopy
     }
   }, [articles, sortOrder])
+  console.log(sortedArticles);
 
   useEffect(() => {
     const initializeCategory = () => {
@@ -157,7 +161,7 @@ export default function ListForm() {
         <div className={`row row-cols-1 row-cols-md-2 row-cols-lg-3 my-4 g-5 mx-0 ${styles['articlelist']}`}>
           {sortedArticles.map((article) => (
             <div className="col" key={article.id}>
-              <Link href={`/article/detail/${article.id}`} className={styles['articleLink']}>
+              <Link href={`/article/${article.id}`} className={styles['articleLink']}>
                 <div className={styles['articlecard']}>
                   <img
                     className={styles['articlecard-img']}

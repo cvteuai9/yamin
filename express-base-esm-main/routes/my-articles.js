@@ -41,8 +41,10 @@ router.get('/filter', async function (req, res) {
   const [rows] = await db.query(query, params)
   const articles = rows
 
+  console.log(articles)
   return res.json({ status: 'success', data: { articles } })
 })
+
 router.get('/top-views', async (req, res) => {
   const [rows] = await db.query(
     'SELECT * FROM `articles` ORDER BY `views` DESC LIMIT 5;'
