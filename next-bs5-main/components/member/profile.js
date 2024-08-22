@@ -24,6 +24,13 @@ export default function Profile() {
     user_image: '',
     email: '',
   }
+  // 錯誤訊息狀態
+  const [errors, setErrors] = useState({
+    user_name: '',
+    nick_name: '',
+    gender: '',
+    phone: '',
+  })
   const { auth } = useAuth()
   console.log('auth', auth)
   const [userProfile, setUserProfile] = useState(initUserProfile)
@@ -81,8 +88,38 @@ export default function Profile() {
     // 阻擋表單預設送出行為
     e.preventDefault()
 
-    // 這裡可以作表單驗証
+    // 表單檢查 --- START
+    // 建立一個新的錯誤物件
+    const newErrors = {
+      user_name: '',
+      nick_name: '',
+      gender: '',
+      phone: '',
+    }
 
+    if (!userProfile.user_name) {
+      newErrors.user_name = '姓名為必填'
+    }
+    if (!userProfile.nick_name) {
+      newErrors.nick_name = '暱稱為必填'
+    }
+    if (!userProfile.gender) {
+      newErrors.gender = '性別為必填'
+    }
+    if (!userProfile.phone) {
+      newErrors.phone = '手機為必填'
+    }
+
+    // 呈現錯誤訊息
+    setErrors(newErrors)
+
+    // 物件屬性值中有非空白字串時，代表有錯誤發生
+    const hasErrors = Object.values(newErrors).some((v) => v)
+
+    // 有錯誤，不送到伺服器，跳出submit函式
+    if (hasErrors) {
+      return
+    }
     // 送到伺服器進行更新
     // 更新會員資料用，排除avatar
     let isUpdated = false
@@ -184,7 +221,7 @@ export default function Profile() {
                 </div>
               </div>
             )}
-            <form onSubmit={handleSubmit}>
+            <form className="profile-form" onSubmit={handleSubmit}>
               <div>
                 <p className="p whitef mt-5">真實姓名（必填）</p>
                 <input
@@ -196,6 +233,9 @@ export default function Profile() {
                   onChange={handleFieldChange}
                 />
               </div>
+              <div className="mt-2">
+                <span className="error">{errors.user_name}</span>
+              </div>
               <div>
                 <p className="p whitef mt-5">暱稱（必填）</p>
                 <input
@@ -206,6 +246,9 @@ export default function Profile() {
                   value={userProfile.nick_name}
                   onChange={handleFieldChange}
                 />
+              </div>
+              <div className="mt-2">
+                <span className="error">{errors.nick_name}</span>
               </div>
               <div>
                 <p className="p whitef mt-5">性別&nbsp;(必填)</p>
@@ -231,6 +274,9 @@ export default function Profile() {
                   <p className="p whitef ms-3">女</p>
                 </div>
               </div>
+              <div className="mt-2">
+                <span className="error">{errors.gender}</span>
+              </div>
               <div>
                 <p className="p whitef mt-5">生日</p>
                 <input
@@ -254,6 +300,9 @@ export default function Profile() {
                   value={userProfile.phone}
                   onChange={handleFieldChange}
                 />
+              </div>
+              <div className="mt-2">
+                <span className="error">{errors.phone}</span>
               </div>
               <div>
                 <p className="p whitef mt-5">
