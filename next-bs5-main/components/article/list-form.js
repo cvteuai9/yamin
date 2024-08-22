@@ -123,7 +123,7 @@ export default function ListForm() {
   }, [selectedCategoryId, categories, getArticles])
 
   return (
-    <main className="article-list">
+    <main className={styles['article-list']}>
       <div className="container">
         <div className={styles['typetitle_group']}>
           {categories.map((category) => (
