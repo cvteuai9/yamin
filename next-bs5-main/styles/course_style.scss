@@ -72,7 +72,7 @@
 }
 
 .shane-course-activity_left img {
-  aspect-ratio: 4/3;
+  aspect-ratio: 16/9;
   /* 也可以換成任何你想要的寬度 */
   object-fit: cover;
   width: 100%;
@@ -82,7 +82,7 @@
 .shane-course-card-body {
   border: #b29564 1px solid;
   width: 100%;
-  height: 100%;
+  height: auto;
   text-decoration: none;
   h3 {
     color: #ffffff;
@@ -102,7 +102,7 @@
     background-color: #b29564;
   }
   .description {
-    overflow: hidden;
+    overflow: clip;
     height: 6vh;
     width: auto;
     padding-right: 10px;
@@ -216,8 +216,8 @@
   }
   .shane-course-card-body {
     .description {
-      height: 5vh;
       width: auto;
+      height: vh;
     }
   }
 }

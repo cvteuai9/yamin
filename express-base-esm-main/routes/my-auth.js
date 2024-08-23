@@ -5,6 +5,8 @@ import moment from 'moment'
 import jsonwebtoken from 'jsonwebtoken'
 import authenticate from '#middlewares/authenticate.js'
 import { v4 as uuidv4 } from 'uuid'
+import { compareHash } from '#db-helpers/password-hash.js'
+
 const router = express.Router()
 // 解析 JSON 請求體
 router.use(express.json())
@@ -66,23 +68,38 @@ router.get('/check', authenticate, async (req, res) => {
   }
 })
 
-router.post('/login', upload.none(), async (req, res) => {
-  const [rows] = await db.query('SELECT * FROM users')
-  const { email, password } = req.body
+router.post('/login', async (req, res) => {
+  // 從前端來的資料 req.body = { username:'xxxx', password :'xxxx'}
+  const loginUser = req.body
+  console.log(loginUser)
 
-  const user = rows.find((u) => u.email === email && u.password === password)
+  // 檢查從前端來的資料哪些為必要
+  if (!loginUser.email || !loginUser.password) {
+    return res.json({ status: 'fail', data: null })
+  }
+  const user = await db.query(`SELECT * FROM users WHERE email=? LIMIT 1`, [
+    loginUser.email,
+  ])
 
   if (!user) {
     res.json({
       status: 'fail',
-      message: '使用者帳號密碼錯誤',
+      message: '使用者不存在',
     })
     return
+  }
+  // compareHash(登入時的密碼純字串, 資料庫中的密碼hash) 比較密碼正確性
+  // isValid=true 代表正確
+  const isValid = await compareHash(loginUser.password, user.password)
+
+  // isValid=false 代表密碼錯誤
+  if (!isValid) {
+    return res.json({ status: 'error', message: '密碼錯誤' })
   }
   // 存取令牌(access token)只需要id和username就足夠，其它資料可以再向資料庫查詢
   const returnUser = {
     id: user.id,
-    username: user.username,
+    username: user.user_name,
     google_uid: user.google_uid,
   }
 
