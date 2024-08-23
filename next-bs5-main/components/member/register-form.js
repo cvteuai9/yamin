@@ -77,21 +77,21 @@ export default function RegisterForm() {
           isAuth: true,
           userData,
         })
-        console.log(auth);
+        console.log(auth)
       }
     }
   }
   const handleRegister = async () => {
-    try {
-      const response = await register(user)
+    const response = await register(user)
 
-      if (response.status === 201) {
-        alert('註冊成功')
-        // 你可以在這裡處理註冊成功後的邏輯，例如導航到登入頁面
-      }
-    } catch (error) {
-      console.error('註冊失敗', error)
-      alert('註冊失敗，請再試一次')
+    if (response.status === 201) {
+      alert('註冊成功')
+      // 你可以在這裡處理註冊成功後的邏輯，例如導航到登入頁面
+    }
+
+    if (response.data.status === 'error') {
+      alert(response.data.message)
+      return
     }
     const res = await login(user)
     if (res.data.status === 'success') {
