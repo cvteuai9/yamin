@@ -46,7 +46,7 @@ export default function FavoriteP() {
     }
   }
   async function getFavProduct() {
-    const url = new URL('http://localhost:3005/api/my_products/my-favorite')
+    const url = new URL('http://localhost:3005/api/my-favorites')
     let searchParams = new URLSearchParams({
       order: order,
       page: page,
@@ -70,7 +70,7 @@ export default function FavoriteP() {
   return (
     <>
       {/* 標題 & 篩選 */}
-      <div className="container-fluid" style={{maxWidth: 1440}}>
+      <div className="container-fluid">
         <div className="row">
           <div className="titlenav">
             <img src="/images/favorite/title.svg" alt="" />
