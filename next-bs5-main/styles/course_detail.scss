@@ -8,6 +8,9 @@ body {
     background-color: #B29564;
     margin: 0px 1vw;
 }
+.cursor-pointer {
+    cursor: pointer;
+  }
 
 .shane-course-detail-star {
     display: inline-flex;
@@ -101,9 +104,9 @@ body {
 
 .shane-course-detail-store_picture {
     width: 100%;
-    aspect-ratio: 9/10;
+    aspect-ratio: 4/3;
     /* 額外確保圖片縮放時會有最好的效果 */
-    object-fit: cover;
+    object-fit: contain;
 }
 
 .shane-course-detail-store {

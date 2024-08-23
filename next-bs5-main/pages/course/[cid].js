@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { CiStar } from 'react-icons/ci'
 import categories from '@/data/course-data/category.json'
 import { Swiper, SwiperSlide } from 'swiper/react'
-
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'
 // Import Swiper styles
 import 'swiper/css'
 import 'swiper/css/free-mode'
@@ -22,6 +22,8 @@ export default function CourseDetail() {
   const router = useRouter()
   const [thumbsSwiper, setThumbsSwiper] = useState(null)
   const [comment, setComment] = useState([])
+  const [currentCommentIndex, setCurrentCommentIndex] = useState(0)
+  const [isMobile, setIsMobile] = useState(false)
 
   // 商品用狀態
   const [course, setCourse] = useState({
@@ -39,6 +41,47 @@ export default function CourseDetail() {
     created_at: '',
     updated_at: '',
   })
+  const [randomCourses, setRandomCourses] = useState([])
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768) // 假設768px為手機和平板的分界點
+    }
+
+    handleResize() // 初始化
+    window.addEventListener('resize', handleResize)
+
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  const handlePrevComment = () => {
+    setCurrentCommentIndex((prevIndex) => {
+      if (isMobile) {
+        return prevIndex > 0 ? prevIndex - 1 : comment.length - 1
+      }
+      return prevIndex > 0 ? prevIndex - 1 : comment.length - 3
+    })
+  }
+
+  const handleNextComment = () => {
+    setCurrentCommentIndex((prevIndex) => {
+      if (isMobile) {
+        return prevIndex < comment.length - 1 ? prevIndex + 1 : 0
+      }
+      return prevIndex < comment.length - 3 ? prevIndex + 1 : 0
+    })
+  }
+  async function getComments(id) {
+    try {
+      const apiURL = new URL(`http://localhost:3005/api/course/comment/${id}`)
+      const res = await fetch(apiURL)
+      const data = await res.json()
+      console.log(data)
+      setComment(data.comments) // 將評論資料設置到狀態中
+    } catch (error) {
+      console.error('Error fetching comments:', error)
+    }
+  }
 
   // 向伺服器fetch獲取資料
   async function getCourse(id) {
@@ -53,11 +96,26 @@ export default function CourseDetail() {
       console.error('Error fetching course data:', error)
     }
   }
+  // 新增函式以獲取隨機課程
+  async function getRandomCourses(id) {
+    try {
+      const apiURL = `http://localhost:3005/api/course/random/${id}`
+      const res = await fetch(apiURL)
+      if (!res.ok) throw new Error('Network response was not ok')
+      const data = await res.json()
+      console.log(data)
+      setRandomCourses(data.courses)
+    } catch (error) {
+      console.error('Error fetching random courses:', error)
+    }
+  }
 
   useEffect(() => {
     if (router.isReady) {
-      console.log(router.query)
-      getCourse(router.query.cid)
+      const courseId = router.query.cid
+      getCourse(courseId)
+      getComments(courseId) // 當路由準備好後，獲取評論資料
+      getRandomCourses()
     }
   }, [router.isReady])
 
@@ -268,101 +326,72 @@ export default function CourseDetail() {
           </div>
         </div>
         <div className="container mt-5 d-flex align-items-center">
-          <img
-            src="/images/yaming/course_detail/Vector 34 (Stroke).png"
-            alt=""
-            width={17}
-            height={29}
+          <FaChevronLeft
+            onClick={handlePrevComment}
+            className="cursor-pointer"
+            size={15}
+            color="#B29564"
           />
           <div className="container">
             <div className="row d-flex justify-content-center">
-              <div className="col-md-4 shane-course-detail-activity_Comment  mx-3">
-                <div className="d-flex">
-                  <img
-                    src="/images/yaming/course_detail/anya-300-03.png"
-                    className="rounded-circle mt-3 ms-3"
-                    alt="..."
-                    width={60}
-                    height={60}
-                  />
-                  <div className="row ms-3 mt-4">
-                    <h5 className="col-12 m-0 p-0">安妮雅</h5>
-                    <p className="col-12 m-0 p-0">
-                      <CiStar />
-                      <CiStar />
-                      <CiStar />
-                      <CiStar />
-                      <CiStar />
-                    </p>
+              {comment
+                .slice(
+                  currentCommentIndex,
+                  currentCommentIndex + (isMobile ? 1 : 3)
+                )
+                .map((item) => (
+                  <div
+                    key={item.id}
+                    className={`${
+                      isMobile ? 'col-12' : 'col-md-4'
+                    } shane-course-detail-activity_Comment mx-3 mb-4`}
+                  >
+                    <div className="d-flex">
+                      <img
+                        src="/images/yaming/course_detail/anya-300-03.png"
+                        className="rounded-circle mt-3 ms-3"
+                        alt="..."
+                        width={60}
+                        height={60}
+                      />
+                      <div className="row ms-3 mt-4">
+                        <h5 className="col-12 m-0 p-0">
+                          用戶 {item.member_id}
+                        </h5>
+                        <p className="col-12 m-0 p-0">
+                          {[...Array(5)].map((_, index) => (
+                            <CiStar
+                              key={index}
+                              className={
+                                index < item.rating ? 'text-warning' : ''
+                              }
+                              color="#fff"
+                            />
+                          ))}
+                        </p>
+                      </div>
+                    </div>
+                    <p className="mt-5 mx-3">{item.comment}</p>
+                    <p className="mt-5 mx-3">{item.date}</p>
                   </div>
-                </div>
-                <p className="mt-5 mx-3">
-                  每個茶人對茶都有自己的論述，那些論述各有迷人之票，本著愛茶的初心一起捧茶壺、注一杯浪漫、飲一口歷史，讓這一切感官的享受滋養你喝茶的自信。
-                </p>
-                <p className="mt-5 mx-3">2024/05/22 </p>
-              </div>
-              <div className="col-md-4  shane-course-detail-activity_Comment2 mx-3">
-                <div className="d-flex">
-                  <img
-                    src="/images/yaming/course_detail/anya-300-03.png"
-                    className="rounded-circle mt-3 ms-3"
-                    alt="..."
-                    width={60}
-                    height={60}
-                  />
-                  <div className="row ms-3 mt-4">
-                    <h5 className="col-12 m-0 p-0">安妮雅</h5>
-                    <p className="col-12 m-0 p-0">
-                      <CiStar />
-                      <CiStar />
-                      <CiStar />
-                      <CiStar />
-                      <CiStar />
-                    </p>
-                  </div>
-                </div>
-                <p className="mt-5 mx-3">
-                  每個茶人對茶都有自己的論述，那些論述各有迷人之票，本著愛茶的初心一起捧茶壺、注一杯浪漫、飲一口歷史，讓這一切感官的享受滋養你喝茶的自信。
-                </p>
-                <p className="mt-5 mx-3">2024/05/22 </p>
-              </div>
-              <div className="col-md-4  shane-course-detail-activity_Comment2 mx-3">
-                <div className="d-flex">
-                  <img
-                    src="/images/yaming/course_detail/anya-300-03.png"
-                    className="rounded-circle mt-3 ms-3"
-                    alt="..."
-                    width={60}
-                    height={60}
-                  />
-                  <div className="row ms-3 mt-4">
-                    <h5 className="col-12 m-0 p-0">安妮雅</h5>
-                    <p className="col-12 m-0 p-0">
-                      <CiStar />
-                      <CiStar />
-                      <CiStar />
-                      <CiStar />
-                      <CiStar />
-                    </p>
-                  </div>
-                </div>
-                <p className="mt-5 mx-3">
-                  每個茶人對茶都有自己的論述，那些論述各有迷人之票，本著愛茶的初心一起捧茶壺、注一杯浪漫、飲一口歷史，讓這一切感官的享受滋養你喝茶的自信。
-                </p>
-                <p className="mt-5 mx-3">2024/05/22 </p>
-              </div>
+                ))}
             </div>
           </div>
-          <img
-            src="/images/yaming/course_detail/Vector 35 (Stroke).png"
-            alt=""
-            width={17}
-            height={29}
+          <FaChevronRight
+            onClick={handleNextComment}
+            className="cursor-pointer"
+            size={15}
+            color="#B29564"
           />
         </div>
         <div className="container mt-5 shane-course-detail-container-top">
           <div className="d-flex justify-content-center mb-1">
-            <img src="/images/上.png" alt="" width={80} height={8} />
+            <img
+              src="/images/yaming/course_detail/上.png"
+              alt=""
+              width={80}
+              height={8}
+            />
           </div>
           <div className="d-flex justify-content-center align-items-center">
             <div className="shane-course-detail-wood mb-4" />
@@ -383,126 +412,44 @@ export default function CourseDetail() {
             />
           </div>
         </div>
-        <div className="container mt-3 mb-1">
+        <div className="container mt-3 mb-1 mt-5">
           <div className="row d-flex justify-content-center align-items-center ms-2 me-2">
-            <div className=".col-12 shane-course-detail-store1 col-sm-6 col-md-3  text-center ">
-              <div className="shane-course-detail-store_picture">
-                <img
-                  src="/images/yaming/course_detail/Rectangle 7.png"
-                  alt=""
-                />
-              </div>
-              <div className="d-flex justify-content-center align-items-center m-0 ">
-                <div className="shane-course-detail-wood" />
-                <div className="h5 shane-course-detail-store">
-                  茶文化與歷史課程
+            {randomCourses.map((course) => (
+              <div
+                key={course.id}
+                className=".col-12 shane-course-detail-store1 col-sm-6 col-md-3 text-center"
+              >
+                <div className="shane-course-detail-store_picture">
+                  <img src={course.img1} alt={course.name} />
                 </div>
-                <div className="shane-course-detail-wood" />
-              </div>
-              <div className="shane-course-detail-star2">
-                <img
-                  src="/images/yaming/course_detail/star.png"
-                  alt=""
-                  className="star3"
-                />
-                <img src="/images/yaming/course_detail/Vector 25.png" alt="" />
-                <img
-                  src="/images/yaming/course_detail/star.png"
-                  alt=""
-                  className="star3"
-                />
-              </div>
-              <p className="shane-course-detail-store">Tea culture</p>
-            </div>
-            <div className=".col-12 shane-course-detail-store1 col-sm-6 col-md-3  text-center ">
-              <div className="shane-course-detail-store_picture">
-                <img
-                  src="/images/yaming/course_detail/Rectangle 7.png"
-                  alt=""
-                />
-              </div>
-              <div className="d-flex justify-content-center align-items-center m-0 ">
-                <div className="shane-course-detail-wood" />
-                <div className="h5 shane-course-detail-store">
-                  茶葉製作與加工課程
+                <div className="d-flex justify-content-center align-items-center m-0 ">
+                  <div className="shane-course-detail-wood" />
+                  <div className="h5 shane-course-detail-store mt-3">
+                    {course.name}
+                  </div>
+                  <div className="shane-course-detail-wood" />
                 </div>
-                <div className="shane-course-detail-wood" />
-              </div>
-              <div className="shane-course-detail-star2">
-                <img
-                  src="/images/yaming/course_detail/star.png"
-                  alt=""
-                  className="star3"
-                />
-                <img src="/images/yaming/course_detail/Vector 25.png" alt="" />
-                <img
-                  src="/images/yaming/course_detail/star.png"
-                  alt=""
-                  className="star3"
-                />
-              </div>
-              <p className="shane-course-detail-store">
-                Tea processing courses
-              </p>
-            </div>
-            <div className=".col-12 shane-course-detail-store1 col-sm-6 col-md-3  text-center">
-              <div className="shane-course-detail-store_picture">
-                <img
-                  src="/images/yaming/course_detail/Rectangle 7.png"
-                  alt=""
-                />
-              </div>
-              <div className="d-flex justify-content-center align-items-center m-0 ">
-                <div className="shane-course-detail-wood" />
-                <div className="h5 shane-course-detail-store">
-                  茶藝表演與茶道課程
+                <div className="shane-course-detail-star2">
+                  <img
+                    src="/images/yaming/course_detail/star.png"
+                    alt=""
+                    className="star3"
+                  />
+                  <img
+                    src="/images/yaming/course_detail/Vector 25.png"
+                    alt=""
+                  />
+                  <img
+                    src="/images/yaming/course_detail/star.png"
+                    alt=""
+                    className="star3"
+                  />
                 </div>
-                <div className="shane-course-detail-wood" />
+                <p className="shane-course-detail-store">
+                  {getCategoryName(course.category_id)}
+                </p>
               </div>
-              <div className="shane-course-detail-star2">
-                <img
-                  src="/images/yaming/course_detail/star.png"
-                  alt=""
-                  className="star3"
-                />
-                <img src="/images/yaming/course_detail/Vector 25.png" alt="" />
-                <img
-                  src="/images/yaming/course_detail/star.png"
-                  alt=""
-                  className="star3"
-                />
-              </div>
-              <p className="shane-course-detail-store">Tea art courses</p>
-            </div>
-            <div className=".col-12 shane-course-detail-store1 col-sm-6 col-md-3 text-center ">
-              <div className="shane-course-detail-store_picture">
-                <img
-                  src="/images/yaming/course_detail/Rectangle 7.png"
-                  alt=""
-                />
-              </div>
-              <div className="d-flex justify-content-center align-items-center m-0 ">
-                <div className="shane-course-detail-wood" />
-                <div className="h5 shane-course-detail-store">
-                  茶葉鑑定品茶課程
-                </div>
-                <div className="shane-course-detail-wood" />
-              </div>
-              <div className="shane-course-detail-star2">
-                <img
-                  src="/images/yaming/course_detail/star.png"
-                  alt=""
-                  className="star3"
-                />
-                <img src="/images/yaming/course_detail/Vector 25.png" alt="" />
-                <img
-                  src="/images/yaming/course_detail/star.png"
-                  alt=""
-                  className="star3"
-                />
-              </div>
-              <p className="shane-course-detail-store">Tea identification</p>
-            </div>
+            ))}
           </div>
         </div>
       </>
