@@ -1,14 +1,10 @@
 import express from 'express'
 // 引入 Express 框架，用來構建後端應用。
-
-const app = express()
-// 創建一個 Express 應用實例，命名為 app。
-
 const router = express.Router()
 // 創建一個新的 Express 路由實例，命名為 router。
 
 import sequelize from '#configs/db.js'
-// 引入 Sequelize ORM 的實例，用來與資料庫進行交互。
+import db from '##/configs/mysql.js'
 
 const { Course } = sequelize.models
 // 從 Sequelize 實例中解構出 Course 模型，用來操作課程數據表。
@@ -112,7 +108,6 @@ router.get('/:id', async function (req, res) {
   if (isNaN(id)) {
     return res.status(400).json({ message: 'Invalid course ID' })
   }
-
   try {
     const course = await Course.findByPk(id, { raw: true })
     if (!course) {
@@ -125,6 +120,20 @@ router.get('/:id', async function (req, res) {
   }
 })
 
-export default router
+// 單個課程的評論API
+router.get('/comment/:id', async (req, res) => {
+  try {
+    const id = Number(req.params.id) // 修正參數名稱
+    const [rows] = await db.query(
+      `SELECT id, member_id, course_id, rating, comment, date FROM member_comment WHERE course_id = ${id} `
+    )
+    const comment = {}
+    comment.comments = rows
+    return res.status(200).json(comment)
+  } catch (error) {
+    console.log(error)
+    return res.status(500).json({ error: 'Internal Server Error' })
+  }
+})
 
-app.use('/api/course', router)
+export default router
