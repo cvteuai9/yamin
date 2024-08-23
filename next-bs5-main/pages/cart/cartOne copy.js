@@ -1,7 +1,10 @@
+import { useState, useEffect } from 'react'
 import { YaminUseCart } from '@/hooks/yamin-use-cart'
 import React from 'react'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
+import { useRouter } from 'next/router'
+import { YaminCourseUseCart } from '@/hooks/yamin-use-Course-cart'
 
 // // {
 //   cartItems = [],
@@ -12,17 +15,25 @@ import withReactContent from 'sweetalert2-react-content'
 //   totalPrice,
 // }
 export default function CardOne() {
-  
-  const {
-    cartItems = [],
-    handleIncrease = () => {},
-    handleDecrease = () => {},
-    handleRemove = () => {},
+  const [hydrated, setHydrated] = useState(false)
 
-    totalQty,
-    totalPrice,
-  } = YaminUseCart()
+  useEffect(() => {
+    setHydrated(true)
+  }, [])
 
+  if (!hydrated) {
+    return null
+  }
+
+  const { cart, items, increment, decrement, removeItem } = YaminUseCart()
+
+  let {
+    cart: courseCart,
+    items: courseItems,
+    increment: courseIncrement,
+    decrement: courseDecrement,
+    removeItem: courseRemoveItem,
+  } = YaminCourseUseCart
   const CartMySwal = withReactContent(Swal)
 
   const CartNotifyAndRemove = (productName, productId) => {
@@ -42,11 +53,15 @@ export default function CardOne() {
           text: productName + '已成功刪除',
           icon: 'success',
         })
-        handleRemove(productId)
+        removeItem(productId)
       }
     })
   }
-
+  const router = useRouter()
+  function handleSubmit() {
+    router.push('http://localhost:3000/cart/cartTwoTest')
+  }
+  console.log('課程資訊', courseItems)
   return (
     <>
       <div className="container-fluid cart ">
@@ -98,77 +113,85 @@ export default function CardOne() {
             <div className="col-2 text-center colorWhite">小計</div>
             <div className="col-1 text-center colorWhite">移除</div>
           </div>
-          {cartItems.map((v, i) => {
-            return (
-              <div key={v.id} className="row cartlistBor h5">
-                <div className="col-2 text-center colorWhite py-4">
-                  <img
-                    src={`/images/product/list1/products-images/${v.paths}`}
-                    alt=""
-                  />
-                </div>
-                <div className="col-4 text-center colorWhite cartlistCol Gotext">
-                  {v.product_name}
-                </div>
-                <div className="col-2 text-center colorWhite cartlistCol">
-                  {v.price}
-                </div>
-                <div className="col-1 text-center colorWhite cartlistCol">
-                  <button
-                    className="btn cartBtn h5 cardTotalBtn cartListBtnMdPrep"
-                    type="button"
-                    onClick={() => {
-                      // 先計算(預計)按了按鈕後，商品數量會變為多少
-                      const nextQty = v.qty - 1
-                      // 如果按了後商品數量<=0 ，進行移除
-                      if (nextQty <= 0) {
+          {/* itemsMap開始 */}
+          {items.length === 0 ? (
+            <div className="checkCart">
+              <h1>購物車為空</h1>
+            </div>
+          ) : (
+            items.map((v, i) => {
+              return (
+                <div key={v.id} className="row cartlistBor h5">
+                  <div className="col-2 text-center colorWhite py-4">
+                    <img
+                      src={`/images/product/list1/products-images/${v.paths}`}
+                      alt=""
+                    />
+                  </div>
+                  <div className="col-4 text-center colorWhite cartlistCol Gotext">
+                    {v.product_name}
+                  </div>
+                  <div className="col-2 text-center colorWhite cartlistCol">
+                    {v.price}
+                  </div>
+                  <div className="col-1 text-center colorWhite cartlistCol">
+                    <button
+                      className="btn cartBtn h5 cardTotalBtn cartListBtnMdPrep"
+                      type="button"
+                      onClick={() => {
+                        // 先計算(預計)按了按鈕後，商品數量會變為多少
+                        const nextQty = v.qty - 1
+                        // 如果按了後商品數量<=0 ，進行移除
+                        if (nextQty <= 0) {
+                          // if (confirm('你確定要移除此商品?')) {
+                          //   handleRemove(v.id)
+                          // }
+                          CartNotifyAndRemove(v.product_name, v.id)
+                        } else {
+                          decrement(v.id)
+                        }
+                      }}
+                    >
+                      -
+                    </button>
+                    <button
+                      className="btn cartBtn  h5 cardTotalBtn"
+                      type="button"
+                    >
+                      {v.qty}
+                    </button>
+                    <button
+                      className="btn cartBtn h5 cardTotalBtn cartListBtnMdAdd"
+                      type="button"
+                      onClick={() => {
+                        increment(v.id)
+                      }}
+                    >
+                      +
+                    </button>
+                  </div>
+                  <div className="col-2 text-center colorWhite cartlistCol">
+                    {v.subtotal}
+                  </div>
+                  <div className="col-1 text-center  colorWhite cartlistCol">
+                    <button
+                      type="button"
+                      className="trashBtn cartBtn"
+                      onClick={() => {
                         // if (confirm('你確定要移除此商品?')) {
                         //   handleRemove(v.id)
                         // }
                         CartNotifyAndRemove(v.product_name, v.id)
-                      } else {
-                        handleDecrease(v.id)
-                      }
-                    }}
-                  >
-                    -
-                  </button>
-                  <button
-                    className="btn cartBtn  h5 cardTotalBtn"
-                    type="button"
-                  >
-                    {v.qty}
-                  </button>
-                  <button
-                    className="btn cartBtn h5 cardTotalBtn cartListBtnMdAdd"
-                    type="button"
-                    onClick={() => {
-                      handleIncrease(v.id)
-                    }}
-                  >
-                    +
-                  </button>
+                      }}
+                    >
+                      <i className="fa-solid fa-trash-can colorWhite p-3" />
+                    </button>
+                  </div>
                 </div>
-                <div className="col-2 text-center colorWhite cartlistCol">
-                  1000
-                </div>
-                <div className="col-1 text-center  colorWhite cartlistCol">
-                  <button
-                    type="button"
-                    className="trashBtn cartBtn"
-                    onClick={() => {
-                      // if (confirm('你確定要移除此商品?')) {
-                      //   handleRemove(v.id)
-                      // }
-                      CartNotifyAndRemove(v.product_name, v.id)
-                    }}
-                  >
-                    <i className="fa-solid fa-trash-can colorWhite p-3" />
-                  </button>
-                </div>
-              </div>
-            )
-          })}
+              )
+            })
+          )}
+          {/* itemsMap end */}
           <div className="row cartlistBor h5">
             <div className="col-2 text-center colorWhite py-4">
               <img src="/images/cart/image_0001.jpg" alt="" />
@@ -201,6 +224,84 @@ export default function CardOne() {
               </button>
             </div>
           </div>
+
+          {/* 390Map */}
+          {items.length === 0 ? (
+            <div className="checkCartMd">
+              <h1>商品購物車為空</h1>
+            </div>
+          ) : (
+            items.map((v, i) => {
+              return (
+                <div key={v.id} className="row cartlistBorMd h5">
+                  <div className="col-3 text-center colorWhite">
+                    <img
+                      src={`/images/product/list1/products-images/${v.paths}`}
+                      alt=""
+                    />
+                  </div>
+                  <div className="col-8 ps-4  colorWhite">
+                    <p style={{ marginLeft: '6px' }}>{v.product_name}</p>
+                    <p style={{ marginLeft: '6px' }}>單價:{v.price}</p>
+                    <p style={{ marginLeft: '6px' }}>總價:{v.subtotal}</p>
+                    <div className="CartListBtnMdBox">
+                      <button
+                        className="btn cartBtn h5 cardTotalBtn cartListBtnMdPrep"
+                        type="button"
+                        onClick={() => {
+                          // 先計算(預計)按了按鈕後，商品數量會變為多少
+                          const nextQty = v.qty - 1
+                          // 如果按了後商品數量<=0 ，進行移除
+                          if (nextQty <= 0) {
+                            // if (confirm('你確定要移除此商品?')) {
+                            //   handleRemove(v.id)
+                            // }
+                            CartNotifyAndRemove(v.product_name, v.id)
+                          } else {
+                            decrement(v.id)
+                          }
+                        }}
+                      >
+                        -
+                      </button>
+                      <button
+                        className="btn cartBtn  h5 cardTotalBtn"
+                        type="button"
+                      >
+                        {v.qty}
+                      </button>
+                      <button
+                        className="btn cartBtn h5 cardTotalBtn cartListBtnMdPrep"
+                        type="button"
+                        onClick={() => {
+                          increment(v.id)
+                        }}
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+                  <div className="trashBoxMd col-1 colorWhite d-flex justify-content-end align-ltems-end">
+                    <button
+                      type="button"
+                      className=" trashBtn cartBtn"
+                      onClick={() => {
+                        // if (confirm('你確定要移除此商品?')) {
+                        //   handleRemove(v.id)
+                        // }
+                        CartNotifyAndRemove(v.product_name, v.id)
+                      }}
+                    >
+                      <i className="fa-solid fa-trash-can colorWhite " />
+                    </button>
+                  </div>
+                </div>
+              )
+            })
+          )}
+
+          {/* 390Map end */}
+
           {/* 390的list */}
           <div className="row cartlistBorMd h5">
             <div className="col-3 text-center colorWhite">
@@ -230,10 +331,10 @@ export default function CardOne() {
           {/* 390的list end */}
           <div className=" h2 pe-2 ">
             <h5 className="text-end d-line-block my-5 colorWhite">
-              總共{totalQty}項
+              總共{cart.totalItems}項
             </h5>
             <h5 className="text-end d-line-block colorWhite">
-              總計:${totalPrice}
+              總計:${cart.totalPrice}
             </h5>
           </div>
         </div>
@@ -250,6 +351,55 @@ export default function CardOne() {
             <div className="col-2 text-center colorWhite">小計</div>
             <div className="col-1 text-center colorWhite">移除</div>
           </div>
+          {courseItems.length === 0 ? (
+            <div className="checkCartMd">
+              <h1>課程購物車為空</h1>
+            </div>
+          ) : (
+            courseItems.map((v) => {
+              return (
+                <div key={v.id} className="row cartlistBor h5">
+                  <div className="col-2 text-center colorWhite py-4">
+                    <img src={v.img1} alt="" />
+                  </div>
+                  <div className=" col-4 text-center colorWhite cartlistCol">
+                    {v.name}
+                  </div>
+                  <div className="col-2 text-center colorWhite cartlistCol">
+                    {v.price}
+                  </div>
+                  <div className="col-1 text-center colorWhite cartlistCol">
+                    <button
+                      className="btn cartBtn  h5 cardTotalBtn"
+                      type="button"
+                    >
+                      -
+                    </button>
+                    <button
+                      className="btn cartBtn  h5 cardTotalBtn"
+                      type="button"
+                    >
+                      {v.qty}
+                    </button>
+                    <button
+                      className="btn cartBtn h5 cardTotalBtn"
+                      type="button"
+                    >
+                      +
+                    </button>
+                  </div>
+                  <div className="col-2 text-center colorWhite cartlistCol">
+                    1000
+                  </div>
+                  <div className="col-1 text-center  colorWhite cartlistCol">
+                    <button type="button" className="trashBtn cartBtn">
+                      <i className="fa-solid fa-trash-can colorWhite p-3" />
+                    </button>
+                  </div>
+                </div>
+              )
+            })
+          )}
           <div className="row cartlistBor h5">
             <div className="col-2 text-center colorWhite py-4">
               <img src="/images/cart/image_0001.jpg" alt="" />
@@ -332,7 +482,11 @@ export default function CardOne() {
         </div>
         {/* 付款摘要end */}
         <div className="text-center">
-          <button type="button" className="h5  goNextBtn">
+          <button
+            type="button"
+            className="h5  goNextBtn"
+            onClick={handleSubmit}
+          >
             下一步
           </button>
         </div>

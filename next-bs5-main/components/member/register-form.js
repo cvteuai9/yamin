@@ -8,7 +8,14 @@ import GoogleLogo from '@/components/icons/google-logo'
 import Image from 'next/image'
 import { RiEyeLine } from 'react-icons/ri'
 import { RiEyeOffLine } from 'react-icons/ri'
-import { register, login, parseJwt, getUserById } from '@/services/my-user'
+import {
+  register,
+  login,
+  parseJwt,
+  getUserById,
+  googleLogin,
+} from '@/services/my-user'
+import useFirebase from '@/hooks/use-firebase'
 import { useAuth, initUserData } from '@/hooks/my-use-auth'
 import toast, { Toaster } from 'react-hot-toast'
 
@@ -37,6 +44,43 @@ export default function RegisterForm() {
     confirmPassword: '',
     agree: '', // 錯誤訊息用字串
   })
+  const { loginGoogle } = useFirebase()
+  // 處理google登入後，要向伺服器進行登入動作
+  const callbackGoogleLoginPopup = async (providerData) => {
+    console.log(providerData)
+    // 如果目前react(next)已經登入中，不需要再作登入動作
+    if (auth.isAuth) return
+    // 向伺服器進行登入動作(向本地端伺服器去登入)
+    const res = await googleLogin(providerData)
+
+    if (res.data.status === 'success') {
+      // 從JWT存取令牌中解析出會員資料
+      // 注意JWT存取令牌中只有id, username, google_uid, line_uid在登入時可以得到
+      const jwtUser = await parseJwt(res.data.data.accessToken)
+      console.log(jwtUser)
+
+      const res1 = await getUserById(jwtUser.id)
+
+      if (res1.data.status === 'success') {
+        // 只需要initUserData中的定義屬性值，詳見use-auth勾子
+        const dbUser = res1.data.data.user
+        console.log(dbUser)
+        const userData = { ...initUserData }
+
+        for (const key in userData) {
+          if (Object.hasOwn(dbUser, key)) {
+            userData[key] = dbUser[key] || ''
+          }
+        }
+        // 設定到全域狀態中
+        setAuth({
+          isAuth: true,
+          userData,
+        })
+        console.log(auth);
+      }
+    }
+  }
   const handleRegister = async () => {
     try {
       const response = await register(user)
@@ -203,7 +247,10 @@ export default function RegisterForm() {
           <div className={`${styles['loginsignin']}`}>
             <div className={`${styles['signinsec1']} text-center mb-4 mt-4`}>
               <p className="mb-5">註冊新帳號</p>
-              <a className={`${styles['gfast']} btn btn-no-radius`}>
+              <button
+                className={`${styles['gfast']} btn btn-no-radius`}
+                onClick={() => loginGoogle(callbackGoogleLoginPopup)}
+              >
                 <GoogleLogo className="mx-3" />
                 {/* <img
                 className="googlelogo"
@@ -211,7 +258,7 @@ export default function RegisterForm() {
                 alt=""
               /> */}
                 <p className="m-0 p-0">快速註冊</p>
-              </a>
+              </button>
             </div>
             <img
               className={['img-fluid m-5', styles['orline']].join(' ')}
