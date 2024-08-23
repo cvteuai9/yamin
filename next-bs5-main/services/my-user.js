@@ -61,7 +61,7 @@ export const updateProfile = async (id = 0, user = {}) => {
  * 修改會員頭像用，需要用FormData
  */
 export const updateProfileAvatar = async (formData) => {
-  return await axiosInstance.post(`/users/upload-avatar`, formData)
+  return await axiosInstance.post(`/my-users/upload-avatar`, formData)
 }
 /**
  * 修改會員密碼專用, password = { originPassword, newPassword }
