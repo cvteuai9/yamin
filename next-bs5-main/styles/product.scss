@@ -197,6 +197,10 @@ div.scroll {
   opacity: 0.4;
 }
 
+.mySwiper > .swiper-slide-thumb-active.swiper-slide-active {
+  opacity: 1;
+}
+
 .mySwiper .swiper-slide-thumb-active {
   opacity: 1;
 }

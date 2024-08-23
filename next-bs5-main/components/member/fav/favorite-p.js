@@ -70,7 +70,7 @@ export default function FavoriteP() {
   return (
     <>
       {/* 標題 & 篩選 */}
-      <div className="container-fluid">
+      <div className="container-fluid" style={{maxWidth: 1440}}>
         <div className="row">
           <div className="titlenav">
             <img src="/images/favorite/title.svg" alt="" />
@@ -136,10 +136,12 @@ export default function FavoriteP() {
                   return (
                     <div className={`${styles['favoritep-pcard']}`} key={i}>
                       <div className={`${styles['favoritep-imgbox']}`}>
-                        <img
+                      <Link href={`/product/${v.id}`}>
+                      <img
                           src={`/images/product/list1/products-images/${v.paths}`}
                           alt=""
                         />
+                      </Link>
                         <button
                           className={`${styles['favoritep-fabtn']}`}
                           type="button"
