@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import PaymentForm from '@/components/cart/testCard-2'
 import { YaminUseCart } from '@/hooks/yamin-use-cart'
+import { YaminCourseUseCart } from '@/hooks/yamin-use-Course-cart'
 import Cards from 'react-credit-cards-2'
 import { useRouter } from 'next/router'
 
@@ -12,6 +13,7 @@ import {
 } from '@/hooks/cartCheckNumber'
 export default function CartTwo() {
   const { cart, items, increment, decrement, removeItem } = YaminUseCart()
+  const courseCart = YaminCourseUseCart()
   // let testLocl = JSON.parse(localStorage.getItem('cart'))
   const router = useRouter()
   const formRef = useRef(null)
@@ -34,10 +36,15 @@ export default function CartTwo() {
     cvc: '',
     state: 1,
   })
+
+  const allTotalItems = cart.totalItems + courseCart.cart.totalItems
+  const allTotalPrice = cart.totalPrice + courseCart.cart.totalPrice
   useEffect(() => {
-    formData.amount = cart.totalItems
-    formData.totalPrice = cart.totalPrice
-  }, [cart.totalItems, cart.totalPrice])
+    const allTotalItems = cart.totalItems + courseCart.cart.totalItems
+    const allTotalPrice = cart.totalPrice + courseCart.cart.totalPrice
+    formData.amount = allTotalItems
+    formData.totalPrice = allTotalPrice
+  }, [allTotalItems, allTotalPrice, cart.totalItems, cart.totalprice])
   // 信用卡部分
   // 測試
   const showCard = useRef(null)
@@ -186,9 +193,18 @@ export default function CartTwo() {
         product_qty: v.qty,
         product_totalprice: v.subtotal,
       }))
+      const courseData = courseCart.items.map((v) => ({
+        course_id: v.id,
+        course_image: v.img1,
+        course_name: v.name,
+        course_unitprice: v.price,
+        course_quantity: v.qty,
+        course_totalprice: v.subtotal,
+      }))
       console.log('1153看', orderData)
       // console.log(cartItems)
       PostformData.append('allProductId', JSON.stringify(orderData))
+      PostformData.append('allCourseId', JSON.stringify(courseData))
       PostformData.append('state', formData.state)
 
       for (const [key, value] of PostformData.entries()) {
@@ -383,21 +399,38 @@ export default function CartTwo() {
             <div className="col-1 text-center colorWhite">數量</div>
             <div className="col-3 text-center colorWhite">小計</div>
           </div>
-          <div className="row cartlistBor h5">
-            <div className="col-2 text-center colorWhite py-4">
-              <img src="/images/cart/image_0001.jpg" alt="" />
+          {courseCart.items.length === 0 ? (
+            <div className="checkCart">
+              <h1>課程購物車為空</h1>
             </div>
-            <div className="col-4 text-center colorWhite cartlistCol">
-              精品原葉丨三峽碧螺 40g–精裝盒
-            </div>
-            <div className="col-2 text-center colorWhite cartlistCol">1000</div>
-            <div className="col-1 text-center colorWhite cartlistCol">
-              <button className="btn cartBtn  h5 cardTotalBtn" type="button">
-                $1000
-              </button>
-            </div>
-            <div className="col-3 text-center colorWhite cartlistCol">1000</div>
-          </div>
+          ) : (
+            courseCart.items.map((v) => {
+              return (
+                <div key={v.id} className="row cartlistBor h5">
+                  <div className="col-2 text-center colorWhite py-4">
+                    <img src={v.img1} alt="" />
+                  </div>
+                  <div className="col-4 text-center colorWhite cartlistCol">
+                    {v.name}
+                  </div>
+                  <div className="col-2 text-center colorWhite cartlistCol">
+                    {v.price}
+                  </div>
+                  <div className="col-1 text-center colorWhite cartlistCol">
+                    <button
+                      className="btn cartBtn  h5 cardTotalBtn"
+                      type="button"
+                    >
+                      {v.qty}
+                    </button>
+                  </div>
+                  <div className="col-3 text-center colorWhite cartlistCol">
+                    {v.subtotal}
+                  </div>
+                </div>
+              )
+            })
+          )}
           {/* 390的list */}
           <div className="row cartlistBorMd h5">
             <div className="col-3 text-center colorWhite">
@@ -416,8 +449,12 @@ export default function CartTwo() {
           </div>
           {/* 390的list end */}
           <div className=" h2 pe-2  ">
-            <h5 className="text-end d-line-block my-5 colorWhite">總共項</h5>
-            <h5 className="text-end d-line-block colorWhite">總計:$3000</h5>
+            <h5 className="text-end d-line-block my-5 colorWhite">
+              總共{courseCart.cart.totalItems}項
+            </h5>
+            <h5 className="text-end d-line-block colorWhite">
+              總計:${courseCart.cart.totalPrice}
+            </h5>
           </div>
         </div>
         {/* 課程end */}
@@ -426,11 +463,11 @@ export default function CartTwo() {
         <div className="cartSubTotalBor  py-5 mb-6  d-flex justify-content-center">
           <div className="cartSubTotal mb-5 h5  colorWhite">
             <div className=" cartSubTotal  d-flex justify-content-center mb-5">
-              <h3>共{cart.totalItems}項目</h3>
+              <h3>共{cart.totalItems + courseCart.cart.totalItems}項目</h3>
             </div>
             <div className=" cartSubTotal d-flex justify-content-between mb-5">
               <h5 className="orderPay">總計:</h5>
-              <h5>${cart.totalPrice}</h5>
+              <h5>${cart.totalPrice + courseCart.cart.totalPrice}</h5>
             </div>
             <div className=" cartSubTotal d-flex justify-content-between mb-5">
               <h5 className="me-5">優惠券折抵:</h5>
