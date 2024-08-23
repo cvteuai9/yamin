@@ -123,6 +123,7 @@ router.get('/favorites', async (req, res) => {
     return res.status(404).json({ error: 'Favorite Course Not Found' })
   }
 })
+
 router.put('/favorites', async (req, res) => {
   try {
     const user_id = req.query.user_id
