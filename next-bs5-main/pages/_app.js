@@ -13,6 +13,7 @@ import 'react-credit-cards-2/dist/es/styles-compiled.css'
 
 import '@/styles/star.scss'
 import '@/styles/article.scss'
+import '@/styles/profile.scss'
 import '@/styles/public.scss'
 import '@/styles/style.scss'
 import '@/styles/course_style.scss'
@@ -29,8 +30,8 @@ import { YaminCourseCartProvider } from '@/hooks/yamin-use-Course-cart'
 // 載入購物車context
 import { CartProvider } from '@/hooks/use-cart-state'
 // 載入認証用context
-// import { AuthProvider } from '@/hooks/my-use-auth'
-import { AuthProvider } from '@/hooks/use-auth'
+import { AuthProvider } from '@/hooks/my-use-auth'
+// import { AuthProvider } from '@/hooks/use-auth'
 // 載入動畫context
 import { LoaderProvider } from '@/hooks/use-loader'
 
