@@ -7,8 +7,27 @@ import locationData from '@/data/course-data/location.json'
 import categories from '@/data/course-data/category.json'
 // 引入本地的課程分類數據，這個 JSON 文件包含了所有可選擇的課程分類。
 import Link from 'next/link'
-
+import { useRouter } from 'next/router'
+import { YaminCourseCartProvider } from '@/hooks/yamin-use-Course-cart'
+import toast, { Toaster } from 'react-hot-toast'
+import { YaminCourseUseCart } from '@/hooks/yamin-use-Course-cart'
 export default function Course() {
+  // 購物車部分
+  const { addItem = () => {} } = YaminCourseUseCart()
+  const router = useRouter()
+  const notify = (CourseName) => {
+    toast.success(
+      <>
+        <p>
+          {CourseName + '已成功加入購物車!'}
+          <br />
+          <Link href="/cart/cartOne">前往購物車</Link>
+        </p>
+      </>
+    )
+  }
+
+  // 購物車部分結束
   // 定義並導出一個名為 Course 的 React 函數組件。
 
   const [courses, setCourses] = useState([])
@@ -408,6 +427,12 @@ export default function Course() {
                               <button
                                 type="button"
                                 className="btn rounded-pill"
+                                onClick={() => {
+                                  const item = { ...v, qty: 1 }
+                                  console.log(item)
+                                  notify(v.name)
+                                  addItem(item)
+                                }}
                               >
                                 購買
                               </button>
