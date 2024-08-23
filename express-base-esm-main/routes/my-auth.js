@@ -44,7 +44,7 @@ router.get('/check', authenticate, async (req, res) => {
 
     // 執行原生 SQL 查詢
     const [rows] = await db.query(
-      'SELECT id, user_name, email,nick_name,phone,gender,birthday FROM users WHERE id = ?',
+      'SELECT id, user_name, email,nick_name,phone,gender,birthday,google_uid FROM users WHERE id = ?',
       [userId]
     )
 
