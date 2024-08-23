@@ -103,6 +103,59 @@ router.get('/', async function (req, res) {
   }
 })
 
+// 收藏部分
+router.get('/favorites', async (req, res) => {
+  try {
+    const user_id = Number(req.query.user_id) || 0
+    const [rows] = await db.execute(
+      `SELECT course_id FROM favorites WHERE user_id = ?`,
+      [user_id]
+    )
+    let favoriteCourse = []
+    rows.map((v) => {
+      if (v.course_id !== 0 && v.course_id !== null) {
+        return favoriteCourse.push(v.course_id)
+      }
+    })
+    // console.log(rows)
+    return res.status(200).json(favoriteCourse)
+  } catch (error) {
+    console.log(error)
+    return res.status(404).json({ error: 'Favorite Course Not Found' })
+  }
+})
+router.put('/favorites', async (req, res) => {
+  try {
+    const user_id = req.query.user_id
+    const course_id = req.query.course_id
+    await db.execute(
+      'INSERT INTO favorites (user_id, course_id) VALUES( ?, ?)',
+      [user_id, course_id]
+    )
+    return res
+      .status(200)
+      .json({ message: 'Course Favorite Insert successfully' })
+  } catch (error) {
+    console.log(error)
+    return res.status(400).json({ error: 'Invalid input data' })
+  }
+})
+
+router.delete('/favorites', async (req, res) => {
+  try {
+    const user_id = req.query.user_id
+    const course_id = req.query.course_id
+    await db.execute(
+      'DELETE FROM favorites WHERE user_id = ? && course_id = ?',
+      [user_id, course_id]
+    )
+    return res.status(200).json({ message: 'User deleted successfully' })
+  } catch (error) {
+    console.log(error)
+    return res.status(400).json({ error: 'Course Not Found' })
+  }
+})
+
 // 單個課程的API
 router.get('/:id', async function (req, res) {
   const id = Number(req.params.id)

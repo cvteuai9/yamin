@@ -221,7 +221,9 @@ router.get('/favorites', async (req, res) => {
     )
     let favoriteProduct = []
     rows.map((v) => {
-      return favoriteProduct.push(v.product_id)
+      if (v.product_id !== 0 && v.product_id !== null) {
+        return favoriteProduct.push(v.product_id)
+      }
     })
     // console.log(rows)
     return res.status(200).json(favoriteProduct)
@@ -239,6 +241,9 @@ router.put('/favorites', async (req, res) => {
       'INSERT INTO favorites (user_id, product_id) VALUES( ?, ?)',
       [user_id, product_id]
     )
+    return res
+      .status(200)
+      .json({ message: 'Product Favorite Insert successfully' })
   } catch (error) {
     console.log(error)
     return res.status(400).json({ error: 'Invalid input data' })
