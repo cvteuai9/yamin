@@ -84,6 +84,7 @@ export default function Detail() {
       const res = await fetch(apiURL)
       const data = await res.json()
       let productThis = data.data[0]
+      // !! user_id要改
       const favURL = new URL(
         `http://localhost:3005/api/my_products/favorites?user_id=1`
       )
@@ -95,8 +96,8 @@ export default function Detail() {
         productThis.fav = false
       }
       // console.log(productThis)
-      setProduct(productThis)
       setImage(data.images)
+      setProduct(productThis)
       // console.log(data)
     } catch (error) {
       console.log(error)
@@ -151,6 +152,7 @@ export default function Detail() {
       }
     }
   }
+  // !! user_id 要改
   async function handleFavToggle(product) {
     if (product.fav === false) {
       fetch(
@@ -172,6 +174,11 @@ export default function Detail() {
     const tmp = { ...product, fav: !product.fav }
     setProduct(tmp)
   }
+  useEffect(() => {
+    if (thumbsSwiper) {
+      thumbsSwiper.update()
+    }
+  }, [thumbsSwiper])
   useEffect(() => {
     // console.log(router.query)
     if (router.isReady) {
@@ -223,17 +230,21 @@ export default function Detail() {
               modules={[Autoplay, FreeMode, Navigation, Thumbs]}
               className="mySwiper2"
             >
-              {image.map((v, i) => {
-                return (
-                  <SwiperSlide key={i}>
-                    <img
-                      className="object-fit-contain"
-                      src={`/images/product/list1/products-images/${v}`}
-                      alt=""
-                    />
-                  </SwiperSlide>
-                )
-              })}
+              {image && image.length > 0 ? (
+                image.map((v, i) => {
+                  return (
+                    <SwiperSlide key={i}>
+                      <img
+                        className="object-fit-contain"
+                        src={`/images/product/list1/products-images/${v}`}
+                        alt=""
+                      />
+                    </SwiperSlide>
+                  )
+                })
+              ) : (
+                <p>No images avilable</p>
+              )}
             </Swiper>
             <Swiper
               onSwiper={setThumbsSwiper}
@@ -244,17 +255,21 @@ export default function Detail() {
               modules={[FreeMode, Navigation, Thumbs, Autoplay]}
               className="mySwiper"
             >
-              {image.map((v, i) => {
-                return (
-                  <SwiperSlide key={i}>
-                    <img
-                      className="object-fit-cover"
-                      src={`/images/product/list1/products-images/${v}`}
-                      alt=""
-                    />
-                  </SwiperSlide>
-                )
-              })}
+              {image && image.length > 0 ? (
+                image.map((v, i) => {
+                  return (
+                    <SwiperSlide key={i}>
+                      <img
+                        className="object-fit-contain"
+                        src={`/images/product/list1/products-images/${v}`}
+                        alt=""
+                      />
+                    </SwiperSlide>
+                  )
+                })
+              ) : (
+                <p>No images avilable</p>
+              )}
             </Swiper>
           </div>
           {/* 商品資訊 */}
