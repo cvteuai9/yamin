@@ -45,7 +45,6 @@ export default function List1() {
   const [pc, setPackage] = useState([]) // 包材
   const [style, setStyle] = useState([]) // 茶品型態
   const [price, setPrice] = useState([]) // 價錢
-  // 收藏
 
   // totalData 為所有符合條件的商品數，用來顯示總共有幾筆符合的商品數量
   const [totalData, setTotalData] = useState(0)
@@ -77,7 +76,7 @@ export default function List1() {
         })
       // console.log(favoriteProduct)
       const tmpData = products.product.data
-      const nextData = tmpData.map((v, i) => {
+      let nextData = tmpData.map((v, i) => {
         if (favoriteProduct.includes(v.id)) return { ...v, fav: !v.fav }
         else return v
       })
@@ -93,6 +92,7 @@ export default function List1() {
       console.log(error)
     }
   }
+  // !!後續要處理user_id
   // 處理收藏狀態的函式
   async function handleFavToggle(id) {
     const nextProduct = product.map((v, i) => {
