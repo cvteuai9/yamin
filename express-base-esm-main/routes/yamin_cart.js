@@ -30,7 +30,8 @@ router.post('/', async (req, res) => {
   const testOrder = [...newOrder.allProductId]
   // console.log(testOrder)
   const ArrayProductOrderData = JSON.parse(req.body.allProductId)
-  console.log('1140看', ArrayProductOrderData)
+  const ArrayCourseOrderData = JSON.parse(req.body.allCourseId)
+  console.log('1140看', ArrayCourseOrderData)
   const orderQuery =
     'INSERT INTO YaminOrder (state,order_uuid, user_id, amount, total_price, username, email, phone, delivery, address, note, pay_state, cardnumber, cardholder, cardexpiry, cvc,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
   const [yamintest] = await db.query(
@@ -73,32 +74,63 @@ router.post('/', async (req, res) => {
   if (yamintest.insertId) {
     const orderProductDetailQuery =
       'INSERT INTO YaminProductDetail (order_id,product_id,product_image,product_name,product_unitprice,product_quantity,product_totalprice,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?)'
-    ArrayProductOrderData.forEach((v) => {
-      db.query(
-        orderProductDetailQuery,
-        [
-          yamintest.insertId,
-          v.product_id,
-          v.product_image,
-          v.product_name,
-          v.product_unitprice,
-          v.product_qty,
-          v.product_totalprice,
-          today,
-          today,
-        ],
-        (err, resultProductDetails) => {
-          if (err) {
-            console.log(err)
-            res.json({ err })
-          }
-          if (resultProductDetails) {
-            res.json({ resultProductDetails })
-          }
-        }
-      )
-    })
 
+    const orderCourseDetailQuery =
+      'INSERT INTO YaminCourseDetail (order_id,course_id,course_image,course_name,course_unitprice,course_quantity,course_totalprice,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?)'
+    if (ArrayProductOrderData) {
+      ArrayProductOrderData.forEach((v) => {
+        db.query(
+          orderProductDetailQuery,
+          [
+            yamintest.insertId,
+            v.product_id,
+            v.product_image,
+            v.product_name,
+            v.product_unitprice,
+            v.product_qty,
+            v.product_totalprice,
+            today,
+            today,
+          ],
+          (err, resultProductDetails) => {
+            if (err) {
+              console.log(err)
+              res.json({ err })
+            }
+            if (resultProductDetails) {
+              res.json({ resultProductDetails })
+            }
+          }
+        )
+      })
+    }
+    if (ArrayCourseOrderData) {
+      ArrayCourseOrderData.forEach((v) => {
+        db.query(
+          orderCourseDetailQuery,
+          [
+            yamintest.insertId,
+            v.course_id,
+            v.course_image,
+            v.course_name,
+            v.course_unitprice,
+            v.course_quantity,
+            v.course_totalprice,
+            today,
+            today,
+          ],
+          (err, resultCourseDetails) => {
+            if (err) {
+              console.log(err)
+              res.json({ err })
+            }
+            if (resultCourseDetails) {
+              res.json({ resultCourseDetails })
+            }
+          }
+        )
+      })
+    }
     // 最一開始的新增資料
     // const testorder = newOrder.allProductId.split(',')
     // console.log('0822看', testorder)
