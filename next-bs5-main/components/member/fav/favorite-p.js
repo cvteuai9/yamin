@@ -46,7 +46,7 @@ export default function FavoriteP() {
     }
   }
   async function getFavProduct() {
-    const url = new URL('http://localhost:3005/api/my_products/my-favorite')
+    const url = new URL('http://localhost:3005/api/my-favorites')
     let searchParams = new URLSearchParams({
       order: order,
       page: page,
@@ -136,10 +136,12 @@ export default function FavoriteP() {
                   return (
                     <div className={`${styles['favoritep-pcard']}`} key={i}>
                       <div className={`${styles['favoritep-imgbox']}`}>
-                        <img
+                      <Link href={`/product/${v.id}`}>
+                      <img
                           src={`/images/product/list1/products-images/${v.paths}`}
                           alt=""
                         />
+                      </Link>
                         <button
                           className={`${styles['favoritep-fabtn']}`}
                           type="button"

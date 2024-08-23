@@ -40,9 +40,31 @@ export default function CourseDetail() {
     valid: 1,
     created_at: '',
     updated_at: '',
+    fav: false,
   })
   const [randomCourses, setRandomCourses] = useState([])
 
+  // !!收藏功能(cloud)
+  // const [fav, setFav] = useState(false)
+  async function handleFavToggle(course) {
+    try {
+      if (course.fav === false) {
+        await fetch(
+          `http://localhost:3005/api/course/favorites?user_id=1&course_id=${course.id}`,
+          { method: 'PUT' }
+        )
+      } else {
+        await fetch(
+          `http://localhost:3005/api/course/favorites?user_id=1&course_id=${course.id}`,
+          { method: 'DELETE' }
+        )
+      }
+      let tmp = { ...course, fav: !course.fav }
+      setCourse(tmp)
+    } catch (error) {
+      console.error('Failed to toggle favorite:', error)
+    }
+  }
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768) // 假設768px為手機和平板的分界點
@@ -76,7 +98,7 @@ export default function CourseDetail() {
       const apiURL = new URL(`http://localhost:3005/api/course/comment/${id}`)
       const res = await fetch(apiURL)
       const data = await res.json()
-      console.log(data)
+      // console.log(data)
       setComment(data.comments) // 將評論資料設置到狀態中
     } catch (error) {
       console.error('Error fetching comments:', error)
@@ -89,8 +111,19 @@ export default function CourseDetail() {
       const apiURL = `http://localhost:3005/api/course/${id}`
       const res = await fetch(apiURL)
       if (!res.ok) throw new Error('Network response was not ok')
-      const data = await res.json()
-      console.log(data)
+      let data = await res.json()
+      // !!拿取使用者收藏的course_id
+      const favoritesURL = `http://localhost:3005/api/course/favorites?user_id=1`
+      const favoritesRes = await fetch(favoritesURL)
+      const favoritesData = await favoritesRes.json()
+      // console.log(favoritesData)
+      // console.log(data)
+      if (favoritesData.includes(data.id)) {
+        data.fav = true
+      } else {
+        data.fav = false
+      }
+      // console.log(data.fav)
       setCourse(data)
     } catch (error) {
       console.error('Error fetching course data:', error)
@@ -103,7 +136,7 @@ export default function CourseDetail() {
       const res = await fetch(apiURL)
       if (!res.ok) throw new Error('Network response was not ok')
       const data = await res.json()
-      console.log(data)
+      // console.log(data)
       setRandomCourses(data.courses)
     } catch (error) {
       console.error('Error fetching random courses:', error)
@@ -117,7 +150,7 @@ export default function CourseDetail() {
       getComments(courseId) // 當路由準備好後，獲取評論資料
       getRandomCourses()
     }
-  }, [router.isReady])
+  }, [router.isReady, router.query.cid])
 
   const getCategoryName = (id) => {
     // 定義一個用來根據 ID 獲取課程分類名稱的函數。
@@ -250,13 +283,30 @@ export default function CourseDetail() {
                 </div>
                 <h4 className="mt-3">${course.price} </h4>
                 <div className="d-flex align-items-center mt-3">
-                  <img
-                    src="/images/yaming/course_detail/love.png"
-                    alt=""
-                    width={20}
-                    height={18}
-                    className="me-3"
-                  />
+                  {/* 收藏按鈕 */}
+                  <button
+                    type="button"
+                    className="btn like-btn"
+                    onClick={() => handleFavToggle(course)}
+                  >
+                    {course.fav ? (
+                      <img
+                        src="/images/yaming/course_detail/heart-fill.svg"
+                        alt=""
+                        width={20}
+                        height={18}
+                        className="me-3"
+                      />
+                    ) : (
+                      <img
+                        src="/images/yaming/course_detail/love.png"
+                        alt=""
+                        width={20}
+                        height={18}
+                        className="me-3"
+                      />
+                    )}
+                  </button>
                   <img
                     src="/images/yaming/course_detail/Group 115.png"
                     alt=""
