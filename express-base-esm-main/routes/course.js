@@ -5,6 +5,7 @@ const router = express.Router()
 
 import sequelize from '#configs/db.js'
 import db from '##/configs/mysql.js'
+import { raw } from 'mysql2'
 
 const { Course } = sequelize.models
 // 從 Sequelize 實例中解構出 Course 模型，用來操作課程數據表。
@@ -123,13 +124,25 @@ router.get('/:id', async function (req, res) {
 // 單個課程的評論API
 router.get('/comment/:id', async (req, res) => {
   try {
-    const id = Number(req.params.id) // 修正參數名稱
+    const id = Number(req.params.id) // 確保參數是數字型態
     const [rows] = await db.query(
-      `SELECT id, member_id, course_id, rating, comment, date FROM member_comment WHERE course_id = ${id} `
+      `SELECT id, member_id, course_id, rating, comment, date FROM member_comment WHERE course_id = ?`,
+      [id]
     )
-    const comment = {}
-    comment.comments = rows
-    return res.status(200).json(comment)
+    return res.status(200).json({ comments: rows })
+  } catch (error) {
+    console.log(error)
+    return res.status(500).json({ error: 'Internal Server Error' })
+  }
+})
+
+// Random course API
+router.get('/random/:id', async (req, res) => {
+  try {
+    const [rows] = await db.query(
+      `SELECT * FROM course ORDER BY RAND() LIMIT 4`
+    ) // MySQL 隨機選擇5個課程
+    return res.status(200).json({ courses: rows })
   } catch (error) {
     console.log(error)
     return res.status(500).json({ error: 'Internal Server Error' })
