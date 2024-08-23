@@ -7,6 +7,8 @@ import moment from 'moment'
 import jwt from 'jsonwebtoken'
 import authenticate from '#middlewares/authenticate.js'
 import { v4 as uuidv4 } from 'uuid'
+// 密碼編碼和檢查比對用
+import { generateHash, compareHash } from '##/db-helpers/password-hash.js'
 
 const router = express.Router()
 
@@ -140,21 +142,72 @@ router.get('/:id', authenticate, async (req, res) => {
 })
 
 // 註冊，新增使用者
-router.post('/', upload.none(), async (req, res) => {
-  // 有安裝multer,就可以用upload.none()幫我們把表單的內容產生在req.body裡面
-  // const [users] = await db.query('SELECT * FROM users')
-  const { email, password, user_name } = req.body
-  // let member_id = uuidv4()
-  await db.query(
-    // 'INSERT INTO users (member_id email, password, user_name) VALUES (?, ?, ?,?)',
-    'INSERT INTO users ( email, password, user_name) VALUES (?, ?, ?)',
-    [email, password, user_name]
-    // [member_id, email, password, user_name]
+// router.post('/', upload.none(), async (req, res) => {
+//   // 有安裝multer,就可以用upload.none()幫我們把表單的內容產生在req.body裡面
+//   // const [users] = await db.query('SELECT * FROM users')
+//   const { email, password, user_name } = req.body
+//   // let member_id = uuidv4()
+//   await db.query(
+//     // 'INSERT INTO users (member_id email, password, user_name) VALUES (?, ?, ?,?)',
+//     'INSERT INTO users ( email, password, user_name) VALUES (?, ?, ?)',
+//     [email, password, user_name]
+//     // [member_id, email, password, user_name]
+//   )
+//   return res.status(201).json({
+//     status: 'success',
+//     message: '註冊成功',
+//     // member_id,
+//   })
+// })
+router.post('/', async function (req, res) {
+  // 要新增的會員資料
+  const newMember = req.body
+
+  // 檢查從前端來的資料哪些為必要(name, username...)
+  if (!newMember.user_name || !newMember.email || !newMember.password) {
+    return res.json({ status: 'error', message: '缺少必要資料' })
+  }
+
+  // 先檢查username或是email不能有相同的
+  const [rows] = await db.query(`SELECT * FROM users WHERE email = ?`, [
+    newMember.email,
+  ])
+
+  console.log('rows', rows)
+
+  if (rows.length > 0) {
+    return res.json({
+      status: 'error',
+      message: '建立會員失敗，有重覆的帳號或email',
+    })
+  }
+
+  // 以下是準備新增會員
+  // 1. 進行密碼編碼
+  const passwordHash = await generateHash(newMember.password)
+
+  // 2. 新增到資料表
+  const [rows2] = await db.query(
+    `INSERT INTO users(user_name, password, email, created_at, updated_at) VALUES(?, ?, ?, NOW(), NOW())`,
+    [newMember.user_name, passwordHash, newMember.email]
   )
+
+  console.log(rows2)
+
+  if (!rows2.insertId) {
+    return res.json({
+      status: 'error',
+      message: '建立會員失敗，資料庫錯誤',
+    })
+  }
+
+  // 成功建立會員的回應
+  // 狀態`201`是建立資料的標準回應，
+  // 如有必要可以加上`Location`會員建立的uri在回應標頭中，或是回應剛建立的資料
+  // res.location(`/users/${user.id}`)
   return res.status(201).json({
     status: 'success',
-    message: '註冊成功',
-    // member_id,
+    data: null,
   })
 })
 
