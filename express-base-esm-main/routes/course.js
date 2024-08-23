@@ -76,7 +76,6 @@ router.get('/', async function (req, res) {
       return res.status(404).json({ message: 'No courses found' })
       // 返回 404 狀態碼，並附上錯誤訊息 "No courses found"。
     }
-
     return res.json({
       // 如果找到符合條件的課程，將數據以 JSON 格式返回給前端。
 

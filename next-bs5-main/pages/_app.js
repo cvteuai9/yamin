@@ -57,7 +57,7 @@ export default function MyApp({ Component, pageProps }) {
     <AuthProvider>
       <LoaderProvider close={2} CustomLoader={CatLoader}>
         <CartProvider>
-          <NextTopLoader height={5} color="#003445" />
+          <NextTopLoader height={5} color="#B29564" />
           <YaminCourseCartProvider localStorageKey="courseCart">
             <YaminCartProvider>
               {getLayout(<Component {...pageProps} />)}
