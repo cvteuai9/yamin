@@ -5,14 +5,14 @@ import { checkAuth, getFavs } from '@/services/my-user'
 
 export const AuthContext = createContext({
   user: null,
-  setUser: () => { },
+  setUser: () => {},
   token: null,
-  setToken: () => { },
+  setToken: () => {},
   guser: null,
-  setGUser: () => { },
-  handleCheckAuth: () => { },
-  userIntention:null,
-  setUserIntention: () => { },
+  setGUser: () => {},
+  handleCheckAuth: () => {},
+  userIntention: null,
+  setUserIntention: () => {},
   // 其他默認值
 })
 
@@ -21,15 +21,13 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
   // const [guser, setGUser] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [userIntention, setUserIntention] = useState(null);
-  
+  const [userIntention, setUserIntention] = useState(null)
+
   // 避免在重定向到登入頁面之前，頁面內容已經開始渲染。
   const [auth, setAuth] = useState({
     isAuth: false,
     userData: initUserData,
   })
-
-
 
   const router = useRouter()
   const loginRouter = '/member/login'
@@ -47,21 +45,24 @@ export const AuthProvider = ({ children }) => {
   ] // 需要驗證的頁面
 
   const handleCheckAuth = async () => {
-      const res = await checkAuth()
-      if (res.data.status === 'success') {
-        // console.log(res.data.data.user)
-        setUser(res.data.data.user)
-        return
-      }
-      else {
-        setUser(null)
-      }
-      setLoading(false)
+    const res = await checkAuth()
+    if (res.data.status === 'success') {
+      // console.log(res.data.data.user)
+      setUser(res.data.data.user)
+      return
+    } else {
+      setUser(null)
+    }
+    setLoading(false)
   }
 
-  useEffect(() => (async () => {
-    handleCheckAuth()
-  })(), [])
+  useEffect(
+    () =>
+      (async () => {
+        handleCheckAuth()
+      })(),
+    []
+  )
 
   useEffect(() => {
     if (loading && user !== null) {
@@ -71,12 +72,12 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     // 當原有想訪問的頁面，儲存到storedIntention然後userIntention
-    const storedIntention = localStorage.getItem('userIntention');
+    const storedIntention = localStorage.getItem('userIntention')
     if (storedIntention) {
-      setUserIntention(storedIntention);
-      localStorage.removeItem('userIntention');
+      setUserIntention(storedIntention)
+      localStorage.removeItem('userIntention')
     }
-  }, []);
+  }, [])
 
   useEffect(() => {
     if (!loading && router.isReady) {
@@ -84,37 +85,37 @@ export const AuthProvider = ({ children }) => {
         // 用戶未登入
         if (protectedRouter.includes(router.pathname)) {
           // 如果嘗試訪問受保護的路由，保存意圖並重定向到登入頁
-          localStorage.setItem('userIntention', router.pathname);
-          router.push(loginRouter);
+          localStorage.setItem('userIntention', router.pathname)
+          router.push(loginRouter)
         }
       } else {
         // 用戶已登入
-        if (router.pathname === '/member/register' || router.pathname === '/member/login') {
+        if (
+          router.pathname === '/member/register' ||
+          router.pathname === '/member/login'
+        ) {
           // 如果在登入或註冊頁，重定向到 profile
-          router.push('/member/profile');
+          router.push('/member/profile')
         } else {
           // 檢查是否有登出前的重定向路徑或用戶意圖
-          const logoutRedirectPath = localStorage.getItem('logoutRedirectPath');
-          const storedIntention = localStorage.getItem('userIntention');
-          
+          const logoutRedirectPath = localStorage.getItem('logoutRedirectPath')
+          const storedIntention = localStorage.getItem('userIntention')
+
           if (logoutRedirectPath) {
-            localStorage.removeItem('logoutRedirectPath');
-            router.push(logoutRedirectPath);
+            localStorage.removeItem('logoutRedirectPath')
+            router.push(logoutRedirectPath)
           } else if (storedIntention) {
-            localStorage.removeItem('userIntention');
-            router.push(storedIntention);
+            localStorage.removeItem('userIntention')
+            router.push(storedIntention)
           }
         }
       }
     }
-  }, [router.isReady, router.pathname, user, loading]);
-
-
-
+  }, [router.isReady, router.pathname, user, loading])
 
   useEffect(() => {
     // 立即執行函數
-    ; (async () => {
+    ;(async () => {
       if (token) {
         const result = await checkToken(token)
         console.log(result)
@@ -131,7 +132,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const oldToken = localStorage.getItem('nextNeToken')
     if (oldToken && !token) {
-      ; (async () => {
+      ;(async () => {
         try {
           const url = 'http://localhost:3005/api/my-auth/status'
           const response = await fetch(url, {
@@ -177,9 +178,19 @@ export const AuthProvider = ({ children }) => {
     return decoded
   }
 
-
   return (
-    <AuthContext.Provider value={{ user, setUser, token, setToken, guser, setGUser, setLoading, handleCheckAuth }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        setUser,
+        token,
+        setToken,
+        guser,
+        setGUser,
+        setLoading,
+        handleCheckAuth,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   )
