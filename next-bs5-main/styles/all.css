@@ -16,7 +16,7 @@
   color: var(--bg-text-color);
 }
 .container {
-  max-width: 1440px;
+  width: 1440px;
   height: auto;
 }
 
@@ -29,28 +29,6 @@ a {
     font-size: 1.4rem;
   }
 } */
- /* profile-btn */
- .btn-profile {
-  white-space: nowrap;
-  width: fit-content;
-  height: auto;
-  background: var(--primary);
-  color: var(--primary2);
-  border: var(--primary2) 1px solid;
-  padding: 0;
-  gap: 20px;
-  align-self: stretch;
-  .profile-label {
-    margin: 0;
-    cursor: pointer;
-    padding: 14px 24px;
-    width: 100%;
-    height: 7px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-}
 /* 共用btn樣式 */
 .btn1 {
   white-space: nowrap;
@@ -87,11 +65,6 @@ a {
   gap: 20px;
 }
 .btn1:hover {
-  background-color: var(--hover03);
-  transition: 0.3s;
-  /* 當滑鼠移過時改變背景顏色 */
-}
-.btn-profile:hover {
   background-color: var(--hover03);
   transition: 0.3s;
   /* 當滑鼠移過時改變背景顏色 */
@@ -264,6 +237,7 @@ input::placeholder,
 }
 
 /* ======視窗更改============================= */
+
 @media screen and (max-width: 1245px) {
   .left-nav,
   .left-nav-line > img {
@@ -590,20 +564,12 @@ input::placeholder,
   height: auto;
   line-height: 22px;
 }
-/* @media screen(min-width: 900px) {
-    .profile-picleft {
-      display: flex;
-    }
-  } */
+
 .profile-picright {
   width: 50%;
   height: 150px;
 }
 
-/* .profile-inputtext::placeholder,
-.profile-inputradio::placeholder {
-  color: var(--primary2);
-} */
 .profile-inputtext {
   all: unset;
   color: var(--white);
@@ -627,14 +593,9 @@ input::placeholder,
   .profile-checked {
     margin: 0 15px;
     text-decoration: none; /* 移除底線 */
-    /* color: inherit; */
   }
 }
-/* coupon */
-/* =================================== */
-/* .coupon-inputtext::placeholder {
-  color: var(--primary2);
-} */
+
 .coupon-inputtext {
   display: flex;
   width: 300px;
@@ -661,25 +622,41 @@ input::placeholder,
   font-size: 14px;
   display: flex;
   align-items: center;
+  white-space: nowrap;
 }
 .coupon-cptable {
   color: var(--white);
   border-collapse: collapse;
-  display: flex;
-  margin: 0;
-  padding: 0;
+  text-align: center;
 
-  .coupon-cpth,
-  .coupon-cptd {
-    width: 195px;
-    margin: 0;
-    padding: 5px 20px 5px 20px;
-    text-align: center;
-  }
-  .coupon-cpth {
-    border-bottom: 1px var(--white) solid;
+}
+/* ====julia08-22新增 */
+.coupon-cpth,
+.coupon-cptd {
+  width: 100px;
+  margin: 0;
+  padding: 5px 10px;
+  text-align: center;
+}
+.coupon-cpth {
+  border-bottom: 1px var(--white) solid;
+}
+.coupon-cpth1 {
+  width: 250px;
+}
+.tabchooes {
+  position: relative;
+  white-space: nowrap;
+  /* ====julia08-22新增 */
+  .choosebtn {
+    position: absolute;
+    background-color: var(--primary);
+    /* white-space: nowrap; */
+    left: 700px;
+    top: 0px;
   }
 }
 .coupon-p-14 {
   text-align: start;
+  white-space: nowrap;
 }

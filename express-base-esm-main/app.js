@@ -1,5 +1,5 @@
 // 加入下列
-import couponRoutes from './routes/my-coupons.js'
+import couponRoutes from './routes/coupons.js'
 import * as fs from 'fs'
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
@@ -33,7 +33,7 @@ app.use(
   cors({
     origin: ['http://localhost:3000', 'https://localhost:9000'],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    credentials: false,
+    credentials: true,
   })
 )
 
