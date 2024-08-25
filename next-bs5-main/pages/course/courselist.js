@@ -58,7 +58,7 @@ export default function Course() {
   // 以下函數用來請求課程數據，並根據篩選條件更新狀態。
 
   const getCourses = async (
-    order = null,
+    sort2 = null,
     // order 參數用來指定價格排序，默認值為 null。
 
     page = 1,
@@ -73,9 +73,9 @@ export default function Course() {
     const baseURL = new URL('http://localhost:3005/api/course')
     // 創建一個 URL 對象，用來構建請求課程數據的 API 地址。
 
-    if (order) {
+    if (sort2) {
       // 如果有價格排序的選擇，就將它作為查詢參數添加到 URL 中。
-      baseURL.searchParams.append('sort', order)
+      baseURL.searchParams.append('sort2', sort2)
     }
 
     if (categoryId !== null) {
@@ -125,10 +125,10 @@ export default function Course() {
   }, [priceFilter, currentPage, categoryId, locationId])
   // 只要 priceFilter、currentPage、categoryId 或 locationId 變化，這個 useEffect 就會觸發。
 
-  const handlePriceFilter = (order) => {
+  const handlePriceFilter = (sort2) => {
     // 定義一個處理價格篩選的函數。
 
-    setPriceFilter(order)
+    setPriceFilter(sort2)
     // 更新 priceFilter 狀態為選擇的排序順序。
 
     setCurrentPage(1)
@@ -316,7 +316,7 @@ export default function Course() {
                     <button
                       className="btn1"
                       href=""
-                      onClick={() => handlePriceFilter('desc')}
+                      onClick={() => handlePriceFilter('DESC')}
                     >
                       價格&nbsp;▲
                     </button>
@@ -325,7 +325,7 @@ export default function Course() {
                     <button
                       className="btn1"
                       href=""
-                      onClick={() => handlePriceFilter('asc')}
+                      onClick={() => handlePriceFilter('ASC')}
                     >
                       價格&nbsp;▼
                     </button>
