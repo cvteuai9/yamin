@@ -5,7 +5,6 @@ const router = express.Router()
 
 import sequelize from '#configs/db.js'
 import db from '##/configs/mysql.js'
-import { raw } from 'mysql2'
 
 const { Course } = sequelize.models
 // 從 Sequelize 實例中解構出 Course 模型，用來操作課程數據表。
@@ -24,11 +23,24 @@ router.get('/', async function (req, res) {
   // 定義一個 GET 請求的路由，用於獲取課程列表。
 
   try {
-    const { sort, page = 1, limit = 6, categoryId, locationId } = req.query
+    const {
+      sort,
+      sort2,
+      page = 1,
+      limit = 6,
+      categoryId,
+      locationId,
+    } = req.query
     // 從請求的查詢參數中解構出排序方式、頁碼、每頁顯示數量、分類 ID 和地點 ID，並設置默認值。
 
-    const order = sort === 'asc' ? ['price', 'ASC'] : ['price', 'DESC']
-    // 根據 sort 參數決定排序方式，默認根據價格升序或降序排序。
+    let order = []
+    if (sort2) {
+      order.push(['price', sort2.toUpperCase()])
+    } else if (sort) {
+      order.push(['id', sort.toUpperCase()])
+    } else {
+      order.push(['id', 'ASC']) // 默認排序
+    }
 
     const offset = (page - 1) * limit
     // 計算資料庫查詢的偏移量，用於分頁。
@@ -36,8 +48,9 @@ router.get('/', async function (req, res) {
     console.log(categoryId, locationId)
     // 輸出當前的分類 ID 和地點 ID 到控制台，主要用於調試。
 
-    const whereConditions = {}
-    // 定義一個空對象用來存儲篩選條件。
+    const whereConditions = {
+      valid: 1, // 排除 'valid' 为 0 的课程
+    }
 
     if (categoryId) {
       // 如果查詢參數中包含分類 ID，就將其加入篩選條件中。
@@ -136,12 +149,55 @@ router.get('/comment/:id', async (req, res) => {
   }
 })
 
+// 新增
+router.post('/', async (req, res) => {
+  try {
+    const newActivity = await Course.create(req.body)
+    res.status(201).json(newActivity)
+  } catch (error) {
+    console.error('Error creating activity:', error)
+    res.status(500).json({ message: 'Internal Server Error' })
+  }
+})
+//編輯
+router.put('/:id', async function (req, res) {
+  try {
+    const { id } = req.params
+    const course = await Course.findByPk(id)
+
+    if (!course) {
+      return res.status(404).json({ message: 'Course not found' })
+    }
+
+    await course.update(req.body)
+    res.status(200).json(course)
+  } catch (error) {
+    console.error('Error updating course:', error)
+    res.status(500).json({ message: 'Error updating course', error })
+  }
+})
+//軟刪除
+router.delete('/:id', async function (req, res) {
+  try {
+    const { id } = req.params
+    const course = await Course.findByPk(id)
+    if (!course) {
+      return res.status(404).json({ message: 'Course not found' })
+    }
+
+    await course.update({ valid: 0 })
+    res.status(200).json({ message: 'Course soft deleted' })
+  } catch (error) {
+    res.status(500).json({ message: 'Error deleting course', error })
+  }
+})
+
 // Random course API
 router.get('/random/:id', async (req, res) => {
   try {
     const [rows] = await db.query(
       `SELECT * FROM course ORDER BY RAND() LIMIT 4`
-    ) // MySQL 隨機選擇5個課程
+    ) // MySQL 隨機選擇4個課程
     return res.status(200).json({ courses: rows })
   } catch (error) {
     console.log(error)

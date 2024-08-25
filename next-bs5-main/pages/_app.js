@@ -17,6 +17,7 @@ import '@/styles/public.scss'
 import '@/styles/style.scss'
 import '@/styles/course_style.scss'
 import '@/styles/course_detail.scss'
+import '@/styles/activity.scss'
 
 // Ju-掛載
 import '@/styles/Normalize.scss'
