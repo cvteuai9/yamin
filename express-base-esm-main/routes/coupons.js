@@ -1,12 +1,12 @@
 import express from 'express'
 import db from '#configs/mysql.js'
+import authenticate from '../middlewares/authenticate.js'
 
 const router = express.Router()
 
-// GET /coupons/:userId - 獲取特定用戶的所有優惠券
-router.get('/:userId', async (req, res) => {
-  const userId = Number(req.params.userId)
-  console.log('in get coupons')
+// GET /coupons 獲取特定用戶的所有優惠券
+router.get('/', authenticate, async (req, res) => {
+  const userId = Number(req.user.id)
   try {
     const [coupons] = await db.query(
       `
@@ -25,9 +25,9 @@ router.get('/:userId', async (req, res) => {
 })
 
 // POST /coupons - 為用戶添加優惠券
-router.post('/', async (req, res) => {
-  const { userId, couponCode } = req.body
-
+router.post('/', authenticate, async (req, res) => {
+  const { couponCode } = req.body
+  const userId = Number(req.user.id)
   if (!userId || !couponCode) {
     return res.status(400).json({ error: 'ERROR_INPUT' })
   }
