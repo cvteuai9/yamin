@@ -44,7 +44,7 @@ router.get('/check', authenticate, async (req, res) => {
 
     // 執行原生 SQL 查詢
     const [rows] = await db.query(
-      'SELECT id, user_name, email,nick_name,phone,gender,birthday FROM users WHERE id = ?',
+      'SELECT id, user_name, email,nick_name,phone,gender,birthday,google_uid FROM users WHERE id = ?',
       [userId]
     )
 
@@ -77,17 +77,18 @@ router.post('/login', async (req, res) => {
   if (!loginUser.email || !loginUser.password) {
     return res.json({ status: 'fail', data: null })
   }
-  const user = await db.query(`SELECT * FROM users WHERE email=? LIMIT 1`, [
+  const [rows] = await db.query(`SELECT * FROM users WHERE email=? LIMIT 1`, [
     loginUser.email,
   ])
 
-  if (!user) {
+  if (!rows) {
     res.json({
       status: 'fail',
       message: '使用者不存在',
     })
     return
   }
+  const [user] = rows
   // compareHash(登入時的密碼純字串, 資料庫中的密碼hash) 比較密碼正確性
   // isValid=true 代表正確
   const isValid = await compareHash(loginUser.password, user.password)
@@ -99,7 +100,7 @@ router.post('/login', async (req, res) => {
   // 存取令牌(access token)只需要id和username就足夠，其它資料可以再向資料庫查詢
   const returnUser = {
     id: user.id,
-    username: user.user_name,
+    email: user.email,
     google_uid: user.google_uid,
   }
 

@@ -7,9 +7,10 @@ import { func } from 'prop-types'
 import { YaminUseCart } from '@/hooks/yamin-use-cart'
 import toast, { Toaster } from 'react-hot-toast'
 
-export default function List1() {
-  const { addItem = () => {} } = YaminUseCart()
+export default function SearchID() {
   const router = useRouter()
+  const { addItem = () => {} } = YaminUseCart()
+
   const notify = (productName) => {
     toast.success(
       <>
@@ -23,6 +24,7 @@ export default function List1() {
   }
 
   const { showLoader, hideLoader, loading, delay } = useLoader() // 頁面載入等候畫面
+  const [searchID, setSearchID] = useState('')
   //宣告 filter array(用來顯示篩選條件checkbox選項)
   const priceArray = ['$500 以下', '$500 ~ $1000', '$1000 以上']
   const [teaArray, setTeaArray] = useState([])
@@ -44,7 +46,6 @@ export default function List1() {
   const [pc, setPackage] = useState([]) // 包材
   const [style, setStyle] = useState([]) // 茶品型態
   const [price, setPrice] = useState([]) // 價錢
-  // 收藏
 
   // totalData 為所有符合條件的商品數，用來顯示總共有幾筆符合的商品數量
   const [totalData, setTotalData] = useState(0)
@@ -76,7 +77,7 @@ export default function List1() {
         })
       // console.log(favoriteProduct)
       const tmpData = products.product.data
-      const nextData = tmpData.map((v, i) => {
+      let nextData = tmpData.map((v, i) => {
         if (favoriteProduct.includes(v.id)) return { ...v, fav: !v.fav }
         else return v
       })
@@ -92,6 +93,7 @@ export default function List1() {
       console.log(error)
     }
   }
+  // !!後續要處理user_id
   // 處理收藏狀態的函式
   async function handleFavToggle(id) {
     const nextProduct = product.map((v, i) => {
@@ -145,13 +147,14 @@ export default function List1() {
     // 每次filter有更動時都會將頁數導回第一頁
     setPage(1)
   }
-  // useEffect(() => {
-  //   // 第一次進入頁面才會有loading畫面
-  //   showLoader()
-  // }, [])
+  useEffect(() => {
+    // 第一次進入頁面才會有loading畫面
+    showLoader()
+  }, [])
   // 當count、order值改變時，設定新網址參數並重新抓取資料
   useEffect(() => {
     if (router.isReady) {
+      setSearchID(router.query.searchid)
       let searchParams = new URLSearchParams({
         order: order,
         perpage: perpage,
@@ -161,6 +164,7 @@ export default function List1() {
         brand: brand,
         package: pc,
         style: style,
+        searchID: router.query.searchid,
       })
       url.search = searchParams
       // console.log(url.href)
@@ -168,7 +172,7 @@ export default function List1() {
     }
     // 下面的註解可以省略eslint檢查下下一行(監聽的部分)
     // eslint-disable-next-line
-  }, [router.isReady, perpage, order, page, price, tea, brand, pc, style])
+  }, [router.isReady, perpage, order, page, price, tea, brand, pc, style, router.query.searchid])
 
   return (
     <>
@@ -218,7 +222,7 @@ export default function List1() {
                 <div className={`${styles.priceCheckbox} ${styles.scrollBar}`}>
                   {priceArray.map((name, index) => {
                     return (
-                      <div className="pt-3" key={index}>
+                      <div className="pt-3 d-flex" key={index}>
                         <input
                           type="checkbox"
                           className={`${styles.checkbox}`}
@@ -255,7 +259,7 @@ export default function List1() {
                 <div className={`${styles.teaCheckbox} ${styles.scrollBar}`}>
                   {teaArray.map((v, i) => {
                     return (
-                      <div className="pt-3" key={v.id}>
+                      <div className="pt-3 d-flex" key={v.id}>
                         <input
                           type="checkbox"
                           className={`${styles.checkbox}`}
@@ -292,7 +296,7 @@ export default function List1() {
                 <div className={`${styles.brandCheckbox} ${styles.scrollBar}`}>
                   {brandArray.map((v, i) => {
                     return (
-                      <div className="pt-3" key={v.id}>
+                      <div className="pt-3 d-flex" key={v.id}>
                         <input
                           type="checkbox"
                           className={`${styles.checkbox}`}
@@ -331,7 +335,7 @@ export default function List1() {
                 >
                   {pcArray.map((v, i) => {
                     return (
-                      <div className="pt-3" key={v.id}>
+                      <div className="pt-3 d-flex" key={v.id}>
                         <input
                           type="checkbox"
                           className={`${styles.checkbox}`}
@@ -368,7 +372,7 @@ export default function List1() {
                 <div className={`${styles.styleCheckbox} ${styles.scrollBar}`}>
                   {styleArray.map((v, i) => {
                     return (
-                      <div className="pt-3" key={v.id}>
+                      <div className="pt-3 d-flex" key={v.id}>
                         <input
                           type="checkbox"
                           className={`${styles.checkbox}`}
@@ -405,7 +409,9 @@ export default function List1() {
               <div
                 className={`d-flex flex-column gap-3 ${styles.crumb} ${styles['product-total-count']} justify-content-end`}
               >
-                <h4 className="m-0">全部商品 / 茶種 / 紅茶</h4>
+                <h4 className="m-0">
+                  搜尋 &quot;<span className="fw-bold">{searchID}</span>&quot;{' '}
+                </h4>
                 <h4 className="m-0">共 {totalData} 筆</h4>
               </div>
               {/* 排序 */}

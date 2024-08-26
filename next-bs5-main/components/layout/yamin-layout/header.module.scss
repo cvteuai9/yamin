@@ -221,3 +221,15 @@
   align-items: center;
   padding: 0 12.5vw;
 }
+.searchForm {
+  background-color: var(--primary-deep);
+  color: var(--primary2);
+  button {
+    background-color: var(--primary2);
+    color: #ffffff;
+  }
+  button:hover {
+    background-color: var(--text-hover-color);
+    color: var(--primary-light);
+  }
+}
