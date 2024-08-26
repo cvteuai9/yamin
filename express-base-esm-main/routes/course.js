@@ -1,14 +1,28 @@
 import express from 'express'
 // 引入 Express 框架，用來構建後端應用。
-const router = express.Router()
-// 創建一個新的 Express 路由實例，命名為 router。
-
+import multer from 'multer'
+import path from 'path'
+import fs from 'fs'
 import sequelize from '#configs/db.js'
 import db from '##/configs/mysql.js'
-
+const router = express.Router()
+// 創建一個新的 Express 路由實例，命名為 router。
 const { Course } = sequelize.models
 // 從 Sequelize 實例中解構出 Course 模型，用來操作課程數據表。
 
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(
+      null,
+      'C:\\Users\\user\\Documents\\yamin\\next-bs5-main\\public\\images\\yaming\\tea_class_picture'
+    ) // 確保此目錄存在
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + path.extname(file.originalname))
+  },
+})
+
+const upload = multer({ storage: storage })
 /* 
   這段代碼主要要做什麼
   這段代碼是定義並導出一個 Express 路由，用來提供課程的 API 接口。
@@ -21,13 +35,12 @@ const { Course } = sequelize.models
 // 课程列表 API，支持排序、分类、位置筛选以及分页
 router.get('/', async function (req, res) {
   // 定義一個 GET 請求的路由，用於獲取課程列表。
-
   try {
     const {
       sort,
       sort2,
       page = 1,
-      limit = 6,
+      limit = 37,
       categoryId,
       locationId,
     } = req.query
@@ -150,45 +163,92 @@ router.get('/comment/:id', async (req, res) => {
 })
 
 // 新增
-router.post('/', async (req, res) => {
-  try {
-    const newActivity = await Course.create(req.body)
-    res.status(201).json(newActivity)
-  } catch (error) {
-    console.error('Error creating activity:', error)
-    res.status(500).json({ message: 'Internal Server Error' })
+router.post(
+  '/',
+  upload.fields([
+    { name: 'img1', maxCount: 1 },
+    { name: 'img2', maxCount: 1 },
+    { name: 'img3', maxCount: 1 },
+  ]),
+  async (req, res) => {
+    try {
+      const courseData = req.body
+      if (req.files) {
+        if (req.files.img1) courseData.img1 = req.files.img1[0].filename
+        if (req.files.img2) courseData.img2 = req.files.img2[0].filename
+        if (req.files.img3) courseData.img3 = req.files.img3[0].filename
+      }
+
+      const newActivity = await Course.create(courseData)
+      res.status(201).json(newActivity)
+    } catch (error) {
+      console.error('Error creating activity:', error)
+      res.status(500).json({ message: 'Internal Server Error' })
+    }
   }
-})
+)
 //編輯
-router.put('/:id', async function (req, res) {
-  try {
-    const { id } = req.params
-    const course = await Course.findByPk(id)
+router.put(
+  '/:id',
+  upload.fields([
+    { name: 'img1', maxCount: 1 },
+    { name: 'img2', maxCount: 1 },
+    { name: 'img3', maxCount: 1 },
+  ]),
+  async function (req, res) {
+    try {
+      const { id } = req.params
+      const course = await Course.findByPk(id)
 
-    if (!course) {
-      return res.status(404).json({ message: 'Course not found' })
+      if (!course) {
+        return res.status(404).json({ message: 'Course not found' })
+      }
+
+      const courseData = req.body
+      if (req.files) {
+        ;['img1', 'img2', 'img3'].forEach((imgField) => {
+          if (req.files[imgField]) {
+            if (course[imgField]) {
+              const oldImagePath = path.join(
+                'C:\\Users\\user\\Documents\\yamin\\next-bs5-main\\public\\images\\yaming\\tea_class_picture',
+                course[imgField]
+              )
+              if (fs.existsSync(oldImagePath)) {
+                fs.unlinkSync(oldImagePath)
+              }
+            }
+            courseData[imgField] = req.files[imgField][0].filename
+          }
+        })
+      }
+
+      await course.update(courseData)
+      res.status(200).json(course)
+    } catch (error) {
+      console.error('Error updating course:', error)
+      res
+        .status(500)
+        .json({ message: 'Error updating course', error: error.toString() })
     }
-
-    await course.update(req.body)
-    res.status(200).json(course)
-  } catch (error) {
-    console.error('Error updating course:', error)
-    res.status(500).json({ message: 'Error updating course', error })
   }
-})
+)
 //軟刪除
-router.delete('/:id', async function (req, res) {
+router.put('/valid/:id', async function (req, res) {
   try {
     const { id } = req.params
     const course = await Course.findByPk(id)
+
     if (!course) {
       return res.status(404).json({ message: 'Course not found' })
     }
 
+    // 將 valid 設置為 0 來軟刪除
     await course.update({ valid: 0 })
-    res.status(200).json({ message: 'Course soft deleted' })
+
+    res.status(200).json({ message: 'Course soft deleted successfully' })
   } catch (error) {
-    res.status(500).json({ message: 'Error deleting course', error })
+    console.error('Error soft deleting course:', error)
+    res.status(500).json({ message: 'Error soft deleting course', error })
   }
 })
 
