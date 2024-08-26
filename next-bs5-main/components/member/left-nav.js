@@ -36,7 +36,11 @@ export default function Leftnav({
           </li>
         </ul>
         <div className="left-nav-line">
-          <img src="/images/favorite/botton_line.svg" alt="裝飾線line" />
+          <img
+            src="/images/favorite/botton_line.svg"
+            alt="裝飾線line"
+            style={{ width: '100%' }}
+          />
         </div>
       </div>
     </>
