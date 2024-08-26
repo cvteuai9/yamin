@@ -1,7 +1,4 @@
-[
-{"type":"header","version":"5.2.1","comment":"Export to JSON plugin for PHPMyAdmin"},
-{"type":"database","name":"product_middle"},
-{"type":"table","name":"users_coupons","database":"product_middle","data":
+
 [
 {"id":"1","user_id":"1","coupon_id":"12","assigned_at":"2024-08-01 11:00:55","redeemed_at":null,"status":"unused"},
 {"id":"2","user_id":"4","coupon_id":"4","assigned_at":"2024-08-08 11:00:55","redeemed_at":null,"status":"unused"},
@@ -424,6 +421,4 @@
 {"id":"629","user_id":"59","coupon_id":"15","assigned_at":"2024-06-15 23:59:00","redeemed_at":null,"status":"expired"},
 {"id":"630","user_id":"59","coupon_id":"25","assigned_at":"2024-08-22 15:54:48","redeemed_at":null,"status":"unused"},
 {"id":"631","user_id":"59","coupon_id":"4","assigned_at":"2024-08-25 16:03:07","redeemed_at":null,"status":"used"}
-]
-}
 ]
