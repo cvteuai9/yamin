@@ -369,7 +369,7 @@ export default function Course() {
                       {/* 這邊是圖片 */}
                       <div className="col-md-4 shane-course-activity_left ">
                         <img
-                          src={v.img1}
+                          src={`/images/yaming/tea_class_picture/${v.img1}`}
                           className="img-fluid rounded-start"
                           alt="..."
                         />

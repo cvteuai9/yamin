@@ -32,7 +32,8 @@ app.use(
     credentials: true,
   })
 )
-
+// 設置靜態文件服務
+app.use('/images', express.static(path.join(__dirname, 'public/images')))
 // 視圖引擎設定
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'pug')
