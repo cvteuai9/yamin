@@ -1,8 +1,13 @@
 body {
   background-color: var(--primary);
+  background-color: var(--primary);
 }
 
 .shane-course-detail-wood {
+  height: 1px;
+  width: 12px;
+  background-color: #b29564;
+  margin: 0px 1vw;
   height: 1px;
   width: 12px;
   background-color: #b29564;
@@ -16,16 +21,23 @@ body {
   display: inline-flex;
   justify-content: center;
   align-items: center;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
 }
+.shane-course-detail-container-top {
+  padding-top: 5vh;
 .shane-course-detail-container-top {
   padding-top: 5vh;
 }
 
 .shane-course-detail-store {
   color: #b29564;
+  color: #b29564;
 }
 
 .shane-course-detail-breadcrumb h5 {
+  color: #b29564;
   color: #b29564;
 }
 
@@ -35,12 +47,21 @@ body {
   object-fit: full;
   width: 100%;
   height: 100%;
+  aspect-ratio: 16/9;
+  /* 也可以換成任何你想要的寬度 */
+  object-fit: full;
+  width: 100%;
+  height: 100%;
 }
+.fa-star {
+  color: #b29564;
 .fa-star {
   color: #b29564;
 }
 
 .shane-course-detail-activity_Comment {
+  border: 1px solid #b29564;
+  width: 30%;
   border: 1px solid #b29564;
   width: 30%;
 
@@ -83,9 +104,18 @@ body {
     color: #ffffff;
     background-color: #b29564;
   }
+  // 收藏按鈕樣式新增(cloud)
+  .btn.like-btn {
+    background-color: #ffffff00;
+    border: none;
+  }
+  .btn.like-btn:hover {
+    transform: scale(1.1);
+  }
 }
 
 .shane-course-detail-card p {
+  color: #ffffff;
   color: #ffffff;
 }
 
@@ -100,9 +130,10 @@ body {
 }
 
 .shane-course-detail-store_picture {
-  aspect-ratio: 16/14;
+  width: 100%;
+  aspect-ratio: 4/3;
   /* 額外確保圖片縮放時會有最好的效果 */
-  object-fit: fill;
+  object-fit: contain;
 }
 
 .shane-course-detail-store {

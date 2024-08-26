@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
+import { useLoader } from '@/hooks/use-loader'
 import { useRouter } from 'next/router'
 import styles from '@/styles/product-detail.module.scss'
 import Link from 'next/link'
@@ -15,8 +16,10 @@ import 'swiper/css'
 import 'swiper/css/free-mode'
 import 'swiper/css/navigation'
 import 'swiper/css/thumbs'
+import { useSwiper } from 'swiper/react'
 // import required modules
 import { Autoplay, FreeMode, Navigation, Thumbs } from 'swiper/modules'
+import { ClientPageRoot } from 'next/dist/client/components/client-page'
 // 以上為  {商品圖輪播套件}
 
 export default function Detail() {
@@ -33,7 +36,9 @@ export default function Detail() {
       </>
     )
   }
-
+  const { showLoader, hideLoader, loading, delay } = useLoader() // 頁面載入等候畫面
+  // const swiper = useSwiper()
+  const swiperRef = useRef(null)
   const [productCount, setProductCount] = useState(1)
   const [thumbsSwiper, setThumbsSwiper] = useState(null)
   const [review, setReview] = useState([])
@@ -49,10 +54,12 @@ export default function Detail() {
   const router = useRouter()
   const [image, setImage] = useState([])
   const [relationProduct, setRelationProduct] = useState([])
-  const allRatingStar = new Array(Math.floor(Number(allRatingScore))).fill(0)
-  const allRatingUnfillStar = new Array(
-    5 - Math.floor(Number(allRatingScore))
-  ).fill(0)
+  const allRatingStar = new Array(Math.floor(Number(allRatingScore)))
+    .fill(0)
+    .map((v, index) => index)
+  const allRatingUnfillStar = new Array(5 - Math.floor(Number(allRatingScore)))
+    .fill(0)
+    .map((v, index) => index)
   // 設定商品資料初始物件
   const [product, setProduct] = useState({
     id: 0,
@@ -79,6 +86,7 @@ export default function Detail() {
       const res = await fetch(apiURL)
       const data = await res.json()
       let productThis = data.data[0]
+      // !! user_id要改
       const favURL = new URL(
         `http://localhost:3005/api/my_products/favorites?user_id=1`
       )
@@ -90,8 +98,8 @@ export default function Detail() {
         productThis.fav = false
       }
       // console.log(productThis)
-      setProduct(productThis)
       setImage(data.images)
+      setProduct(productThis)
       // console.log(data)
     } catch (error) {
       console.log(error)
@@ -146,6 +154,7 @@ export default function Detail() {
       }
     }
   }
+  // !! user_id 要改
   async function handleFavToggle(product) {
     if (product.fav === false) {
       fetch(
@@ -168,22 +177,32 @@ export default function Detail() {
     setProduct(tmp)
   }
   useEffect(() => {
+    // 第一次進入頁面才會有loading畫面
+    showLoader()
+  }, [])
+  useEffect(() => {
+    if (thumbsSwiper) {
+      thumbsSwiper.update()
+    }
+  }, [thumbsSwiper])
+  useEffect(() => {
     // console.log(router.query)
     if (router.isReady) {
       // console.log(router.query)`
       getProduct(router.query.pid)
       getReviews(router.query.pid)
       getRelationProduct(router.query.pid)
+      // reset swiper
+      swiperRef.current.slideTo(0)
     }
     // eslint-disable-next-line
   }, [router.isReady, router.query.pid])
-
   return (
     <>
       {/* 返回商品列表頁按鈕 */}
       <div className={`${styles.backToListBtn}`}>
         <h3>
-          <Link href={`/product/list1`}>
+          <Link href={`/product/list`}>
             <IoArrowBackCircle className="display-4" />
             返回產品列表
           </Link>
@@ -200,6 +219,9 @@ export default function Detail() {
             className={`${styles.left} col-12 col-sm-5 col-lg-4 p-0 p-md-3 p-xl-5`}
           >
             <Swiper
+              onSwiper={(swiper) => {
+                swiperRef.current = swiper
+              }}
               style={{
                 '--swiper-navigation-color': '#d7b375',
                 '--swiper-pagination-color': '#d7b375',
@@ -214,17 +236,21 @@ export default function Detail() {
               modules={[Autoplay, FreeMode, Navigation, Thumbs]}
               className="mySwiper2"
             >
-              {image.map((v, i) => {
-                return (
-                  <SwiperSlide key={i}>
-                    <img
-                      className="object-fit-contain"
-                      src={`/images/product/list1/products-images/${v}`}
-                      alt=""
-                    />
-                  </SwiperSlide>
-                )
-              })}
+              {image && image.length > 0 ? (
+                image.map((v, i) => {
+                  return (
+                    <SwiperSlide key={i}>
+                      <img
+                        className="object-fit-contain"
+                        src={`/images/product/list1/products-images/${v}`}
+                        alt=""
+                      />
+                    </SwiperSlide>
+                  )
+                })
+              ) : (
+                <p>No images avilable</p>
+              )}
             </Swiper>
             <Swiper
               onSwiper={setThumbsSwiper}
@@ -232,20 +258,24 @@ export default function Detail() {
               slidesPerView={4}
               freeMode={true}
               watchSlidesProgress={true}
-              modules={[FreeMode, Navigation, Thumbs]}
+              modules={[FreeMode, Navigation, Thumbs, Autoplay]}
               className="mySwiper"
             >
-              {image.map((v, i) => {
-                return (
-                  <SwiperSlide key={i}>
-                    <img
-                      className="object-fit-cover"
-                      src={`/images/product/list1/products-images/${v}`}
-                      alt=""
-                    />
-                  </SwiperSlide>
-                )
-              })}
+              {image && image.length > 0 ? (
+                image.map((v, i) => {
+                  return (
+                    <SwiperSlide key={i}>
+                      <img
+                        className="object-fit-contain"
+                        src={`/images/product/list1/products-images/${v}`}
+                        alt=""
+                      />
+                    </SwiperSlide>
+                  )
+                })
+              ) : (
+                <p>No images avilable</p>
+              )}
             </Swiper>
           </div>
           {/* 商品資訊 */}
@@ -264,7 +294,7 @@ export default function Detail() {
                       <img
                         src="/images/product/list1/Star.svg"
                         alt=""
-                        key={i}
+                        key={v}
                       />
                     )
                   })}
@@ -273,7 +303,7 @@ export default function Detail() {
                       <img
                         src="/images/product/list1/Star-unfill.svg"
                         alt=""
-                        key={i}
+                        key={v}
                       />
                     )
                   })}
@@ -357,7 +387,7 @@ export default function Detail() {
                   className={`btn ${styles['cart-btn']} text-center`}
                   onClick={() => {
                     const item = { ...product, qty: productCount }
-                    console.log(item)
+                    // console.log(item)
                     notify(product.product_name)
                     addItem(item)
                   }}
@@ -430,7 +460,7 @@ export default function Detail() {
                         <img
                           src="/images/product/list1/Star.svg"
                           alt=""
-                          key={i}
+                          key={v}
                         />
                       )
                     })}
@@ -439,7 +469,7 @@ export default function Detail() {
                         <img
                           src="/images/product/list1/Star-unfill.svg"
                           alt=""
-                          key={i}
+                          key={v}
                         />
                       )
                     })}
@@ -551,7 +581,7 @@ export default function Detail() {
               <div
                 className="modal fade"
                 id="moreBtnModal"
-                tabindex="-1"
+                tabIndex="-1"
                 aria-labelledby="exampleModalLabel"
                 aria-hidden="true"
               >
@@ -573,10 +603,12 @@ export default function Detail() {
                     <div className={`modal-body ${styles.modalBody}`}>
                       <div className={`${styles['review-area']} mt-5`}>
                         {allReviews.map((v, i) => {
-                          const starArray = new Array(v.rating).fill(0)
-                          const starArrayUnfill = new Array(5 - v.rating).fill(
-                            0
-                          )
+                          const starArray = new Array(v.rating)
+                            .fill(0)
+                            .map((v, index) => index)
+                          const starArrayUnfill = new Array(5 - v.rating)
+                            .fill(0)
+                            .map((v, index) => index)
                           return (
                             <div
                               className={`${styles['review-card']} d-flex flex-row gap-5 mb-3`}
@@ -632,10 +664,10 @@ export default function Detail() {
                       </div>
                     </div>
                     {/* 確認按鈕 */}
-                    <div class="modal-footer">
+                    <div className="modal-footer">
                       <button
                         type="button"
-                        class="btn btn-primary fs-4"
+                        className="btn btn-primary fs-4"
                         data-bs-dismiss="modal"
                         aria-label="Close"
                       >
@@ -675,36 +707,34 @@ export default function Detail() {
           <div className={`${styles['rp-group']} my-3 py-3`}>
             {relationProduct.map((v, i) => {
               return (
-                <>
-                  <div
-                    className={`${styles['relation-product-card']} pb-1 d-flex flex-column gap-3 justify-content-between`}
-                    key={i}
-                  >
-                    <div className="d-flex flex-column gap-2">
-                      <div className={`${styles['card-image']} pb-3`}>
-                        <Link href={`/product/${v.id}`}>
-                          <img
-                            src={`/images/product/list1/products-images/${v.paths}`}
-                            alt=""
-                          />
-                        </Link>
-                      </div>
-                      <div className={`${styles['product-name']} px-3`}>
-                        <Link
-                          href={`/product/${v.id}`}
-                          className="text-decoration-none"
-                        >
-                          <p className="fw-bold">{v.product_name}</p>
-                        </Link>
-                      </div>
+                <div
+                  className={`${styles['relation-product-card']} pb-1 d-flex flex-column gap-3 justify-content-between`}
+                  key={v.id}
+                >
+                  <div className="d-flex flex-column gap-2">
+                    <div className={`${styles['card-image']} pb-3`}>
+                      <Link href={`/product/${v.id}`}>
+                        <img
+                          src={`/images/product/list1/products-images/${v.paths}`}
+                          alt=""
+                        />
+                      </Link>
                     </div>
-                    <div className={`${styles['card-bottom']} px-3`}>
-                      <p className="m-0">
-                        NT$ <span>{v.price}</span>
-                      </p>
+                    <div className={`${styles['product-name']} px-3`}>
+                      <Link
+                        href={`/product/${v.id}`}
+                        className="text-decoration-none"
+                      >
+                        <p className="fw-bold">{v.product_name}</p>
+                      </Link>
                     </div>
                   </div>
-                </>
+                  <div className={`${styles['card-bottom']} px-3`}>
+                    <p className="m-0">
+                      NT$ <span>{v.price}</span>
+                    </p>
+                  </div>
+                </div>
               )
             })}
             <Link

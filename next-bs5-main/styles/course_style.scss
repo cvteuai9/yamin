@@ -101,6 +101,13 @@
     color: #ffffff;
     background-color: #b29564;
   }
+  .btn.like-btn {
+    background-color: #ffffff00;
+    border: none;
+  }
+  .btn.like-btn:hover {
+    transform: scale(1.1);
+  }
   .description {
     overflow: clip;
     height: 6vh;

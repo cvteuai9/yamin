@@ -77,56 +77,58 @@ export default function RegisterForm() {
           isAuth: true,
           userData,
         })
-        console.log(auth);
+        console.log(auth)
       }
     }
   }
   const handleRegister = async () => {
-    try {
-      const response = await register(user)
+    const response = await register(user)
 
-      if (response.status === 201) {
-        alert('註冊成功')
-        // 你可以在這裡處理註冊成功後的邏輯，例如導航到登入頁面
-      }
-    } catch (error) {
-      console.error('註冊失敗', error)
-      alert('註冊失敗，請再試一次')
+    if (response.status === 201) {
+      alert('註冊成功')
+      // 你可以在這裡處理註冊成功後的邏輯，例如導航到登入頁面
     }
-    const res = await login(user)
-    if (res.data.status === 'success') {
-      // 從JWT存取令牌中解析出會員資料
-      // 注意JWT存取令牌中只有id, username, google_uid, line_uid在登入時可以得到
-      const jwtUser = parseJwt(res.data.data.accessToken)
-      console.log(jwtUser)
 
-      const res1 = await getUserById(jwtUser.id)
-      console.log(res1.data)
-
-      if (res1.data.status === 'success') {
-        // 只需要initUserData中的定義屬性值，詳見use-auth勾子
-        const dbUser = res1.data.data.user
-        const userData = { ...initUserData }
-
-        for (const key in userData) {
-          if (Object.hasOwn(dbUser, key)) {
-            userData[key] = dbUser[key]
-          }
-        }
-
-        // 設定到全域狀態中
-        setAuth({
-          isAuth: true,
-          userData,
-        })
-
-        toast.success('已成功登入')
-      } else {
-        toast.error('登入後無法得到會員資料')
-        // 這裡可以讓會員登出，因為這也算登入失敗，有可能會造成資料不統一
-      }
+    if (response.data.status === 'error') {
+      alert(response.data.message)
+      return
     } else {
-      toast.error(`登入失敗`)
+      console.log(user);
+      const res = await login(user)
+      if (res.data.status === 'success') {
+        // 從JWT存取令牌中解析出會員資料
+        // 注意JWT存取令牌中只有id, username, google_uid, line_uid在登入時可以得到
+        const jwtUser = parseJwt(res.data.data.accessToken)
+        console.log(jwtUser)
+
+        const res1 = await getUserById(jwtUser.id)
+        console.log(res1.data)
+
+        if (res1.data.status === 'success') {
+          // 只需要initUserData中的定義屬性值，詳見use-auth勾子
+          const dbUser = res1.data.data.user
+          const userData = { ...initUserData }
+
+          for (const key in userData) {
+            if (Object.hasOwn(dbUser, key)) {
+              userData[key] = dbUser[key]
+            }
+          }
+
+          // 設定到全域狀態中
+          setAuth({
+            isAuth: true,
+            userData,
+          })
+
+          toast.success('已成功登入')
+        } else {
+          toast.error('登入後無法得到會員資料')
+          // 這裡可以讓會員登出，因為這也算登入失敗，有可能會造成資料不統一
+        }
+      } else {
+        toast.error(`登入失敗`)
+      }
     }
   }
 
