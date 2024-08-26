@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react'
 import Leftnav from './left-nav'
 import { FaAngleDown } from 'react-icons/fa6'
 import option from '@/components/article/option.module.sass'
+// ==========08-26 julia_test
+import { Modal, Button } from 'react-bootstrap'
 
 // 狀態映射對象
 const statusMapping = {
@@ -19,6 +21,16 @@ export default function Coupon() {
   const [filteredCoupons, setFilteredCoupons] = useState([])
   const [selectedLabel, setSelectedLabel] = useState('全部')
   const [unusedCouponCount, setUnusedCouponCount] = useState(0)
+  // ==========08-26 優惠券使用說明視窗
+  const [showModal, setShowModal] = useState(false)
+  const handleShowModal = () => setShowModal(true)
+  const handleCloseModal = () => setShowModal(false)
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      handleShowModal()
+    }
+  }
+  // ==============================
 
   useEffect(() => {
     fetchCoupons()
@@ -45,7 +57,6 @@ export default function Coupon() {
         (coupon) => coupon.user_status === 'unused'
       ).length
       setUnusedCouponCount(unusedCount)
-
     } catch (error) {
       console.error('獲取優惠券時出錯:', error)
       setError(error.message || '獲取優惠券時出錯')
@@ -120,7 +131,7 @@ export default function Coupon() {
           <div className="col-md-3 col-sm-0">
             <Leftnav />
           </div>
-          <div className="col-md-9 ">
+          <div className="col-md-9 testmodal">
             <h3 className="goldenf">優惠券</h3>
             <p className="grayf">注意事項：</p>
             <p className="grayf">
@@ -128,8 +139,45 @@ export default function Coupon() {
             </p>
             <p className="grayf">
               ＊優惠券詳細規範及抵用辦法，請參考「
-              <span className="goldenf">優惠券使用說明</span>」。
+              {/* ==========08-26 優惠券使用說明視窗 */}
+              <span
+                className="goldenf"
+                onClick={handleShowModal}
+                onKeyPress={handleKeyPress}
+                role="button"
+                tabIndex={0}
+              >
+                優惠券使用說明
+              </span>
+              」。
             </p>
+            <Modal show={showModal} onHide={handleCloseModal} centered>
+              <Modal.Header closeButton>
+                <Modal.Title>優惠券使用說明</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                {/* <h5>優惠券使用說明:</h5> */}
+                <ul className="p2">
+                  <li>每張優惠券只能使用一次。</li>
+                  <li>優惠券不能與其他優惠同時使用。</li>
+                  {/* <li>優惠券有效期為發放日起 30 天內。</li>
+                  <li>優惠券僅適用於指定商品或商品類別。</li> */}
+                  <li>使用優惠券的訂單金額需達到最低消費金額。</li>
+                  <li>如有任何疑問,請聯繫客服。</li>
+                </ul>
+              </Modal.Body>
+              <Modal.Footer style={{ borderTop: 'none' }}>
+                <Button
+                  variant="secondary"
+                  onClick={handleCloseModal}
+                  className="p2"
+                >
+                  了解
+                </Button>
+              </Modal.Footer>
+            </Modal>
+            {/* ... */}
+            {/* ==========08-26 優惠券使用說明視窗 */}
             <p className="grayf"> 雅茗保留活動修改、變更及終止之權利。 </p>
             <div className="coupon-cinput">
               <p className="grayf pt-3">優惠券歸戶</p>
@@ -144,6 +192,7 @@ export default function Coupon() {
               <button className="btn2 p checked" onClick={handleCouponSubmit}>
                 確認
               </button>
+
               {isLoading && (
                 <p className="grayf ms-3 m-0 d-flex text-align-center">
                   加載中...
@@ -177,10 +226,23 @@ export default function Coupon() {
                   <tbody>
                     {filteredCoupons.length > 0 ? (
                       filteredCoupons.map((coupon) => (
-                        <tr key={coupon.id}>
+                        <tr
+                          key={coupon.id}
+                          style={{
+                            transition: 'background-color 0.3s ease',
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor =
+                              'rgba(0, 0, 0, 0.15)'
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor =
+                              'transparent'
+                          }}
+                        >
                           <td className="coupon-cptd p">{coupon.name}</td>
                           <td className="coupon-cptd p">{coupon.code}</td>
-                          <td className="coupon-p-14 p2">{coupon.info}</td>
+                          <td className="coupon-p-14 p">{coupon.info}</td>
                           <td className="coupon-cptd p">
                             {new Date(coupon.end_time).toLocaleDateString()}
                           </td>
@@ -199,7 +261,7 @@ export default function Coupon() {
                     )}
                   </tbody>
                 </table>
-
+                {/* ==========08-26 優惠券下拉式選單 */}
                 <div
                   className="d-flex justify-content-end choosebtn text-nowrap align-items-center"
                   style={{ width: 150 }}
