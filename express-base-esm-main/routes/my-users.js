@@ -11,6 +11,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { generateHash, compareHash } from '##/db-helpers/password-hash.js'
 // 檢查空物件, 轉換req.params為數字
 import { getIdParam } from '#db-helpers/db-tool.js'
+import { getAutoSentCouponList } from './coupons.js'
 
 const router = express.Router()
 
@@ -203,6 +204,38 @@ router.post('/', async function (req, res) {
     })
   }
 
+  // 註冊成功，自動發送優惠券
+  try {
+    // 獲取自動發送的優惠券列表
+    const autoSentCoupons = await getAutoSentCouponList()
+
+    // 為新用戶添加自動發送的優惠券
+    for (const couponCode of autoSentCoupons) {
+      try {
+        const [result] = await db.query(
+          `
+          INSERT INTO users_coupons (user_id, coupon_id)
+          SELECT u.id, c.id
+          FROM users u
+          JOIN coupons c ON c.code = ?
+          WHERE u.password = ?
+          `,
+          [couponCode, passwordHash]
+        )
+        if (result.affectedRows === 0) {
+          console.warn(`Failed to assign coupon ${couponCode} to new user`)
+        } else {
+          console.log(`Successfully assigned coupon ${couponCode} to new user`)
+        }
+      } catch (couponError) {
+        console.error(`Error assigning coupon ${couponCode}:`, couponError)
+      }
+    }
+  } catch (error) {
+    // 自動發送優惠券時出現錯誤，但暫時不做處理
+    console.error('Error in auto-sending coupons:', error)
+  }
+
   // 成功建立會員的回應
   // 狀態`201`是建立資料的標準回應，
   // 如有必要可以加上`Location`會員建立的uri在回應標頭中，或是回應剛建立的資料
@@ -338,6 +371,60 @@ router.put('/:id/profile', authenticate, async function (req, res) {
   //console.log(updatedUser)
   // 回傳
   return res.json({ status: 'success', data: { user: updatedUser } })
+})
+// PUT - 更新會員資料(密碼更新用)
+router.put('/:id/password', authenticate, async function (req, res) {
+  const id = getIdParam(req)
+
+  // 檢查是否為授權會員，只有授權會員可以存取自己的資料
+  if (req.user.id !== id) {
+    return res.json({ status: 'error', message: '存取會員資料失敗' })
+  }
+
+  // user為來自前端的會員資料(準備要修改的資料)
+  const userPassword = req.body
+
+  // 檢查從前端瀏覽器來的資料，哪些為必要(name, ...)，從前端接收的資料為
+  // {
+  //   originPassword: '', // 原本密碼，要比對成功才能修改
+  //   newPassword: '', // 新密碼
+  // }
+  if (!id || !userPassword.origin || !userPassword.new) {
+    return res.json({ status: 'error', message: '缺少必要資料' })
+  }
+
+  // 查詢資料庫目前的資料
+  const [dbUserRow] = await db.query('SELECT * FROM users WHERE id = ?', [id])
+
+  // null代表不存在
+  if (!dbUserRow) {
+    return res.json({ status: 'error', message: '使用者不存在' })
+  }
+  const [dbUser] = dbUserRow
+
+  // compareHash(登入時的密碼純字串, 資料庫中的密碼hash) 比較密碼正確性
+  // isValid=true 代表正確
+  const isValid = await compareHash(userPassword.origin, dbUser.password)
+
+  // isValid=false 代表密碼錯誤
+  if (!isValid) {
+    return res.json({ status: 'error', message: '密碼錯誤' })
+  }
+  const passwordHash = await generateHash(userPassword.new)
+
+  // 對資料庫執行update
+  const [affectedRows] = await db.query(
+    'UPDATE users SET password = ? WHERE id = ?',
+    [passwordHash, id]
+  )
+
+  // 沒有更新到任何資料 -> 失敗
+  if (!affectedRows) {
+    return res.json({ status: 'error', message: '更新失敗' })
+  }
+
+  // 成功，不帶資料
+  return res.json({ status: 'success', data: null })
 })
 // PUT - 更新會員資料(密碼更新用)
 router.put('/:id/password', authenticate, async function (req, res) {

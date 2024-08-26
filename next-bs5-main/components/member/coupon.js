@@ -129,7 +129,7 @@ export default function Coupon() {
             <img src="/images/group.svg" alt="" style={{ width: '100%' }} />
           </div>
           <div className="col-md-3 col-sm-0">
-            <Leftnav />
+          <Leftnav fromCupon="fromCupon" />
           </div>
           <div className="col-md-9 testmodal">
             <h3 className="goldenf">優惠券</h3>
