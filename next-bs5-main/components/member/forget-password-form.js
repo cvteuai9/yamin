@@ -1,4 +1,4 @@
-import styles from './member.module.css'
+import styles from './member.module.scss'
 import Link from 'next/link'
 
 export default function ForgetPasswordForm() {
