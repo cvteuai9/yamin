@@ -225,11 +225,6 @@ input::placeholder,
   width: 100px;
   height: 100px;
 }
-
-/* .changeps-inputtext::placeholder,
-.changeps-inputradio::placeholder {
-  color: var(--primary2);
-} */
 .changeps-inputtext {
   margin: 12px 0px 12px 0px;
   height: 50px;
@@ -277,7 +272,6 @@ input::placeholder,
     /*自己本身高度往上調50%*/
   }
 }
-
 /* ======視窗更改============================= */
 @media screen and (max-width: 1245px) {
   .left-nav,
@@ -679,7 +673,7 @@ input::placeholder,
   border-collapse: collapse;
   text-align: center;
 }
-/* ====julia08-22新增 */
+/* ====julia08-22新增--篩選下拉式選單 */
 .coupon-cpth,
 .coupon-cptd {
   width: 100px;
@@ -691,7 +685,7 @@ input::placeholder,
   border-bottom: 1px var(--white) solid;
 }
 .coupon-cpth1 {
-  width: 250px;
+  width: 270px;
 }
 .tabchooes {
   position: relative;
@@ -709,3 +703,26 @@ input::placeholder,
   text-align: start;
   white-space: nowrap;
 }
+/* ====julia08-26新增--優惠券使用說明視窗 */
+.modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+  background-color: #ccc;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.modal-header {
+  border-bottom: 1px solid #724d4d;
+}
+
+.modal-footer {
+  border-top: 1px solid #724d4d;
+}
+.modal-body {
+  max-height: 400px;
+  overflow-y: auto;
+}
+/* ====julia08-26新增--優惠券使用說明視窗 */

@@ -171,7 +171,7 @@ export default function Profile() {
             />
           </div>
           <div className="col-md-3">
-            <Leftnav />
+            <Leftnav fromProfile="fromProfile" />
           </div>
           <div className="col-md-9">
             <h4 className="goldenf">
