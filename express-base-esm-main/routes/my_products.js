@@ -158,59 +158,6 @@ router.get('/relation_product/:id', async (req, res) => {
   }
 })
 
-router.get('/my-favorite', async (req, res) => {
-  try {
-    const perpage = 8
-    const page = Number(req.query.page) || 1
-    const start = (page - 1) * perpage
-    const end = perpage * page
-    const user_id = req.query.user_id || 0
-    const type = req.query.type || ''
-    const order = Number(req.query.order) || 1
-    let queryCluse = ``
-    switch (type) {
-      case 'product':
-        queryCluse = `SELECT mp.id,mp.product_name, mp.paths, mp.weight, mp.price, brand.name AS brand_name, tea.name AS tea_name, style.name AS style_name
-        FROM my_products mp
-        JOIN favorites f ON f.product_id = mp.id
-        JOIN brand ON brand.id = mp.brand_id
-        JOIN tea ON tea.id = mp.tea_id
-        JOIN style ON style.id = mp.style_id
-        WHERE f.user_id = ${user_id}`
-        break
-      case 'course':
-        break
-      case 'article':
-        break
-      default:
-        throw new Error('error')
-    }
-    switch (order) {
-      case 1:
-        queryCluse += ' ORDER BY price ASC'
-        break
-      case 2:
-        queryCluse += ' ORDER BY price DESC'
-        break
-      case 3:
-        queryCluse += ' ORDER BY price ASC'
-        break
-      case 4:
-        queryCluse += ' ORDER BY price ASC'
-        break
-    }
-    const [rows] = await db.execute(queryCluse)
-    let myFavProduct = {}
-    myFavProduct.data = rows.slice(start, end)
-    myFavProduct.totalCount = rows.length
-    myFavProduct.totalPage = Math.ceil(rows.length / 8)
-    return res.status(200).json(myFavProduct)
-  } catch (error) {
-    console.log(error)
-    return res.status(404).json({ error: 'Favorite Data Not Found' })
-  }
-})
-
 // 請求收藏資料
 router.get('/favorites', async (req, res) => {
   try {
@@ -221,7 +168,9 @@ router.get('/favorites', async (req, res) => {
     )
     let favoriteProduct = []
     rows.map((v) => {
-      return favoriteProduct.push(v.product_id)
+      if (v.product_id !== 0 && v.product_id !== null) {
+        return favoriteProduct.push(v.product_id)
+      }
     })
     // console.log(rows)
     return res.status(200).json(favoriteProduct)
@@ -239,6 +188,9 @@ router.put('/favorites', async (req, res) => {
       'INSERT INTO favorites (user_id, product_id) VALUES( ?, ?)',
       [user_id, product_id]
     )
+    return res
+      .status(200)
+      .json({ message: 'Product Favorite Insert successfully' })
   } catch (error) {
     console.log(error)
     return res.status(400).json({ error: 'Invalid input data' })

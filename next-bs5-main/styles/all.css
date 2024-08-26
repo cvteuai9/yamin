@@ -645,11 +645,7 @@ input::placeholder,
     /* color: inherit; */
   }
 }
-/* coupon */
-/* =================================== */
-/* .coupon-inputtext::placeholder {
-  color: var(--primary2);
-} */
+
 .coupon-inputtext {
   display: flex;
   width: 300px;
@@ -676,25 +672,40 @@ input::placeholder,
   font-size: 14px;
   display: flex;
   align-items: center;
+  white-space: nowrap;
 }
 .coupon-cptable {
   color: var(--white);
   border-collapse: collapse;
-  display: flex;
+  text-align: center;
+}
+/* ====julia08-22新增 */
+.coupon-cpth,
+.coupon-cptd {
+  width: 100px;
   margin: 0;
-  padding: 0;
-
-  .coupon-cpth,
-  .coupon-cptd {
-    width: 195px;
-    margin: 0;
-    padding: 5px 20px 5px 20px;
-    text-align: center;
-  }
-  .coupon-cpth {
-    border-bottom: 1px var(--white) solid;
+  padding: 5px 10px;
+  text-align: center;
+}
+.coupon-cpth {
+  border-bottom: 1px var(--white) solid;
+}
+.coupon-cpth1 {
+  width: 250px;
+}
+.tabchooes {
+  position: relative;
+  white-space: nowrap;
+  /* ====julia08-22新增 */
+  .choosebtn {
+    position: absolute;
+    background-color: var(--primary);
+    /* white-space: nowrap; */
+    left: 700px;
+    top: 0px;
   }
 }
 .coupon-p-14 {
   text-align: start;
+  white-space: nowrap;
 }

@@ -118,25 +118,38 @@
 
   & .favoritec-fabtn {
     position: absolute;
-    bottom: 5px;
-    right: 10px; /* 距离父元素左边20像素 */
+    bottom: 0;
+    right: 0; /* 距离父元素左边20像素 */
+    & img {
+      width: 30px;
+    }
   }
 }
 
 .favoritec-cardtext {
+  display: flex;
+  gap: 5rem;
   width: 700px;
   height: 124px;
-
-  margin: auto 10px;
   line-height: 25px;
   padding-left: 10px;
-  display: flex;
+  padding-top: 10px;
 }
 .favoritec-cardlefttext {
+  display: flex;
+  gap: 1rem;
+  flex-direction: column;
   width: 680px;
-
   height: auto;
-  margin-right: 80px;
+  .courseDescription {
+    height: 7rem;
+    > p {
+      display: -webkit-box;
+      overflow: hidden;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+    }
+  }
 }
 .favoritec-cardrighttext {
   width: 180px;

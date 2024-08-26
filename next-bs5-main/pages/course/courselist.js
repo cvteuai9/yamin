@@ -97,12 +97,27 @@ export default function Course() {
     const res = await fetch(baseURL)
     // 使用 fetch API 發送 GET 請求到構建好的 URL，等待伺服器回應。
 
-    const data = await res.json()
     // 將伺服器回應的 JSON 數據轉換成 JavaScript 對象。
+    const data = await res.json()
 
+    // !! 收藏部分，後續要處理user_id部分
+    // 先將每個課程加上 fav屬性，並設為false
+    let tmp = data.courses.map((v) => {
+      return { ...v, fav: false }
+    })
+    const favoritesURL = `http://localhost:3005/api/course/favorites?user_id=1`
+    const favoritesRes = await fetch(favoritesURL)
+    const favoritesData = await favoritesRes.json()
+    let courseList = tmp.map((v, i) => {
+      if (favoritesData.includes(v.id)) {
+        return { ...v, fav: true }
+      } else {
+        return v
+      }
+    })
     if (res.ok) {
       // 如果伺服器回應狀態為 OK，則更新課程數據、總頁數和總筆數的狀態。
-      setCourses(data.courses)
+      setCourses(courseList)
       setTotalPages(data.totalPages)
       setTotalCourses(data.totalCourses)
     } else {
@@ -110,7 +125,32 @@ export default function Course() {
       console.error('Failed to fetch courses:', data.message)
     }
   }
-
+  // !!處理收藏或取消收藏的函式
+  async function handleFavToggle(courses, id) {
+    try {
+      let nextData = courses.map((v) => {
+        if (v.id === id) {
+          if (!v.fav) {
+            fetch(
+              `http://localhost:3005/api/course/favorites?user_id=1&course_id=${v.id}`,
+              { method: 'PUT' }
+            )
+          } else {
+            fetch(
+              `http://localhost:3005/api/course/favorites?user_id=1&course_id=${v.id}`,
+              { method: 'DELETE' }
+            )
+          }
+          return { ...v, fav: !v.fav }
+        } else {
+          return v
+        }
+      })
+      setCourses(nextData)
+    } catch (error) {
+      console.error('Failed to toggle favorite:', error)
+    }
+  }
   useEffect(() => {
     setLocations(locationData)
     // 使用 useEffect hook 在組件初次渲染時將本地的地點數據設定為 locations 狀態。
@@ -364,84 +404,100 @@ export default function Course() {
                   className="shane-course-card mb-3"
                   style={{ maxWidth: 1440 }}
                 >
-                  <Link href={`/course/${v.id}`}>
-                    <div className="row mt-5">
-                      {/* 這邊是圖片 */}
-                      <div className="col-md-4 shane-course-activity_left ">
+                  <div className="row mt-5">
+                    {/* 這邊是圖片 */}
+                    <div className="col-md-4 shane-course-activity_left">
+                      <Link href={`/course/${v.id}`}>
                         <img
                           src={v.img1}
                           className="img-fluid rounded-start"
                           alt="..."
                         />
-                      </div>
-                      {/* 這邊是右邊的課程大致說明圖 */}
-                      <div className="col-md-8">
-                        <div className="shane-course-card-body position-relative px-3">
-                          <div className=" text-center justify-content-center position-absolute top-50 start-50 translate-middle">
-                            <img
-                              src="/images/yaming/course/LOGO 直向.png"
-                              alt=""
-                              width={150}
-                              height={240}
-                            />
-                          </div>
-                          <h3 className="card-title mt-3">{v.name}</h3>
-                          <p className="card-text mb-2">
-                            {getCategoryName(v.category_id)}
-                          </p>
-                          <p className="description">{v.description}</p>
-                          <p>
-                            {v.start_time} - {v.end_time}
-                          </p>
-                          <p>
-                            已經報名 {v.current_number} 個人 /人數限制{' '}
-                            {v.limit_people} 人
-                          </p>
-                          <div className="d-flex text-center">
-                            <img
-                              src="/images/yaming/course/geo-alt (1) 1.png"
-                              alt=""
-                              width="13px"
-                              height="13px"
-                              className="mt-2 me-2"
-                            />
-                            <p>{v.location}</p>
-                          </div>
-                          <h3 className="mt-3">${v.price}</h3>
-                          <div className="d-flex align-items-center mt-3 mb-2">
-                            <img
-                              src="/images/yaming/course/love.png"
-                              alt=""
-                              width={20}
-                              height={18}
-                              className="me-3"
-                            />
-                            <img
-                              src="/images/yaming/course/Group 115.png"
-                              alt=""
-                              width={20}
-                              height={18}
-                              className="me-3"
-                            />
-                            <div className="ms-3">
-                              <button
-                                type="button"
-                                className="btn rounded-pill"
-                                onClick={() => {
-                                  const item = { ...v, qty: 1 }
-                                  console.log(item)
-                                  notify(v.name)
-                                  addItem(item)
-                                }}
-                              >
-                                購買
-                              </button>
-                            </div>
+                      </Link>
+                    </div>
+                    {/* 這邊是右邊的課程大致說明圖 */}
+                    <div className="col-md-8">
+                      <div className="shane-course-card-body position-relative px-3">
+                        <div className=" text-center justify-content-center position-absolute top-50 start-50 translate-middle">
+                          <img
+                            src="/images/yaming/course/LOGO 直向.png"
+                            alt=""
+                            width={150}
+                            height={240}
+                          />
+                        </div>
+                        <h3 className="card-title mt-3">{v.name}</h3>
+                        <p className="card-text mb-2">
+                          {getCategoryName(v.category_id)}
+                        </p>
+                        <p className="description">{v.description}</p>
+                        <p>
+                          {v.start_time} - {v.end_time}
+                        </p>
+                        <p>
+                          已經報名 {v.current_number} 個人 /人數限制{' '}
+                          {v.limit_people} 人
+                        </p>
+                        <div className="d-flex text-center">
+                          <img
+                            src="/images/yaming/course/geo-alt (1) 1.png"
+                            alt=""
+                            width="13px"
+                            height="13px"
+                            className="mt-2 me-2"
+                          />
+                          <p>{v.location}</p>
+                        </div>
+                        <h3 className="mt-3">${v.price}</h3>
+                        <div className="d-flex align-items-center mt-3 mb-2">
+                          <button
+                            type="button"
+                            className="btn like-btn"
+                            onClick={() => handleFavToggle(courses, v.id)}
+                          >
+                            {v.fav ? (
+                              <img
+                                src="/images/yaming/course/heart-fill.svg"
+                                alt=""
+                                width={20}
+                                height={18}
+                                className="me-3"
+                              />
+                            ) : (
+                              <img
+                                src="/images/yaming/course/love.png"
+                                alt=""
+                                width={20}
+                                height={18}
+                                className="me-3"
+                              />
+                            )}
+                          </button>
+                          <img
+                            src="/images/yaming/course/Group 115.png"
+                            alt=""
+                            width={20}
+                            height={18}
+                            className="me-3"
+                          />
+                          <div className="ms-3">
+                            <button
+                              type="button"
+                              className="btn rounded-pill"
+                              onClick={() => {
+                                const item = { ...v, qty: 1 }
+                                console.log(item)
+                                notify(v.name)
+                                addItem(item)
+                              }}
+                            >
+                              購買
+                            </button>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </Link>
+                  </div>
                   {/* end */}
                 </div>
               )

@@ -129,7 +129,7 @@ router.get('/reserve', async (req, res) => {
 
     // 導向到付款頁面， line pay回應後會帶有info.paymentUrl.web為付款網址
     res.redirect(linePayResponse.body.info.paymentUrl.web)
-  } catch (e) {
+  } catch (e) { 
     console.log('error', e)
   }
 })
