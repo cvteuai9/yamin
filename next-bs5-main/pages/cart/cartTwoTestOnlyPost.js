@@ -212,7 +212,7 @@ export default function CartTwo() {
       }
       // linepay測試
       if (formData.payState === 'line') {
-        const url = 'http://localhost:3005/api/yamin_cart'
+        const url = 'http://localhost:3005/api/yamin_cart/linepay'
         fetch(url, {
           method: 'POST',
           headers: {
@@ -221,13 +221,15 @@ export default function CartTwo() {
           body: JSON.stringify(PostformData),
         })
           .then((response) => response.json())
-          .then(async (result) => {
+          .then((result) => {
             console.log('testurl', url)
             console.log('success', result)
+            window.location.href = result.lineUrl
           })
           .catch((error) => {
             console.error(error)
           })
+
         console.log('取得', PostformData.get('username'))
         console.log('line表單提交成功', formData)
       }
