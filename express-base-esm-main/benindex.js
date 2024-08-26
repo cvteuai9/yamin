@@ -248,6 +248,9 @@ app.post('/api/users/', upload.none(), async (req, res) => {
     head,
   })
   await db.write()
+
+
+  
   res.status(201).json({
     status: 'success',
     message: '註冊成功',
