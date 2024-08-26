@@ -1,6 +1,19 @@
 import { useState } from 'react'
+import { useState } from 'react'
 import Leftnav from '@/components/member/left-nav'
 import Link from 'next/link'
+import { RiEyeLine } from 'react-icons/ri'
+import { RiEyeOffLine } from 'react-icons/ri'
+import { useAuth } from '@/hooks/my-use-auth'
+import { updatePassword } from '@/services/my-user'
+import toast, { Toaster } from 'react-hot-toast'
+
+// 定義要在此頁呈現/編輯的會員資料初始物件
+const initUserPassword = {
+  origin: '', // 原本密碼，要比對成功才能修改
+  new: '', // 新密碼
+  confirm: '', //確認新密碼用(前端檢查用，不送後端)
+}
 import { RiEyeLine } from 'react-icons/ri'
 import { RiEyeOffLine } from 'react-icons/ri'
 import { useAuth } from '@/hooks/my-use-auth'
@@ -61,16 +74,15 @@ export default function Changeps() {
 
     // 送到伺服器進行更新
     const password = { origin: userPassword.origin, new: userPassword.new }
-    console.log(password);
-    console.log(id);
+    console.log(password)
+    console.log(id)
 
     // try {
-      let res = await updatePassword(id, password)
+    let res = await updatePassword(id, password)
 
     // } catch (error) {
-      console.log(res.data.message)
+    console.log(res.data.message)
     // }
-
 
     console.log(res.data)
 
@@ -85,7 +97,7 @@ export default function Changeps() {
   return (
     <>
       <div className="container mb-6">
-        <div className='d-flex'>
+        <div className="d-flex">
           <div className="titlenav">
             <img src="/images/favorite/title.svg" alt="title" />
             <img
@@ -94,6 +106,8 @@ export default function Changeps() {
               style={{ width: '100%' }}
             />
           </div>
+        </div>
+        <div className="row mx-5 mt-4">
         </div>
         <div className="row mx-5 mt-4">
           <div className="col-md-3">
@@ -128,18 +142,20 @@ export default function Changeps() {
                   <div>
                     {showOldPassword ? (
                       <RiEyeLine
-                        className='icon'
+                        className="icon"
                         onClick={handleOldPasswordIconClick}
                       />
                     ) : (
                       <RiEyeOffLine
-                        className='icon'
+                        className="icon"
                         onClick={handleOldPasswordIconClick}
                       />
                     )}
                   </div>
                 </div>
-                <div className="mb-2 p2 whitef">* 8到12個字元，且至少需包含一個英文大寫與一個英文小寫字元</div>
+                <div className="mb-2 p2 whitef">
+                  * 8到12個字元，且至少需包含一個英文大寫與一個英文小寫字元
+                </div>
               </div>
               <div>
                 <p className="my-0 whitef">密碼(必填)</p>
@@ -155,12 +171,12 @@ export default function Changeps() {
                   <div>
                     {showPassword ? (
                       <RiEyeLine
-                        className='icon'
+                        className="icon"
                         onClick={handlePasswordIconClick}
                       />
                     ) : (
                       <RiEyeOffLine
-                        className='icon'
+                        className="icon"
                         onClick={handlePasswordIconClick}
                       />
                     )}
@@ -181,12 +197,12 @@ export default function Changeps() {
                   <div>
                     {showConfirmPassword ? (
                       <RiEyeLine
-                        className='icon'
+                        className="icon"
                         onClick={handleConfirmPasswordIconClick}
                       />
                     ) : (
                       <RiEyeOffLine
-                        className='icon'
+                        className="icon"
                         onClick={handleConfirmPasswordIconClick}
                       />
                     )}
@@ -199,8 +215,11 @@ export default function Changeps() {
                 </button>
               </div>
             </form>
+            </form>
           </div>
         </div>
+        {/* 土司訊息視窗用 */}
+        <Toaster />
         {/* 土司訊息視窗用 */}
         <Toaster />
       </div>
