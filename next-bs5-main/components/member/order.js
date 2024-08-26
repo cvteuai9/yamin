@@ -21,7 +21,7 @@ export default function Ordered() {
             />
           </div>
           <div className="col-md-3 ">
-            <Leftnav />
+          <Leftnav fromOrder="fromOrder" />
           </div>
           <div className="col-md-9 ">
             <h3 className="goldenf">購買訂單</h3>
