@@ -9,28 +9,34 @@ import { IoEyeSharp } from 'react-icons/io5'
 import { FaRegComment, FaBookmark } from 'react-icons/fa'
 import { FaAngleDown } from 'react-icons/fa6'
 import Link from 'next/link'
+import StarPage from '@/components/star/star-page'
 
 export default function ListForm() {
   const router = useRouter()
-  const { category_id } = router.query
+  const { category_id, page = 1, sort = 'date_desc' } = router.query
   const [articles, setArticles] = useState([])
   const [categories, setCategories] = useState([])
-  const [selectedCategory, setSelectedCategory] = useState('') 
+  const [selectedCategory, setSelectedCategory] = useState('')
   const [selectedCategoryId, setSelectedCategoryId] = useState(null)
-  const [sortOrder, setSortOrder] = useState('date_desc')
+  const [sortOrder, setSortOrder] = useState(router.query.sort || 'date_desc')
+  const [totalPages, setTotalPages] = useState(1)
+  const ARTICLES_PER_PAGE = 12; // 每頁顯示的文章數量
+
 
   // 使用 useCallback 優化函數
-  const getArticles = useCallback(async (categoryId) => {
+  const getArticles = useCallback(async (categoryId, currentSortOrder) => {
     try {
-      const apiUrl = `http://localhost:3005/api/my-articles/filter?category_id=${categoryId || 1}`
+      const currentPage = router.query.page || '1'
+      const apiUrl = `http://localhost:3005/api/my-articles/filter?category_id=${categoryId || 1}&page=${currentPage}&limit=${ARTICLES_PER_PAGE}&sort=${currentSortOrder}`
       const res = await fetch(apiUrl)
       const data = await res.json()
       setArticles(data.data.articles)
+      setTotalPages(Math.ceil(data.data.totalCount / ARTICLES_PER_PAGE))
     } catch (error) {
       console.error('Failed to fetch articles:', error)
     }
-  }, [])
-  console.log(articles);
+  }, [router.query.page])
+  // console.log(articles);
 
 
   const getCategories = useCallback(async () => {
@@ -55,10 +61,11 @@ export default function ListForm() {
     localStorage.setItem('lastVisitedCategoryId', id.toString());
     await router.push({
       pathname: router.pathname,
-      query: { category_id: id },
+      query: { category_id: id, sort: sortOrder },
     }, undefined, { shallow: true })
-    await getArticles(id)
-  }, [selectedCategoryId, router, getArticles])
+    await getArticles(id, sortOrder)
+  }, [selectedCategoryId, sortOrder, router, getArticles])
+
 
   const getImagePathPrefix = useCallback((categoryName) => {
     const pathMap = {
@@ -70,57 +77,66 @@ export default function ListForm() {
     return pathMap[categoryName] || '/images/article/articlelist/articledefault.jpg'
   }, [])
 
-  const handleSortChange = useCallback((event) => {
+  const handleSortChange = useCallback(async (event) => {
     event.preventDefault()
     const value = event.target.dataset.value
     if (sortOrder !== value) {
       setSortOrder(value)
+      await router.push({
+        pathname: router.pathname,
+        query: { ...router.query, sort: value, page: 1 },
+      }, undefined, { shallow: true })
+      await getArticles(selectedCategoryId, value)
     }
-  }, [sortOrder])
-
-  // 使用 useMemo 優化排序
-  const sortedArticles = useMemo(() => {
-    console.log(articles);
-    const articlesCopy = [...articles]
-    switch (sortOrder) {
-      case 'date_desc':
-        return articlesCopy.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-      case 'date_asc':
-        return articlesCopy.sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
-      case 'views_desc':
-        return articlesCopy.sort((a, b) => b.views - a.views)
-      case 'views_asc':
-        return articlesCopy.sort((a, b) => a.views - b.views)
-      default:
-        return articlesCopy
-    }
-  }, [articles, sortOrder])
-  console.log(sortedArticles);
+  }, [sortOrder, selectedCategoryId, router, getArticles])
 
   useEffect(() => {
-    const initializeCategory = () => {
-      const initialCategoryId = category_id || localStorage.getItem('lastVisitedCategoryId') || '1'
-      setSelectedCategoryId(parseInt(initialCategoryId))
-      
-      if (!category_id) {
-        router.push({
+    const initializeCategory = async () => {
+      let initialCategoryId = router.query.category_id || localStorage.getItem('lastVisitedCategoryId') || '1'
+      let initialSortOrder = router.query.sort || 'date_desc'
+      let initialPage = router.query.page || '1'
+  
+      if (!router.isReady) return;
+  
+      if (router.query.category_id !== initialCategoryId || 
+          router.query.sort !== initialSortOrder || 
+          router.query.page !== initialPage) {
+        await router.push({
           pathname: router.pathname,
-          query: { category_id: initialCategoryId },
+          query: { 
+            category_id: initialCategoryId, 
+            sort: initialSortOrder,
+            page: initialPage
+          },
         }, undefined, { shallow: true })
       }
+  
+      setSelectedCategoryId(parseInt(initialCategoryId))
+      setSortOrder(initialSortOrder)
     }
-
+  
     initializeCategory()
     getCategories()
-  }, [category_id, router, getCategories])
+  }, [router.isReady, router.query, router, getCategories])
 
   useEffect(() => {
     if (categories.length > 0 && selectedCategoryId) {
       const category = categories.find(cat => cat.id === selectedCategoryId) || categories[0]
       setSelectedCategory(category.name)
-      getArticles(category.id)
+      getArticles(category.id, sortOrder)
     }
-  }, [selectedCategoryId, categories, getArticles])
+  }, [selectedCategoryId, categories, sortOrder, getArticles])
+
+  // 分頁處理函數
+  const handlePageChange = useCallback(async (newPage) => {
+    await router.push({
+      pathname: router.pathname,
+      query: { category_id: selectedCategoryId, page: newPage, sort: sortOrder },
+    }, undefined, { shallow: true })
+    await getArticles(selectedCategoryId, sortOrder)
+  }, [selectedCategoryId, sortOrder, router, getArticles])
+
+
 
   return (
     <main className={styles['article-list']}>
@@ -159,7 +175,7 @@ export default function ListForm() {
           </div>
         </div>
         <div className={`row row-cols-1 row-cols-md-2 row-cols-lg-3 my-4 g-5 mx-0 ${styles['articlelist']}`}>
-          {sortedArticles.map((article) => (
+          {articles.map((article) => (
             <div className="col" key={article.id}>
               <Link href={`/article/${article.id}`} className={styles['articleLink']}>
                 <div className={styles['articlecard']}>
@@ -194,6 +210,40 @@ export default function ListForm() {
               </Link>
             </div>
           ))}
+        </div>
+        {/* 分頁 */}
+        <div className={`${styles['articlepagearea']}`}>
+          <div className={`${styles['articlepage']}`}>
+            <img
+              src="/images/article/articlelist/articlepage-leftarrow.svg"
+              alt="Previous Page"
+              onClick={() => handlePageChange(Math.max(1, parseInt(page) - 1))}
+              style={{ cursor: page <= 1 ? 'not-allowed' : 'pointer' }}
+            />
+            <div className={`${styles['articlepagenume']}`}>
+              {
+                Array.from({ length: Math.min(totalPages, 5) }, (_, index) => {
+                  const pageNumber = index + 1;
+                  return (
+                    <button
+                      key={pageNumber}
+                      onClick={() => handlePageChange(pageNumber)}
+                      className={pageNumber === parseInt(page) ? styles['active'] : ''}
+                    >
+                      {pageNumber}
+                    </button>
+                  );
+                })
+              }
+            </div>
+            <img
+              src="/images/article/articlelist/articlepage-rightarrow.svg"
+              alt="Next Page"
+              onClick={() => handlePageChange(Math.min(totalPages, parseInt(page) + 1))}
+              style={{ cursor: page >= totalPages ? 'not-allowed' : 'pointer' }}
+            />
+          </div>
+          <StarPage />
         </div>
       </div>
     </main>
