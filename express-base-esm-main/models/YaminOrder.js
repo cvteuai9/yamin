@@ -58,6 +58,34 @@ export default async function (sequelize) {
       cvc: {
         type: DataTypes.INTEGER,
       },
+      transaction_id: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      status: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        comment: 'pending, paid, fail, cancel, error',
+      },
+      order_info: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+        comment: 'send to line pay',
+      },
+      reservation: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+        comment: 'get from line pay',
+      },
+      confirm: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+        comment: 'confirm from line pay',
+      },
+      return_code: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
     },
     {
       tableName: 'YaminOrder', //直接提供資料表名稱
