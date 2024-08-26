@@ -28,21 +28,52 @@ router.get('/category', async function (req, res) {
   return res.json({ status: 'success', data: { articles_category } })
 })
 
-router.get('/filter', async function (req, res) {
-  const category_id = Number(req.query.category_id) // 使用 req.query 來讀取查詢參數
-  let query = 'SELECT * FROM articles'
-  let params = []
+router.get('/filter', async (req, res) => {
+  const { category_id, page = 1, limit = 12, sort = 'date_desc' } = req.query
+  const offset = (page - 1) * limit
 
-  if (category_id) {
-    query += ' WHERE category_id = ?'
-    params.push(category_id)
+  // 設定排序規則
+  let orderBy
+  switch (sort) {
+    case 'date_asc':
+      orderBy = 'created_at ASC'
+      break
+    case 'date_desc':
+      orderBy = 'created_at DESC'
+      break
+    case 'views_asc':
+      orderBy = 'views ASC'
+      break
+    case 'views_desc':
+      orderBy = 'views DESC'
+      break
+    default:
+      orderBy = 'created_at DESC'
   }
 
-  const [rows] = await db.query(query, params)
-  const articles = rows
+  try {
+    // 取得該分類下的文章總數
+    const [[{ totalCount }]] = await db.query(
+      'SELECT COUNT(*) AS totalCount FROM articles WHERE category_id = ?',
+      [category_id]
+    )
 
-  console.log(articles)
-  return res.json({ status: 'success', data: { articles } })
+    // 取得文章數據並進行分頁和排序
+    const [articles] = await db.query(
+      `SELECT * FROM articles WHERE category_id = ? ORDER BY ${orderBy} LIMIT ? OFFSET ?`,
+      [category_id, parseInt(limit), offset]
+    )
+
+    res.json({
+      data: {
+        articles,
+        totalCount, // 包含總文章數
+      },
+    })
+  } catch (error) {
+    console.error('Failed to fetch articles:', error)
+    res.status(500).json({ error: 'Failed to fetch articles' })
+  }
 })
 
 router.get('/top-views', async (req, res) => {
