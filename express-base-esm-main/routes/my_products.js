@@ -12,7 +12,7 @@ router.get('/', async (req, res) => {
       'package_name'
     ) // 包裝方式
     const styleFilter = await handleFilterInfo('style', 'style_name') // 茶品型態
-
+    const searchID = req.query.searchID || ''
     const order = req.query.order || '1'
     const perpage = Number(req.query.perpage) || 12
     const page = Number(req.query.page) || 1
@@ -34,7 +34,8 @@ router.get('/', async (req, res) => {
       teaSql = '',
       brandSql = '',
       packageSql = '',
-      styleSql = ''
+      styleSql = '',
+      searchSql = ''
     // 設定排序
     if (order === '1') {
       orderSql = ' ORDER BY price DESC'
@@ -75,18 +76,31 @@ router.get('/', async (req, res) => {
       const styleConditions = style.map((id) => `style_id=${id}`).join(' || ')
       styleSql = styleConditions ? `(${styleConditions})` : ''
     }
+    // 搜尋邏輯判斷
+    if (searchID !== '') {
+      searchSql = `product_name LIKE '%${searchID}%'`
+    }
     // 如果有篩選條件，開頭要加WHERE
     let whereSql =
       priceSql !== '' ||
       teaSql !== '' ||
       brandSql !== '' ||
       packageSql !== '' ||
-      styleSql !== ''
-        ? ' WHERE'
+      styleSql !== '' ||
+      searchSql !== ''
+        ? ' WHERE '
         : ''
+
     // allFilterSql 陣列將所有篩選條件字串塞進來
     let allFilterSql = []
-    allFilterSql.push(priceSql, teaSql, brandSql, packageSql, styleSql)
+    allFilterSql.push(
+      searchSql,
+      priceSql,
+      teaSql,
+      brandSql,
+      packageSql,
+      styleSql
+    )
     // 再透過filter去除掉空字串
     allFilterSql = allFilterSql.filter((p) => p !== '')
     // 再透過join方法將所有篩選條件用 && 串接起來成一個字串
@@ -94,7 +108,7 @@ router.get('/', async (req, res) => {
     // 組合所有sql語句
     let queryCluse =
       'SELECT * FROM my_products' + whereSql + allFilterSql + orderSql
-    // console.log(queryCluse)
+    console.log(queryCluse)
 
     // 取出商品資料
     const [rows] = await db.query(queryCluse)

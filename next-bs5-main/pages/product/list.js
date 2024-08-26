@@ -406,7 +406,6 @@ export default function List1() {
               <div
                 className={`d-flex flex-column gap-3 ${styles.crumb} ${styles['product-total-count']} justify-content-end`}
               >
-                <h4 className="m-0">全部商品 / 茶種 / 紅茶</h4>
                 <h4 className="m-0">共 {totalData} 筆</h4>
               </div>
               {/* 排序 */}
