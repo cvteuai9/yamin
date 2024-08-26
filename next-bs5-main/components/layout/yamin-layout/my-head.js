@@ -140,7 +140,7 @@ export default function MyHeader() {
               />
             </div>
             <div className={`${styles['love_btn']}`}>
-              <Link href={'/member/fav/'}>
+              <Link href={'/member/fav/favorite-p'}>
                 <img
                   src="/images/header/heart.png"
                   alt=""
