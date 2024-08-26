@@ -1,3 +1,64 @@
+// changeps
+.changeps {
+  font-family: 'B2Hana-Regular', sans-serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: var(--bg-text-color);
+
+  .changeps-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* align-items: center; */
+    .error {
+      font-size: 1.6rem;
+      color: red;
+    }
+    .inputarea {
+      position: relative;
+      width: 900px;
+      .icon {
+        padding: 0px;
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        /*自己本身高度往上調50%*/
+      }
+    }
+
+    input {
+      margin: 12px 0px 12px 0px;
+      height: 50px;
+      width: 900px;
+      padding: 1.2rem;
+      color: var(--bg-text-color);
+      background-color: var(--background);
+      border: var(--primary2) solid 1px;
+      font-size: 1.6rem;
+      /* 懸停指示 */
+      caret-color: var(--bg-text-color);
+      /* 讓文字從1rem後開始(首行縮排) */
+      text-indent: 0.2rem;
+
+      &:focus {
+        outline: none;
+      }
+    }
+
+    input::placeholder {
+      color: var(--primary2);
+    }
+
+    label {
+      font-size: 1.6rem;
+      display: flex;
+      flex-direction: column;
+    }
+  }
+}
+
 .main-title {
   width: 200px;
   height: auto;
@@ -17,7 +78,6 @@
   align-items: center;
   /* 為了字體平滑設計 */
   //  -webkit-font-smoothing: antialiased;
-
 }
 
 // .googlelogo {
@@ -27,7 +87,6 @@
 // }
 
 .signinsec1 {
-  
   p {
     color: var(--bg-text-color);
   }
@@ -57,14 +116,13 @@
 }
 
 .signinsec2 {
-  font-family: "B2Hana-Regular", sans-serif;
+  font-family: 'B2Hana-Regular', sans-serif;
   display: flex;
   flex-direction: column;
   justify-content: center;
   color: var(--bg-text-color);
 
   .register-form {
-    
     display: flex;
     flex-direction: column;
     justify-content: center;
