@@ -5,6 +5,8 @@ import { YaminCourseUseCart } from '@/hooks/yamin-use-Course-cart'
 import Cards from 'react-credit-cards-2'
 import { useRouter } from 'next/router'
 
+import axiosInstance from '@/services/axios-instance'
+
 import {
   formatCVC,
   formatExpirationDate,
@@ -36,6 +38,9 @@ export default function CartTwo() {
     cvc: '',
     state: 1,
   })
+  // confirm回來用的，在記錄確認之後，line-pay回傳訊息與代碼，例如
+  // {returnCode: '1172', returnMessage: 'Existing same orderId.'}
+
 
   const allTotalItems = cart.totalItems + courseCart.cart.totalItems
   const allTotalPrice = cart.totalPrice + courseCart.cart.totalPrice
@@ -56,8 +61,16 @@ export default function CartTwo() {
     cardholder: '',
     focus: '',
   })
-
+  // 載入狀態(控制是否顯示載入中的訊息，和伺服器回傳時間點未完成不同步的呈現問題)
+  
   const PostformData = new FormData()
+  let getorderId
+  const goLinePay = () => {
+    if (window.confirm('確認要導向至LINE Pay進行付款?')) {
+      // 先連到node伺服器後，導向至LINE Pay付款頁面
+      window.location.href = `http://localhost:3005/api/yamin_cart/linepay?orderId=${getorderId}`
+    }
+  }
 
   const handleCardPayChange = (e) => {
     if (e.target.checked) {
@@ -152,7 +165,7 @@ export default function CartTwo() {
     return valid
   }
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault()
 
     // formRef.current.submit()
@@ -178,7 +191,7 @@ export default function CartTwo() {
           `items[${item.id}][product_name]`,
           item.product_name
         )
-        console.log(PostformData)
+
         PostformData.append('PproductId', [{ productId: item.id }])
         PostformData.append(`productId[${item.id}]`, `productId[${item.id}]`)
         // PostformData.append(`items[${item.id}][price]`, item.price)
@@ -210,25 +223,52 @@ export default function CartTwo() {
       for (const [key, value] of PostformData.entries()) {
         console.log('123', (PostformData[key] = value))
       }
-      const params = new URLSearchParams(formData).toString()
-      const url = 'http://localhost:3005/api/yamin_cart'
-      fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(PostformData),
-      })
-        .then((response) => response.json())
-        .then((result) => {
-          console.log('testurl', url)
-          console.log('success', result)
+      // linepay測試
+      if (formData.payState === 'line') {
+        const url = 'http://localhost:3005/api/yamin_cart/linepay'
+        await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(PostformData),
         })
-        .catch((error) => {
-          console.error(error)
+          .then((response) => response.json())
+          .then((result) => {
+            console.log('testurl', url)
+            console.log('success', result)
+            getorderId = result.goLineurl
+            // window.location.href = result.lineUrl
+          })
+          .catch((error) => {
+            console.error(error)
+          })
+
+        // const goLineUrl = result.goLineurl
+        goLinePay()
+      }
+
+      // linepay測試內容結束
+      if (formData.payState === 'cardPay') {
+        const url = 'http://localhost:3005/api/yamin_cart'
+        fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(PostformData),
         })
-      console.log('取得', PostformData.get('username'))
-      console.log('表單提交成功', formData)
+          .then((response) => response.json())
+          .then((result) => {
+            console.log('testurl', url)
+            console.log('success', result)
+          })
+          .catch((error) => {
+            console.error(error)
+          })
+        console.log('取得', PostformData.get('username'))
+        console.log('信用卡表單提交成功', formData)
+      }
 
       // Perform form submission or additional actions here
     } else {
@@ -239,6 +279,7 @@ export default function CartTwo() {
     // localStorage.removeItem('cart')
   }
 
+  
   // test
 
   // testend

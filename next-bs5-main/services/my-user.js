@@ -61,13 +61,13 @@ export const updateProfile = async (id = 0, user = {}) => {
  * 修改會員頭像用，需要用FormData
  */
 export const updateProfileAvatar = async (formData) => {
-  return await axiosInstance.post(`/users/upload-avatar`, formData)
+  return await axiosInstance.post(`/my-users/upload-avatar`, formData)
 }
 /**
  * 修改會員密碼專用, password = { originPassword, newPassword }
  */
 export const updatePassword = async (id = 0, password = {}) => {
-  return await axiosInstance.put(`/users/${id}/password`, password)
+  return await axiosInstance.put(`/my-users/${id}/password`, password)
 }
 /**
  * 獲得會員有加在我的最愛的商品id，回傳為id陣列
