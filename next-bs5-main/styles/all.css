@@ -231,13 +231,22 @@ input::placeholder,
   color: var(--primary2);
 } */
 .changeps-inputtext {
-  all: unset;
-  color: var(--white);
-  border: 1px solid #fff;
-  width: 900px;
-  height: 22px;
-  padding: 15px 0 15px 15px;
-  border: 1px solid var(--primary2);
+  margin: 12px 0px 12px 0px;
+  height: 50px;
+  width: 100%;
+  padding: 1.2rem;
+  color: var(--bg-text-color);
+  background-color: var(--background);
+  border: var(--primary2) solid 1px;
+  font-size: 1.6rem;
+  /* 懸停指示 */
+  caret-color: var(--bg-text-color);
+  /* 讓文字從1rem後開始(首行縮排) */
+  text-indent: 0.2rem;
+
+  &:focus {
+    outline: none;
+  }
 }
 .changeps-inputradio {
   padding: 0;
@@ -247,7 +256,7 @@ input::placeholder,
 }
 .changeps-btns {
   display: flex;
-  padding-top: 32px;
+  padding-top: 10px;
   justify-content: center;
   & .changepassword,
   .checked {
@@ -256,10 +265,16 @@ input::placeholder,
 }
 .changeps-inputgroup {
   position: relative;
-  & i {
+  width: 100%;
+  .icon {
+    font-size: 1.6rem;
+    color: var(--primary2);
+    padding: 0px;
     position: absolute;
-    bottom: 20px;
-    right: 0; /* 距离父元素左边20像素 */
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    /*自己本身高度往上調50%*/
   }
 }
 
