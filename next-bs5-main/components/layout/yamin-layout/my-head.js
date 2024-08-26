@@ -1,8 +1,9 @@
 import Link from 'next/link'
 import { useEffect, useRef } from 'react'
 import styles from './header.module.scss'
-
+import { useRouter } from 'next/router'
 export default function MyHeader() {
+  const router = useRouter()
   const toggleBtnRef = useRef(null)
   const toggleBtnIconRef = useRef(null)
   const dropDownMenuRef = useRef(null)
@@ -10,7 +11,19 @@ export default function MyHeader() {
   const search2Ref = useRef(null)
   const logoRef = useRef(null)
   const logo2Ref = useRef(null)
+  const searchFormRef = useRef(null)
+  const searchFormCloseBtnRef = useRef(null)
 
+  async function handleSearchProduct() {
+    const searchForm = searchFormRef.current
+    const searchFormCloseBtn = searchFormCloseBtnRef.current
+    const searchData = searchForm.value
+
+    // 清空搜尋欄
+    searchForm.value = ''
+    searchFormCloseBtn.click()
+    router.push(`/product/search/${searchData}`)
+  }
   useEffect(() => {
     const toggleBtn = toggleBtnRef.current
     const toggleBtnIcon = toggleBtnIconRef.current
@@ -39,18 +52,6 @@ export default function MyHeader() {
         ? 'fa-solid fa-xmark'
         : 'fa-solid fa-bars'
     })
-
-    // 添加事件監聽器，阻止事件冒泡
-    const searchInput1 = document.getElementById('search')
-    const searchInput2 = document.getElementById('search2')
-
-    searchInput1.onclick = function (event) {
-      event.stopPropagation()
-    }
-
-    searchInput2.onclick = function (event) {
-      event.stopPropagation()
-    }
 
     window.addEventListener('resize', () => {
       if (window.innerWidth >= 992) {
@@ -117,10 +118,10 @@ export default function MyHeader() {
               </div>
             </li>
           </ul>
-          <div className="d-flex">
+          <div className="d-flex align-items-center">
             <div className={`${styles.search}`}>
               <input
-                type="search"
+                type="button"
                 id="search"
                 name=""
                 className={`${styles.search}`}
@@ -130,7 +131,12 @@ export default function MyHeader() {
                   height: 25,
                   width: 100,
                   borderRadius: 100,
+                  color: 'white',
+                  fontSize: 20,
                 }}
+                data-bs-toggle="modal"
+                data-bs-target="#exampleModal"
+                data-bs-whatever="@mdo"
               />
             </div>
             <div className={`${styles['love_btn']}`}>
@@ -144,7 +150,7 @@ export default function MyHeader() {
               </Link>
             </div>
             <div className={`${styles['action_btn']}`}>
-              <Link href={``}>
+              <Link href={`#`}>
                 <img
                   src="/images/header/cart.png"
                   alt=""
@@ -155,10 +161,10 @@ export default function MyHeader() {
             </div>
             <div className={`${styles.circle}`}></div>
           </div>
-          <div className={`${styles['toggle_btn']}`} ref={toggleBtnRef}>
-            <div className="d-flex">
+          <div>
+            <div className="d-flex align-items-center">
               <input
-                type="search"
+                type="button"
                 id="search2"
                 name=""
                 className={`${styles.search2}`}
@@ -170,8 +176,13 @@ export default function MyHeader() {
                   borderRadius: 100,
                 }}
                 ref={search2Ref}
+                data-bs-toggle="modal"
+                data-bs-target="#exampleModal"
+                data-bs-whatever="@mdo"
               />
-              <i className="fa-solid fa-bars" ref={toggleBtnIconRef} />
+              <div className={`${styles['toggle_btn']}`} ref={toggleBtnRef}>
+                <i className="fa-solid fa-bars" ref={toggleBtnIconRef} />
+              </div>
             </div>
           </div>
         </div>
@@ -204,16 +215,60 @@ export default function MyHeader() {
           </li>
         </div>
       </header>
-      <div className={`${styles.star} mt-3`}>
-        <img src="/images/header/star.png" alt="" width={16} height={16} />
-        <img
-          src="/images/header/vector.png"
-          alt=""
-          width="100%"
-          height="1.5px"
-          style={{ margin: '0 -2px' }}
-        />
-        <img src="/images/header/star.png" alt="" width={16} height={16} />
+      {/* 搜尋彈出視窗 */}
+      <div
+        className="modal fade"
+        id="exampleModal"
+        tabIndex={-1}
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+      >
+        <div className={`modal-dialog`}>
+          <div className={`${styles.searchForm} modal-content`}>
+            <div className="modal-header">
+              <h1 className="modal-title fs-3" id="exampleModalLabel">
+                搜尋商品
+              </h1>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+                ref={searchFormCloseBtnRef}
+              />
+            </div>
+            <div className="modal-body">
+              <form>
+                <div className="mb-3">
+                  <label htmlFor="product-name" className="col-form-label fs-4">
+                    請輸入商品名稱或關鍵字搜尋商品:
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control fs-4"
+                    id="product-name"
+                    ref={searchFormRef}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault()
+                        handleSearchProduct()
+                      }
+                    }}
+                  />
+                </div>
+              </form>
+            </div>
+            <div className="modal-footer">
+              <button
+                type="button"
+                className="btn"
+                onClick={() => handleSearchProduct()}
+              >
+                送出
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
       <style jsx>
         {`
