@@ -1,5 +1,4 @@
 import { useState } from 'react'
-
 import Leftnav from '@/components/member/left-nav'
 import Link from 'next/link'
 import { RiEyeLine } from 'react-icons/ri'
@@ -18,7 +17,7 @@ export default function Changeps() {
   // 需要會員登入時的id
   const { auth } = useAuth()
   const id = auth.userData.id
-  console.log(auth);
+  // console.log(auth);
   // 本頁狀態用
   const [userPassword, setUserPassword] = useState(initUserPassword)
 
