@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
+import { useLoader } from '@/hooks/use-loader'
 import { useRouter } from 'next/router'
 import styles from '@/styles/product-detail.module.scss'
 import Link from 'next/link'
@@ -35,6 +36,7 @@ export default function Detail() {
       </>
     )
   }
+  const { showLoader, hideLoader, loading, delay } = useLoader() // 頁面載入等候畫面
   // const swiper = useSwiper()
   const swiperRef = useRef(null)
   const [productCount, setProductCount] = useState(1)
@@ -174,6 +176,10 @@ export default function Detail() {
     const tmp = { ...product, fav: !product.fav }
     setProduct(tmp)
   }
+  useEffect(() => {
+    // 第一次進入頁面才會有loading畫面
+    showLoader()
+  }, [])
   useEffect(() => {
     if (thumbsSwiper) {
       thumbsSwiper.update()
