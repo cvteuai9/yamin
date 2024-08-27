@@ -1,5 +1,5 @@
 import React from 'react'
-
+import Leftnav from '@/components/member/left-nav'
 export default function OrderOne() {
   return (
     <>
@@ -15,34 +15,7 @@ export default function OrderOne() {
         {/* 會員中心Title End */}
         <div className="orderColRow row">
           <div className="orderCol orderColLeft col-4">
-            <div className="left-nav">
-              <ul>
-                <li>
-                  <a href="/">
-                    <h2>個人檔案</h2>
-                  </a>
-                </li>
-                <li>
-                  <a href="/">
-                    <h2>訂單</h2>
-                  </a>
-                </li>
-                <li>
-                  <a href="/">
-                    <h2>優惠券</h2>
-                  </a>
-                </li>
-                <li>
-                  <a href="/">
-                    <h2>收藏商品</h2>
-                  </a>
-                </li>
-                {/* <li><h5>瀏覽商品</h5></li> */}
-              </ul>
-              <div className="line">
-                <img src="/images/cart/botton_line.svg" alt="裝飾線line" />
-              </div>
-            </div>
+            <Leftnav fromOrder="fromOrder" />
           </div>
           {/* 歷史訂單部分 */}
           <div className="orderCol orderColRight col-8">
