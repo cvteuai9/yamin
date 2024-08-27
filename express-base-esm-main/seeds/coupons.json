@@ -1,8 +1,4 @@
 [
-{"type":"header","version":"5.2.1","comment":"Export to JSON plugin for PHPMyAdmin"},
-{"type":"database","name":"product_middle"},
-{"type":"table","name":"coupons","database":"product_middle","data":
-[
 {"id":"1","name":"冬季特賣綠茶","code":"RR43BF","category":"百分比","discount":"0.92","min_spend_amount":"1500","stock":"200","status":"unreleased","status_info":"未開放","start_time":"2024-11-01 21:57:00","end_time":"2024-12-31 23:59:00","valid":"1","info":"消費滿 NT$ 1,500，享結帳 92 折","auto_send":"0"},
 {"id":"2","name":"入會折扣","code":"S3A1C4","category":"金額","discount":"200.00","min_spend_amount":"2000","stock":"999","status":"available","status_info":"可使用","start_time":"2024-06-03 21:57:00","end_time":"2024-11-30 23:59:00","valid":"1","info":"消費滿 NT$ 2,000，享NT$ 200 折扣","auto_send":"1"},
 {"id":"3","name":"茶香滿堂","code":"M5DB55","category":"百分比","discount":"0.92","min_spend_amount":"2000","stock":"100","status":"expired","status_info":"已過期","start_time":"2024-06-03 15:00:00","end_time":"2024-07-31 23:59:00","valid":"1","info":"消費滿 NT$ 2,000，享結帳 92 折","auto_send":"0"},
@@ -33,6 +29,4 @@
 {"id":"28","name":"綠茶特惠","code":"NLSAWE","category":"百分比","discount":"0.80","min_spend_amount":"10000","stock":"200","status":"available","status_info":"可使用","start_time":"2024-06-21 21:53:00","end_time":"2024-11-30 23:59:00","valid":"1","info":"消費滿 NT$ 10,000，享結帳 8 折","auto_send":"0"},
 {"id":"29","name":"享受茶韻","code":"RLVYFP","category":"金額","discount":"0.95","min_spend_amount":"100","stock":"500","status":"available","status_info":"可使用","start_time":"2024-06-05 21:58:00","end_time":"2024-11-30 23:59:00","valid":"1","info":"消費滿 NT$ 100，享結帳 95 折","auto_send":"0"},
 {"id":"30","name":"香濃優惠","code":"3WKL1A","category":"金額","discount":"1000.00","min_spend_amount":"5000","stock":"100","status":"expired","status_info":"已過期","start_time":"2024-06-05 22:16:00","end_time":"2024-06-30 23:59:00","valid":"1","info":"消費滿 NT$ 5,000，享NT$ 1,000 折扣","auto_send":"0"}
-]
-}
 ]
