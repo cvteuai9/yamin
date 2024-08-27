@@ -594,12 +594,22 @@ input::placeholder,
 }
 /* profile */
 /* =================================== */
+.profile-form {
+  .profile-inputtext {
+    font-size: 1.6rem;
+    font-family: 'B2Hana-Regular', sans-serif;
+    font-weight: 100;
+  }
+}
 .profile-pic {
   display: flex;
-
+  margin-top: 30px;
   height: 150px;
 }
 .profile-picleft {
+  .pc-text{
+    margin-top: 15px;
+  }
   display: block;
   width: 50%;
   height: auto;
@@ -624,7 +634,7 @@ input::placeholder,
   color: var(--white);
   width: 800px;
   height: 22px;
-  padding: 15px 0 15px 15px;
+  padding: 15px;
   border: 1px solid var(--primary2);
 }
 .profile-inputradio {

@@ -1,8 +1,18 @@
 import Link from 'next/link'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import styles from './header.module.scss'
+import MyPreviewUploadImage from '@/components/user/my-preview-upload-image'
+import { useAuth } from '@/hooks/my-use-auth'
+import { avatarBaseUrl } from '@/configs'
+import {
+  // updateProfile,
+  getUserById,
+  // updateProfileAvatar,
+} from '@/services/my-user'
+import { useRouter } from 'next/router'
 
 export default function MyHeader() {
+  const router = useRouter()
   const toggleBtnRef = useRef(null)
   const toggleBtnIconRef = useRef(null)
   const dropDownMenuRef = useRef(null)
@@ -62,6 +72,50 @@ export default function MyHeader() {
       }
     })
   }, [])
+  // 增加是否登入會員，顯示照片
+  const { auth } = useAuth()
+  const initUserProfile = {
+    id: '',
+    user_name: '',
+    nick_name: '',
+    gender: '',
+    phone: '',
+    birthday: null,
+    user_image: '',
+    email: '',
+  }
+  const [userProfile, setUserProfile] = useState(initUserProfile)
+  const [selectedFile, setSelectedFile] = useState(null)
+  const getUserData = async (id) => {
+    const res = await getUserById(id)
+
+    if (res.data.status === 'success') {
+      // 以下為同步化目前後端資料庫資料，與這裡定義的初始化會員資料物件的資料
+      const dbUser = res.data.data.user
+      // console.log('dbUser ', dbUser) //有ＩＤ
+      const dbUserProfile = { ...initUserProfile }
+
+      for (const key in dbUserProfile) {
+        if (Object.hasOwn(dbUser, key)) {
+          // 這裡要將null值的預設值改為空字串 ''
+          dbUserProfile[key] = dbUser[key] || ''
+        }
+      }
+      // 設定到狀態中
+      setUserProfile(dbUserProfile)
+    }
+  }
+  // auth載入完成後向資料庫要會員資料
+  useEffect(() => {
+    if (auth.isAuth) {
+      getUserData(auth.userData.id)
+    }
+    // eslint-disable-next-line
+  }, [auth])
+
+  const GoProfile = () => {
+    router.push('/member/profile')
+  }
 
   return (
     <>
@@ -113,7 +167,7 @@ export default function MyHeader() {
                   alt=""
                   className={`${styles.svg}`}
                 />
-                <Link href="#">文章</Link>
+                <Link href="/article">文章</Link>
               </div>
             </li>
           </ul>
@@ -153,7 +207,22 @@ export default function MyHeader() {
                 />
               </Link>
             </div>
-            <div className={`${styles.circle}`}></div>
+
+            <button
+              className="d-flex align-items-center btn btn-reset p-0"
+              onClick={GoProfile}
+            >
+              <div className="header-personimgdiv">
+                <MyPreviewUploadImage
+                  avatarImg={userProfile.user_image}
+                  // uploadImg={updateProfileAvatar}
+                  avatarBaseUrl={avatarBaseUrl}
+                  showText={false}
+                  setSelectedFile={setSelectedFile}
+                  selectedFile={selectedFile}
+                />
+              </div>
+            </button>
           </div>
           <div className={`${styles['toggle_btn']}`} ref={toggleBtnRef}>
             <div className="d-flex">

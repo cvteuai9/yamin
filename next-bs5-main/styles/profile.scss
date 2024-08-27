@@ -4,3 +4,15 @@
     color: red;
   }
 }
+.profile-form{
+
+  /* 隱藏瀏覽器自帶的圖示 */
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    display: none;
+  }
+  input[type="email"]{
+    border: none;
+    background-color: #ffffff39;
+  }
+}
+

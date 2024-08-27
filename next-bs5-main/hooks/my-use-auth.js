@@ -15,6 +15,7 @@ export const initUserData = {
   // line_uid: '',
   // name: '',
   email: '',
+  user_image: '',
 }
 
 export const AuthProvider = ({ children }) => {
@@ -56,7 +57,7 @@ export const AuthProvider = ({ children }) => {
     '/member/order/info',
     '/member/coupon',
     '/member/order/review',
-    '/member/fav/',
+    '/member/fav',
   ]
   useEffect(() => {
     if (!hasCheckedAuth && router.isReady) {

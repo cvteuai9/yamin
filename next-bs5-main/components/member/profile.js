@@ -32,7 +32,6 @@ export default function Profile() {
     phone: '',
   })
   const { auth } = useAuth()
-  console.log('auth', auth)
   const [userProfile, setUserProfile] = useState(initUserProfile)
   const [hasProfile, setHasProfile] = useState(false)
   const [selectedFile, setSelectedFile] = useState(null)
@@ -160,16 +159,18 @@ export default function Profile() {
 
   return (
     <>
-      <div className="container">
-        <div className="row">
+      <div className="container mb-6">
+        <div className="d-flex">
           <div className="titlenav">
-            <img src="/images/favorite/title.svg" alt="" />
+            <img src="/images/favorite/title.svg" alt="" className="my-3" />
             <img
               src="/images/favorite/group.svg"
               alt=""
               style={{ width: '100%' }}
             />
           </div>
+        </div>
+        <div className="row mx-5 mt-4">
           <div className="col-md-3">
             <Leftnav />
           </div>
@@ -188,7 +189,7 @@ export default function Profile() {
               </Link>
             </h4>
             <p className="p whitef mt-5">
-              請放心，你的電子郵件及所有與設計師溝通的訊息、檔案及相關購買資料，網站將依照個人資料保護法保障你的個人隱私！
+              請放心，你的電子郵件、檔案及相關購買資料，網站將依照個人資料保護法保障你的個人隱私！
             </p>
 
             {hasProfile ? (
@@ -199,15 +200,16 @@ export default function Profile() {
                 // toast={toast}
                 setSelectedFile={setSelectedFile}
                 selectedFile={selectedFile}
+                showText={true}
               />
             ) : (
               <div>
                 <div className="profile-pic">
                   <div className="profile-picleft">
-                    <p className="p whitef mt-5">更換頭貼</p>
-                    <p2 className="p2 goldenf">
+                    <p className="p whitef">更換頭貼</p>
+                    <p className="p2 goldenf mt-6">
                       從電腦中選取圖檔：最佳大小為 600 x 600 px
-                    </p2>
+                    </p>
                     {/* <button>選擇照片</button> */}
                     <div type="file" className="p btn1 low mt-5">
                       選擇照片
@@ -225,7 +227,7 @@ export default function Profile() {
               <div>
                 <p className="p whitef mt-5">真實姓名（必填）</p>
                 <input
-                  className="profile-inputtext p2 goldenf"
+                  className="profile-inputtext goldenf"
                   type="text"
                   name="user_name"
                   placeholder="請輸入你的真實姓名"
@@ -286,6 +288,7 @@ export default function Profile() {
                   name="birthday"
                   value={userProfile.birthday}
                   onChange={handleFieldChange}
+                  onClick={(e) => e.target.showPicker()} // 使用 onClick 事件來觸發日期選擇器
                 />
               </div>
               <p2 className="p2 whitef">* 請正確填寫，註冊成功後將無法修改</p2>
