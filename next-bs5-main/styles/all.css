@@ -277,23 +277,29 @@ input::placeholder,
     /*自己本身高度往上調50%*/
   }
 }
+.left-nav-line {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
 /* ======視窗更改============================= */
-@media screen and (max-width: 1245px) {
-  .left-nav,
-  .left-nav-line > img {
-    width: 200px;
-    height: auto;
-  }
+/* @media screen and (max-width: 1245px) { */
+.left-nav,
+.left-nav-line > img {
+  max-width: 100%;
+  height: auto;
 }
-@media screen and (max-width: 960px) {
-  .left-nav,
+/* } */
+/* @media screen and (max-width: 960px) { */
+/* .left-nav,
   .left-nav-line > img {
     width: 150px;
     height: auto;
-  }
-}
-@media screen and (max-width: 780px) {
+  } */
+/* } */
+@media screen and (max-width: 768px) {
   .left-nav,
   .left-nav-line > img {
     display: none;
@@ -595,6 +601,7 @@ input::placeholder,
 /* profile */
 /* =================================== */
 .profile-form {
+  width: 100%;
   .profile-inputtext {
     font-size: 1.6rem;
     font-family: 'B2Hana-Regular', sans-serif;
@@ -607,7 +614,7 @@ input::placeholder,
   height: 150px;
 }
 .profile-picleft {
-  .pc-text{
+  .pc-text {
     margin-top: 30px;
   }
   display: block;
@@ -632,10 +639,10 @@ input::placeholder,
 .profile-inputtext {
   all: unset;
   color: var(--white);
-  width: 800px;
-  height: 22px;
+  width: 100%;
   padding: 15px;
   border: 1px solid var(--primary2);
+  box-sizing: border-box;
 }
 .profile-inputradio {
   padding: 0;
@@ -645,6 +652,7 @@ input::placeholder,
   align-items: center;
 }
 .profile-btns {
+  width: 100%;
   display: flex;
   padding-top: 32px;
   justify-content: center;

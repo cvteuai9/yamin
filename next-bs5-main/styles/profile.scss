@@ -1,18 +1,31 @@
+.profile-content {
+  display: flex;
+  justify-content: center;
+  max-width: 1200px;
+  margin: 0px auto;
+  .profile-content-left {
+    padding: 0px 0px 0px 50px;
+  }
+  .profile-content-right {
+    padding: 0px 0px 0px 20px;
+  }
+}
+.profile-content .row {
+  width: 100%;
+}
 .profile-form {
   .error {
     font-size: 1.6rem;
     color: red;
   }
 }
-.profile-form{
-
+.profile-form {
   /* 隱藏瀏覽器自帶的圖示 */
-  input[type="date"]::-webkit-calendar-picker-indicator {
+  input[type='date']::-webkit-calendar-picker-indicator {
     display: none;
   }
-  input[type="email"]{
+  input[type='email'] {
     border: none;
     background-color: #ffffff39;
   }
 }
-

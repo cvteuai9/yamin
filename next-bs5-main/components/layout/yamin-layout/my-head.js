@@ -14,6 +14,11 @@ import {
 import useFirebase from '@/hooks/use-firebase'
 import toast, { Toaster } from 'react-hot-toast'
 import { useRouter } from 'next/router'
+import { IoLogOutOutline } from 'react-icons/io5'
+import { CiHeart } from "react-icons/ci";
+import { RiCoupon2Line } from 'react-icons/ri'
+import { TiClipboard } from 'react-icons/ti'
+import { CgProfile } from 'react-icons/cg'
 
 export default function MyHeader() {
   const router = useRouter()
@@ -98,6 +103,7 @@ export default function MyHeader() {
     } else {
       toast.error(`登出失敗`)
     }
+    toggleMenu()
   }
   // 增加是否登入會員，顯示照片
   const initUserProfile = {
@@ -139,14 +145,52 @@ export default function MyHeader() {
     // eslint-disable-next-line
   }, [auth])
 
-  const GoProfile = () => {
-    router.push('/member/profile')
-  }
   // 點擊使用者頭像，跳出視窗
   const [menuOpen, setMenuOpen] = useState(false)
+  // 創建了一個 menuRef，並將其附加到彈出選單的 DOM 元素上。
+  const menuRef = useRef(null)
+  const buttonRef = useRef(null)
 
-  const toggleMenu = () => {
-    setMenuOpen(!menuOpen)
+  const toggleMenu = (e) => {
+    e.stopPropagation() // 阻止事件冒泡
+    // 這行程式碼的作用是阻止事件冒泡。事件冒泡是指當一個事件發生在某個元素上時，該事件會向父元素傳遞。如果你不希望點擊事件傳遞到父元素（例如，點擊菜單時不希望點擊事件傳遞到其他可能會關閉菜單的父級元素）
+    setMenuOpen((prevState) => !prevState) //prevState => !prevState 是一個回調函數，它接收當前的 menuOpen 狀態（prevState），並返回相反的狀態值（如果當前為 true，則返回 false，反之亦然）。
+  }
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      // menuRef.current && ...
+      //這是一個短路評估。它首先檢查 menuRef.current 是否存在。這樣做是為了確保在訪問 .contains() 方法之前，menuRef.current 確實指向了一個有效的 DOM 元素。
+      // / !menuRef.current.contains(event.target)
+      // event.target 是觸發點擊事件的 DOM 元素。menuRef.current.contains(event.target) 檢查 event.target 是否是 menuRef.current 的子元素或者就是 menuRef.current 本身。
+      // 所以，整個條件的意思是："如果 menuRef.current 存在，並且點擊的元素不在 menuRef.current 內部或不是 menuRef.current 本身"如果這個條件為真，那麼 setMenuOpen(false) 就會被執行，關閉選單。
+      if (
+        menuRef.current &&
+        !menuRef.current.contains(event.target) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(event.target)
+      ) {
+        setMenuOpen(false)
+      }
+    }
+
+    // 只有當選單打開時才添加事件監聽器
+    if (menuOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+
+    // 清理函數
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [menuOpen])
+  // 新增：處理內部連結點擊
+  const handleInnerClick = (e) => {
+    const target = e.target.closest('a')
+    if (target) {
+      // 如果點擊的是連結，關閉選單
+      setMenuOpen(false)
+    }
   }
 
   return (
@@ -241,8 +285,11 @@ export default function MyHeader() {
             </div>
             <div className="position-relative d-flex align-items-center">
               <button
+                ref={buttonRef}
                 className="d-flex align-items-center btn btn-reset p-0 "
                 onClick={toggleMenu}
+                aria-haspopup="true"
+                aria-expanded={menuOpen}
               >
                 <div className="header-personimgdiv">
                   <MyPreviewUploadImage
@@ -256,20 +303,35 @@ export default function MyHeader() {
                 </div>
               </button>
               {menuOpen && (
-                <div className="header-dropdownMenu">
+                <div
+                  className="header-dropdownMenu"
+                  onClick={handleInnerClick}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      handleInnerClick(e)
+                    }
+                  }}
+                  role="menu"
+                  tabIndex={0}
+                  ref={menuRef}
+                >
                   <ul className="header-dropdownMenu-ul">
                     {!auth.isAuth && (
                       <>
-                        <li className="">
-                          <Link href="/member/login" className="user-link">
-                            會員登入
-                          </Link>
-                        </li>
-                        <li>
-                          <Link href="/member/register" className="user-link">
-                            註冊新會員
-                          </Link>
-                        </li>
+                        <div className="d-flex justify-content-center">
+                          <button className="header-login btn btn-reset">
+                            <div className="user-link-login">
+                              <Link href="/member/login">會員登入</Link>
+                            </div>
+                          </button>
+                        </div>
+                        <div className="d-flex justify-content-center">
+                          <button className="header-register btn btn-reset">
+                            <div className="user-link-register">
+                              <Link href="/member/register">註冊新會員</Link>
+                            </div>
+                          </button>
+                        </div>
                       </>
                     )}
                     {auth.isAuth && (
@@ -288,41 +350,56 @@ export default function MyHeader() {
                             </div>
                           </div>
                           <div className="header-dropdownMenu-li">
-                            <p className="p-0 m-0">hi</p>
                             {auth.userData.user_name}
+                            <p className="p-0 m-0">hello！</p>
                           </div>
                         </div>
                       </>
                     )}
-                    <li className="">
-                      <Link href="/member/profile" className="user-link">
+                    <li className="mt-4 d-flex align-items-center">
+                      <div className="d-flex align-items-center">
+                        <CgProfile className="icon" />
+                      </div>
+                      <Link href="/member/profile" className="user-link ms-3">
                         個人資料管理
                       </Link>
                     </li>
-                    <li>
-                      <Link href="/member/order" className="user-link">
+                    <li className="d-flex align-items-center">
+                      <div className="d-flex align-items-center">
+                        <TiClipboard className="icon" />
+                      </div>
+                      <Link href="/member/order" className="user-link ms-3">
                         我的訂單
                       </Link>
                     </li>
-                    <li>
-                      <Link href="/member/coupon" className="user-link">
+                    <li className="d-flex align-items-center">
+                      <div className="d-flex align-items-center">
+                        <RiCoupon2Line className="icon" />
+                      </div>
+                      <Link href="/member/coupon" className="user-link ms-3">
                         優惠券
                       </Link>
                     </li>
-                    <li>
-                      <Link href="/member/fav" className="user-link">
+                    <li className="d-flex align-items-center">
+                      <div className="d-flex align-items-center">
+                        <CiHeart className="icon" />
+                      </div>
+                      <Link href="/member/fav" className="user-link ms-3">
                         我的收藏
                       </Link>
                     </li>
-                    <li>
-                      <Link
-                        href="/logout"
-                        className="user-link"
-                        onClick={handleLogout}
-                      >
-                        登出
-                      </Link>
-                    </li>
+                    {auth.isAuth && (
+                      <li className="d-flex align-items-center">
+                        <IoLogOutOutline className="icon ms-1" />
+                        <Link
+                          href="#"
+                          className="user-link ms-3"
+                          onClick={handleLogout}
+                        >
+                          登出
+                        </Link>
+                      </li>
+                    )}
                   </ul>
                 </div>
               )}
