@@ -8,37 +8,41 @@ import { IoEyeSharp } from 'react-icons/io5'
 import { FaRegComment, FaBookmark } from 'react-icons/fa'
 import { FaAngleDown } from 'react-icons/fa6'
 
+import { useAuth } from '@/hooks/my-use-auth'
 import Leftnav from '@/components/member/left-nav'
 import SearchNav from './search-nav'
 import Link from 'next/link'
 import styles from '@/components/member/fav/favorite.module.scss'
 import { func } from 'prop-types'
+import { FaProductHunt } from "react-icons/fa6";
 export default function FavoriteP() {
+  // !!拿取會員資料
+  const { auth } = useAuth()
   const filterArray = ['金額由小到大', '金額由大到小']
   const router = useRouter()
   const [product, setProduct] = useState([])
   const [order, setOrder] = useState('')
   const [page, setPage] = useState(1)
-  const [userID, setUserID] = useState(1)
+  const [userID, setUserID] = useState(0)
   const [totalCount, setTotalCount] = useState(0)
   const [totalPage, setTotalPage] = useState(0)
-  const pageArray = new Array(totalPage).fill(0).map((v,i) => i)
+  const pageArray = new Array(totalPage).fill(0).map((v, i) => i)
   function handleOption(e) {
     const value = e.target.getAttribute('data-value')
     // console.log(value);
     setOrder(value)
   }
-  async function handleFavCancel(id) {
+  async function handleFavCancel(id, userID) {
     // console.log(id);
     const agreeDelete = confirm('您確定要移除此收藏商品?')
-    if(agreeDelete){
+    if (agreeDelete) {
       await fetch(
-        `http://localhost:3005/api/my_products/favorites?user_id=1&product_id=${id}`,
+        `http://localhost:3005/api/my_products/favorites?user_id=${userID}&product_id=${id}`,
         { method: 'DELETE' }
       )
         .then((res) => res.json())
         .then((result) => {
-          if(result.message){
+          if (result.message) {
             getFavProduct()
           }
         })
@@ -61,12 +65,15 @@ export default function FavoriteP() {
     setTotalPage(favProduct.totalPage)
   }
   useEffect(() => {
+    setUserID(auth.userData.id)
+  }, [auth])
+  useEffect(() => {
     if (router.isReady) {
-      getFavProduct()
+      getFavProduct(userID)
     }
     // console.log(product)
     // console.log(totalPage);
-  }, [router.isReady, order, page, totalCount, totalPage])
+  }, [router.isReady, order, page, totalCount, totalPage, userID])
   return (
     <>
       {/* 標題 & 篩選 */}
@@ -106,22 +113,22 @@ export default function FavoriteP() {
                           <FaAngleDown className={option['icon']} />
                         </p>
                         <ul className="ul1">
-                        {filterArray.map((v,i) => {
-                          return (
-                            <li key={i}>
-                            <a
-                              href="#"
-                              data-value={`${i+1}`}
-                              onClick={(e) => {
-                                e.preventDefault()
-                                handleOption(e)
-                              }}
-                            >
-                              {v}
-                            </a>
-                          </li>
-                          )
-                        })}
+                          {filterArray.map((v, i) => {
+                            return (
+                              <li key={i}>
+                                <a
+                                  href="#"
+                                  data-value={`${i + 1}`}
+                                  onClick={(e) => {
+                                    e.preventDefault()
+                                    handleOption(e)
+                                  }}
+                                >
+                                  {v}
+                                </a>
+                              </li>
+                            )
+                          })}
                         </ul>
                       </label>
                     </div>
@@ -136,16 +143,16 @@ export default function FavoriteP() {
                   return (
                     <div className={`${styles['favoritep-pcard']}`} key={i}>
                       <div className={`${styles['favoritep-imgbox']}`}>
-                      <Link href={`/product/${v.id}`}>
-                      <img
-                          src={`/images/product/list1/products-images/${v.paths}`}
-                          alt=""
-                        />
-                      </Link>
+                        <Link href={`/product/${v.id}`}>
+                          <img
+                            src={`/images/product/list1/products-images/${v.paths}`}
+                            alt=""
+                          />
+                        </Link>
                         <button
                           className={`${styles['favoritep-fabtn']}`}
                           type="button"
-                          onClick={() => handleFavCancel(v.id)}
+                          onClick={() => handleFavCancel(v.id, userID)}
                         >
                           <img
                             id="like2"
@@ -187,7 +194,10 @@ export default function FavoriteP() {
                   )
                 })
               ) : (
-                <div></div>
+                <div className={`${styles.noFavorites}`}>
+                  <h4 className='fw-bold mb-5'>你還沒有收藏的商品喔!</h4>
+                  <Link href={`/product/list`} className={`h4 d-flex align-items-center justify-content-center gap-1`}><FaProductHunt />來去逛逛吧!</Link>
+                </div>
               )}
             </div>
 

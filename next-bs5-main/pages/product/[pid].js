@@ -9,7 +9,7 @@ import { Swiper, SwiperSlide } from 'swiper/react'
 import { FaArrowAltCircleRight } from 'react-icons/fa'
 import { YaminUseCart } from '@/hooks/yamin-use-cart'
 import toast, { Toaster } from 'react-hot-toast'
-
+import { useAuth } from '@/hooks/my-use-auth'
 // 以下為  {商品圖輪播套件}
 // Import Swiper styles
 import 'swiper/css'
@@ -37,6 +37,10 @@ export default function Detail() {
     )
   }
   const { showLoader, hideLoader, loading, delay } = useLoader() // 頁面載入等候畫面
+  // !!取得使用者資訊
+  const { auth } = useAuth()
+  const [userID, setUserID] = useState(0)
+  const [isAuth, setIsAuth] = useState(false)
   // const swiper = useSwiper()
   const swiperRef = useRef(null)
   const [productCount, setProductCount] = useState(1)
@@ -80,20 +84,24 @@ export default function Detail() {
     updated_at: '',
   })
   // 取得特定id商品資料的函式
-  async function getProduct(id) {
+  async function getProduct(id, userID, isAuth) {
     try {
       const apiURL = new URL(`http://localhost:3005/api/my_products/${id}`)
       const res = await fetch(apiURL)
       const data = await res.json()
       let productThis = data.data[0]
       // !! user_id要改
-      const favURL = new URL(
-        `http://localhost:3005/api/my_products/favorites?user_id=1`
-      )
-      const resFav = await fetch(favURL)
-      const dataFav = await resFav.json()
-      if (dataFav.includes(productThis.id)) {
-        productThis.fav = true
+      if (isAuth) {
+        const favURL = new URL(
+          `http://localhost:3005/api/my_products/favorites?user_id=${userID}`
+        )
+        const resFav = await fetch(favURL)
+        const dataFav = await resFav.json()
+        if (dataFav.includes(productThis.id)) {
+          productThis.fav = true
+        } else {
+          productThis.fav = false
+        }
       } else {
         productThis.fav = false
       }
@@ -155,26 +163,32 @@ export default function Detail() {
     }
   }
   // !! user_id 要改
-  async function handleFavToggle(product) {
-    if (product.fav === false) {
-      fetch(
-        `http://localhost:3005/api/my_products/favorites?user_id=1&product_id=${product.id}`,
-        { method: 'PUT' }
-      )
-        .then((res) => res.json())
-        .then((result) => console.log(result))
-        .catch((error) => console.log(error))
+  async function handleFavToggle(product, userID, isAuth) {
+    if (isAuth) {
+      if (product.fav === false) {
+        fetch(
+          `http://localhost:3005/api/my_products/favorites?user_id=${userID}&product_id=${product.id}`,
+          { method: 'PUT' }
+        )
+          .then((res) => res.json())
+          .then((result) => console.log(result))
+          .catch((error) => console.log(error))
+      } else {
+        fetch(
+          `http://localhost:3005/api/my_products/favorites?user_id=${userID}&product_id=${product.id}`,
+          { method: 'DELETE' }
+        )
+          .then((res) => res.json())
+          .then((result) => console.log(result))
+          .catch((error) => console.log(error))
+      }
+      const tmp = { ...product, fav: !product.fav }
+      setProduct(tmp)
     } else {
-      fetch(
-        `http://localhost:3005/api/my_products/favorites?user_id=1&product_id=${product.id}`,
-        { method: 'DELETE' }
-      )
-        .then((res) => res.json())
-        .then((result) => console.log(result))
-        .catch((error) => console.log(error))
+      if (confirm('您尚未登入，請登入後再操作!')) {
+        router.push('/member/login')
+      }
     }
-    const tmp = { ...product, fav: !product.fav }
-    setProduct(tmp)
   }
   useEffect(() => {
     // 第一次進入頁面才會有loading畫面
@@ -186,23 +200,27 @@ export default function Detail() {
     }
   }, [thumbsSwiper])
   useEffect(() => {
+    setUserID(auth.userData.id)
+    setIsAuth(auth.isAuth)
+  }, [auth])
+  useEffect(() => {
     // console.log(router.query)
     if (router.isReady) {
       // console.log(router.query)`
-      getProduct(router.query.pid)
+      getProduct(router.query.pid, userID, isAuth)
       getReviews(router.query.pid)
       getRelationProduct(router.query.pid)
       // reset swiper
       swiperRef.current.slideTo(0)
     }
     // eslint-disable-next-line
-  }, [router.isReady, router.query.pid])
+  }, [router.isReady, router.query.pid, userID, isAuth])
   return (
     <>
       {/* 返回商品列表頁按鈕 */}
       <div className={`${styles.backToListBtn}`}>
         <h3>
-          <Link href={`/product/list`}>
+          <Link href={`/product/list`} className="d-flex align-items-center">
             <IoArrowBackCircle className="display-4" />
             返回產品列表
           </Link>
@@ -331,8 +349,8 @@ export default function Detail() {
                   <div className="d-flex gap-0 gap-md-3">
                     <button
                       type="button"
-                      className="btn d-flex"
-                      onClick={() => handleFavToggle(product)}
+                      className="btn d-flex align-items-center"
+                      onClick={() => handleFavToggle(product, userID, isAuth)}
                     >
                       {product.fav ? (
                         <>
@@ -530,7 +548,7 @@ export default function Detail() {
                             alt=""
                           />
                         </div>
-                        <h5 className="text-center">陳浩南</h5>
+                        <h5 className="text-center">{v.user_name}</h5>
                       </div>
                       <div>
                         <div
@@ -590,7 +608,8 @@ export default function Detail() {
                   <div className={`modal-content ${styles.moreArea}`}>
                     <div className="modal-header d-flex justify-content-between">
                       <h5 className="modal-title" id="exampleModalLabel">
-                        {product.product_name} 的所有評論
+                        <span className="fw-bold">{product.product_name}</span>{' '}
+                        的所有評論
                       </h5>
                       <button
                         type="button"
@@ -622,7 +641,7 @@ export default function Detail() {
                                     alt=""
                                   />
                                 </div>
-                                <h5 className="text-center">陳浩南</h5>
+                                <h5 className="text-center">{v.user_name}</h5>
                               </div>
                               <div>
                                 <div
@@ -686,7 +705,7 @@ export default function Detail() {
                 <div className="mt-3">
                   <Link
                     className={`${styles.goShooping} text-decoration-none fs-2`}
-                    href="/product/list1"
+                    href="/product/list"
                   >
                     點我去逛逛
                   </Link>
@@ -739,7 +758,7 @@ export default function Detail() {
             })}
             <Link
               className={`${styles.relationProductBtn} d-flex justify-contnet-center align-items-center`}
-              href="/product/list1"
+              href="/product/list"
             >
               <div className="fs-1 d-flex justify-contnet-center align-items-center">
                 <FaArrowAltCircleRight />
