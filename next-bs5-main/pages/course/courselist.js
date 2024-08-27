@@ -11,6 +11,7 @@ import { useRouter } from 'next/router'
 import { YaminCourseCartProvider } from '@/hooks/yamin-use-Course-cart'
 import toast, { Toaster } from 'react-hot-toast'
 import { YaminCourseUseCart } from '@/hooks/yamin-use-Course-cart'
+import { useAuth } from '@/hooks/my-use-auth'
 export default function Course() {
   // 購物車部分
   const { addItem = () => {} } = YaminCourseUseCart()
@@ -26,6 +27,11 @@ export default function Course() {
       </>
     )
   }
+
+  // !!取得使用者資訊
+  const { auth } = useAuth()
+  const [userID, setUserID] = useState(0)
+  const [isAuth, setIsAuth] = useState(false)
 
   // 購物車部分結束
   // 定義並導出一個名為 Course 的 React 函數組件。
@@ -67,8 +73,10 @@ export default function Course() {
     categoryId = null,
     // categoryId 參數用來指定課程分類 ID，默認值為 null。
 
-    location = null
+    location = null,
     // location 參數用來指定地點 ID，默認值為 null。
+    userID,
+    isAuth
   ) => {
     const baseURL = new URL('http://localhost:3005/api/course')
     // 創建一個 URL 對象，用來構建請求課程數據的 API 地址。
@@ -105,9 +113,12 @@ export default function Course() {
     let tmp = data.courses.map((v) => {
       return { ...v, fav: false }
     })
-    const favoritesURL = `http://localhost:3005/api/course/favorites?user_id=1`
-    const favoritesRes = await fetch(favoritesURL)
-    const favoritesData = await favoritesRes.json()
+    let favoritesData = []
+    if (isAuth) {
+      const favoritesURL = `http://localhost:3005/api/course/favorites?user_id=${userID}`
+      const favoritesRes = await fetch(favoritesURL)
+      favoritesData = await favoritesRes.json()
+    }
     let courseList = tmp.map((v, i) => {
       if (favoritesData.includes(v.id)) {
         return { ...v, fav: true }
@@ -126,27 +137,33 @@ export default function Course() {
     }
   }
   // !!處理收藏或取消收藏的函式
-  async function handleFavToggle(courses, id) {
+  async function handleFavToggle(courses, id, userID, isAuth) {
     try {
-      let nextData = courses.map((v) => {
-        if (v.id === id) {
-          if (!v.fav) {
-            fetch(
-              `http://localhost:3005/api/course/favorites?user_id=1&course_id=${v.id}`,
-              { method: 'PUT' }
-            )
+      if (isAuth) {
+        let nextData = courses.map((v) => {
+          if (v.id === id) {
+            if (!v.fav) {
+              fetch(
+                `http://localhost:3005/api/course/favorites?user_id=${userID}&course_id=${v.id}`,
+                { method: 'PUT' }
+              )
+            } else {
+              fetch(
+                `http://localhost:3005/api/course/favorites?user_id=${userID}&course_id=${v.id}`,
+                { method: 'DELETE' }
+              )
+            }
+            return { ...v, fav: !v.fav }
           } else {
-            fetch(
-              `http://localhost:3005/api/course/favorites?user_id=1&course_id=${v.id}`,
-              { method: 'DELETE' }
-            )
+            return v
           }
-          return { ...v, fav: !v.fav }
-        } else {
-          return v
+        })
+        setCourses(nextData)
+      } else {
+        if (confirm('您尚未登入，請登入後再操作!')) {
+          router.push('/member/login')
         }
-      })
-      setCourses(nextData)
+      }
     } catch (error) {
       console.error('Failed to toggle favorite:', error)
     }
@@ -160,9 +177,9 @@ export default function Course() {
   // 每當篩選條件（價格排序、頁碼、課程分類或地點）發生變化時，重新請求課程數據。
 
   useEffect(() => {
-    getCourses(priceFilter, currentPage, categoryId, locationId)
+    getCourses(priceFilter, currentPage, categoryId, locationId, userID, isAuth)
     // 根據當前的篩選條件請求課程數據。
-  }, [priceFilter, currentPage, categoryId, locationId])
+  }, [priceFilter, currentPage, categoryId, locationId, userID, isAuth])
   // 只要 priceFilter、currentPage、categoryId 或 locationId 變化，這個 useEffect 就會觸發。
 
   const handlePriceFilter = (order) => {
@@ -217,6 +234,11 @@ export default function Course() {
     return category ? category.name : '未知類型'
     // 如果找到對應的分類，返回它的名稱；否則返回 "未知類型"。
   }
+
+  useEffect(() => {
+    setUserID(auth.userData.id)
+    setIsAuth(auth.isAuth)
+  }, [auth])
   return (
     <>
       <>
@@ -453,7 +475,9 @@ export default function Course() {
                           <button
                             type="button"
                             className="btn like-btn"
-                            onClick={() => handleFavToggle(courses, v.id)}
+                            onClick={() =>
+                              handleFavToggle(courses, v.id, userID, isAuth)
+                            }
                           >
                             {v.fav ? (
                               <img
