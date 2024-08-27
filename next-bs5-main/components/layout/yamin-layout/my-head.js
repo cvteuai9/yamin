@@ -14,6 +14,7 @@ export default function MyHeader() {
   const logo2Ref = useRef(null)
   const searchFormRef = useRef(null)
   const searchFormCloseBtnRef = useRef(null)
+  const [isScrolled, setIsScrolled] = useState(false)
   const { auth } = useAuth()
   const [isAuth, setIsAuth] = useState(false)
 
@@ -81,20 +82,24 @@ export default function MyHeader() {
   }, [auth])
   return (
     <>
-      <header className={`${styles.header}`}>
+      <header
+        className={`${styles.header} ${isScrolled ? styles.scrolled : ''}`}
+      >
         <div className={`${styles.navbar}`} ref={navbarRef}>
           <div className={`${styles.logo}`} id="logo" ref={logoRef}>
             <img
               src="/images/header/logo-x.png"
               alt=""
-              height={70}
-              width={140}
+              height={60}
+              width={120}
             />
           </div>
           <ul className={`${styles.links}`}>
             <li>
               <div className={`${styles['svgDiv']}`}>
-                <Link href="#">首頁</Link>
+                <Link href="/home">
+                  <h5>首頁</h5>
+                </Link>
                 <img
                   src="/images/header/outer-frame.png"
                   alt=""
@@ -109,7 +114,9 @@ export default function MyHeader() {
                   alt=""
                   className={`${styles.svg}`}
                 />
-                <Link href="/product/list">商品</Link>
+                <Link href="/product/list">
+                  <h5>商品</h5>
+                </Link>
               </div>
             </li>
             <li>
@@ -119,7 +126,9 @@ export default function MyHeader() {
                   alt=""
                   className={`${styles.svg}`}
                 />
-                <Link href="/course/courselist">課程</Link>
+                <Link href="/course/courselist">
+                  <h5>課程</h5>
+                </Link>
               </div>
             </li>
             <li>
@@ -129,7 +138,9 @@ export default function MyHeader() {
                   alt=""
                   className={`${styles.svg}`}
                 />
-                <Link href="/article">文章</Link>
+                <Link href="#">
+                  <h5>文章</h5>
+                </Link>
               </div>
             </li>
           </ul>
@@ -215,12 +226,13 @@ export default function MyHeader() {
             />
           </div>
           <li>
-            <Link href="首頁">首頁</Link>
+            <Link href="/home">首頁</Link>
           </li>
           <li>
             <Link href="/product/list">商品</Link>
           </li>
           <li>
+            <Link href="/course/courselist">課程</Link>
             <Link href="/course/courselist">課程</Link>
           </li>
           <li>
