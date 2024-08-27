@@ -59,6 +59,10 @@ export const AuthProvider = ({ children }) => {
     '/member/fav/favorite-p',
     '/member/fav/favorite-a',
     '/member/fav/favorite-c',
+    '/cart/cartOne',
+    '/cart/cartTwoTest',
+    '/cart/cartThree',
+    '/order',
   ]
   useEffect(() => {
     if (!hasCheckedAuth && router.isReady) {
