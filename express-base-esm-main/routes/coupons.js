@@ -89,8 +89,8 @@ router.post('/', authenticate, async (req, res) => {
       `
         SELECT id
             FROM coupons
-            WHERE code = ?   //存在
-            AND status != 'unreleased'  // 已開放
+            WHERE code = ?   
+            AND status != 'unreleased'  
         `,
       [couponCode]
     )
