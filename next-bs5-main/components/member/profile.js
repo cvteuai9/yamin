@@ -204,8 +204,8 @@ export default function Profile() {
               />
             ) : (
               <div>
-                <div className="profile-pic">
-                  <div className="profile-picleft">
+                <div className="d-flex mt-3">
+                  <div className="profile-picleft mt-3">
                     <p className="p whitef">更換頭貼</p>
                     <p className="p2 goldenf mt-6">
                       從電腦中選取圖檔：最佳大小為 600 x 600 px

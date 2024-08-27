@@ -53,9 +53,9 @@ export default function MyPreviewUploadImage({
 
   return (
     <div>
-      <div className="profile-pic">
+      <div className="d-flex">
         {showText && (
-          <div className="profile-picleft ">
+          <div className="profile-picleft mt-5">
             <p className="p whitef">更換頭貼</p>
             <p className="p2 goldenf mt-6 pc-text">
               從電腦中選取圖檔：最佳大小為 600 x 600 px
@@ -77,14 +77,22 @@ export default function MyPreviewUploadImage({
             </div>
           </div>
         )}
-        <div>
-          <div className="profile-picright">
-            {showText && (
-              <img src={showImg()} alt="" width={146} height={146} />
-            )}
-            {!showText && <img src={showImg()} alt="" width={50} height={50} className='header-personimg' />}
+        {showText && (
+          <div className="profile-picright mt-5">
+            <img src={showImg()} alt="" width={146} height={146} />
           </div>
-        </div>
+        )}
+        {!showText && (
+          <div className="profile-picright">
+            <img
+              src={showImg()}
+              alt=""
+              width={50}
+              height={50}
+              className="header-personimg"
+            />
+          </div>
+        )}
       </div>
       <style jsx>
         {`

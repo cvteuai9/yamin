@@ -2,13 +2,17 @@ import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 import styles from './header.module.scss'
 import MyPreviewUploadImage from '@/components/user/my-preview-upload-image'
-import { useAuth } from '@/hooks/my-use-auth'
+import { initUserData, useAuth } from '@/hooks/my-use-auth'
 import { avatarBaseUrl } from '@/configs'
 import {
+  login,
+  logout,
   // updateProfile,
   getUserById,
   // updateProfileAvatar,
 } from '@/services/my-user'
+import useFirebase from '@/hooks/use-firebase'
+import toast, { Toaster } from 'react-hot-toast'
 import { useRouter } from 'next/router'
 
 export default function MyHeader() {
@@ -72,8 +76,30 @@ export default function MyHeader() {
       }
     })
   }, [])
+  //登出登入
+  const { auth, setAuth } = useAuth()
+
+  const { loginGoogle, logoutFirebase } = useFirebase()
+  // 處理登出
+  const handleLogout = async () => {
+    // firebase logout(注意，這並不會登出google帳號，是登出firebase的帳號)
+    logoutFirebase()
+
+    const res = await logout()
+
+    // 成功登出後，回復初始會員狀態
+    if (res.data.status === 'success') {
+      toast.success('已成功登出')
+
+      setAuth({
+        isAuth: false,
+        userData: initUserData,
+      })
+    } else {
+      toast.error(`登出失敗`)
+    }
+  }
   // 增加是否登入會員，顯示照片
-  const { auth } = useAuth()
   const initUserProfile = {
     id: '',
     user_name: '',
@@ -115,6 +141,12 @@ export default function MyHeader() {
 
   const GoProfile = () => {
     router.push('/member/profile')
+  }
+  // 點擊使用者頭像，跳出視窗
+  const [menuOpen, setMenuOpen] = useState(false)
+
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen)
   }
 
   return (
@@ -207,22 +239,94 @@ export default function MyHeader() {
                 />
               </Link>
             </div>
-
-            <button
-              className="d-flex align-items-center btn btn-reset p-0"
-              onClick={GoProfile}
-            >
-              <div className="header-personimgdiv">
-                <MyPreviewUploadImage
-                  avatarImg={userProfile.user_image}
-                  // uploadImg={updateProfileAvatar}
-                  avatarBaseUrl={avatarBaseUrl}
-                  showText={false}
-                  setSelectedFile={setSelectedFile}
-                  selectedFile={selectedFile}
-                />
-              </div>
-            </button>
+            <div className="position-relative d-flex align-items-center">
+              <button
+                className="d-flex align-items-center btn btn-reset p-0 "
+                onClick={toggleMenu}
+              >
+                <div className="header-personimgdiv">
+                  <MyPreviewUploadImage
+                    avatarImg={userProfile.user_image}
+                    // uploadImg={updateProfileAvatar}
+                    avatarBaseUrl={avatarBaseUrl}
+                    showText={false}
+                    setSelectedFile={setSelectedFile}
+                    selectedFile={selectedFile}
+                  />
+                </div>
+              </button>
+              {menuOpen && (
+                <div className="header-dropdownMenu">
+                  <ul className="header-dropdownMenu-ul">
+                    {!auth.isAuth && (
+                      <>
+                        <li className="">
+                          <Link href="/member/login" className="user-link">
+                            會員登入
+                          </Link>
+                        </li>
+                        <li>
+                          <Link href="/member/register" className="user-link">
+                            註冊新會員
+                          </Link>
+                        </li>
+                      </>
+                    )}
+                    {auth.isAuth && (
+                      <>
+                        <div className="d-flex align-items-center header-userdiv">
+                          <div className="header-dropdownMenu-li">
+                            <div className="header-personimgdiv-inside">
+                              <MyPreviewUploadImage
+                                avatarImg={userProfile.user_image}
+                                // uploadImg={updateProfileAvatar}
+                                avatarBaseUrl={avatarBaseUrl}
+                                showText={false}
+                                setSelectedFile={setSelectedFile}
+                                selectedFile={selectedFile}
+                              />
+                            </div>
+                          </div>
+                          <div className="header-dropdownMenu-li">
+                            <p className="p-0 m-0">hi</p>
+                            {auth.userData.user_name}
+                          </div>
+                        </div>
+                      </>
+                    )}
+                    <li className="">
+                      <Link href="/member/profile" className="user-link">
+                        個人資料管理
+                      </Link>
+                    </li>
+                    <li>
+                      <Link href="/member/order" className="user-link">
+                        我的訂單
+                      </Link>
+                    </li>
+                    <li>
+                      <Link href="/member/coupon" className="user-link">
+                        優惠券
+                      </Link>
+                    </li>
+                    <li>
+                      <Link href="/member/fav" className="user-link">
+                        我的收藏
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href="/logout"
+                        className="user-link"
+                        onClick={handleLogout}
+                      >
+                        登出
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
+              )}
+            </div>
           </div>
           <div className={`${styles['toggle_btn']}`} ref={toggleBtnRef}>
             <div className="d-flex">

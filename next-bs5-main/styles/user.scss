@@ -1,4 +1,4 @@
-
+//user頭像
 .header-personimgdiv {
   position: relative;
   height: 30px;
@@ -14,5 +14,52 @@
     width: 30px;
     border-radius: 50%;
     // border: 1px solid var(--primary2);
+  }
+}
+.header-personimgdiv-inside{
+  height: 50px;
+  width: 50px;
+}
+
+// 點擊user頭像menu
+.header-dropdownMenu {
+  font-family: 'B2Hana-Regular', sans-serif;
+  font-size: 1.6rem;
+  width: 300px;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  transform: translateY(10px);
+  background-color: var(--primary);
+  border: 1px solid var(--primary2);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+
+  ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    font-size: 1.6rem;
+    .header-userdiv{
+      &:hover {
+        background-color: var(--primary-deep);
+      }
+    }
+    .header-dropdownMenu-li{
+      color: var(--primary2);
+      padding: 15px 0px 10px 15px;
+    }
+    li {
+      color: var(--primary2);
+      padding: 10px 20px;
+      cursor: pointer;
+      text-wrap: nowrap;
+      .user-link{
+        font-size: 1.8rem;
+      }
+      &:hover {
+        background-color: var(--primary-deep);
+      }
+    }
   }
 }
