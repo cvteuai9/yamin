@@ -22,8 +22,6 @@ let testline
 let LinePayOrder
 let reservation
 let linePayResponse
-let LineOrderInsertId
-let linePayState
 /* GET home page. */
 router.use(express.json())
 router.post('/', async (req, res) => {
@@ -327,131 +325,14 @@ router.post('/linepay', async (req, res) => {
       })
     }
   }
-  // if (newOrder.payState === 'line') {
-  //   if (yamintest.insertId) {
-  //     console.log('line 0408', yamintest)
-
-  //     const lineOrder = 'SELECT * FROM YaminOrder WHERE id = ?'
-  //     testline = await db.query(
-  //       lineOrder,
-  //       [yamintest.insertId],
-  //       (err, resultLine) => {
-  //         if (err) {
-  //           console.log(err)
-  //           res.json({ err })
-  //         }
-  //         if (resultLine) {
-  //           console.log(resultLine)
-  //           res.json({ resultLine })
-  //         }
-  //       }
-  //     )
-  //     console.log('line416', testline[0][0])
-  //     // 老師的部分
-  //     LinePayOrder = {
-  //       orderId: testline[0][0].id,
-  //       currency: 'TWD',
-  //       amount: testline[0][0].total_price,
-  //       packages: [
-  //         {
-  //           id: testline[0][0].order_uuid,
-  //           amount: testline[0][0].total_price,
-  //           products: [
-  //             {
-  //               id: testline[0][0].id,
-  //               name: '測試商品1',
-  //               quantity: 1,
-  //               price: testline[0][0].total_price,
-  //             },
-  //           ],
-  //         },
-  //       ],
-  //       options: { display: { locale: 'zh_TW' } },
-  //     }
-  //     // 老師的部分end
-  //     const redirectUrls = {
-  //       confirmUrl: process.env.REACT_REDIRECT_CONFIRM_URL,
-  //       cancelUrl: process.env.REACT_REDIRECT_CANCEL_URL,
-  //     }
-  //     // line pay要求的訂單json
-  //     try {
-  //       linePayResponse = await linePayClient.request.send({
-  //         body: { ...LinePayOrder, redirectUrls },
-  //       })
-
-  //       // 深拷貝一份order資料
-  //       reservation = JSON.parse(JSON.stringify(LinePayOrder))
-
-  //       reservation.returnCode = linePayResponse.body.returnCode
-  //       reservation.returnMessage = linePayResponse.body.returnMessage
-  //       reservation.transactionId = linePayResponse.body.info.transactionId
-  //       reservation.paymentAccessToken =
-  //         linePayResponse.body.info.paymentAccessToken
-
-  //       const LinePayUpdateInOrder =
-  //         'UPDATE `yaminorder` SET `transaction_id` = ?, `reservation` = ? WHERE `yaminorder`.`id` = ?;'
-  //       const LinePayResultOrder = await db.query(
-  //         LinePayUpdateInOrder,
-  //         [
-  //           JSON.stringify(LinePayOrder),
-  //           reservation.transactionId,
-  //           reservation.id,
-  //         ],
-  //         (err, lineResult) => {
-  //           if (err) {
-  //             console.log(err)
-  //             res.json(err)
-  //           }
-  //           if (lineResult) {
-  //             console.log(lineResult)
-  //           }
-  //         }
-  //       )
-  //       console.log('test')
-  //     } catch (e) {
-  //       console.log('錯促勿霧霧霧霧霧霧error', e)
-  //     }
-  //     console.log(`預計付款資料(Reservation)已建立。資料如下:`)
-  //     console.log(reservation)
-  //     console.log(`獲得訂單資料，內容如下`)
-  //     console.log(LinePayOrder)
-  //   }
-  // }
-
-  // res.json({
-  //   status: 'success',
-  //   data: { LinePayOrder },
-  //   // lineUrl: linePayResponse.body.info.paymentUrl.web,
-  // })
-  LineOrderInsertId = yamintest.insertId
-  linePayState = newOrder.payState
-  // console.log('line測試要看的', LinePayOrder)
-  res.json({
-    status: 'success',
-    data: { newOrder },
-    goLineurl: yamintest.insertId,
-  })
-  function getRandomCode(length = 11) {
-    const min = Math.pow(10, length - 1)
-    const max = Math.pow(10, length) - 1
-    return Math.floor(Math.random() * (max - min + 1)) + min
-  }
-})
-
-// linepay測試結束
-
-router.get('/linepay', async (req, res) => {
-  const today = moment().format()
-  console.log(LineOrderInsertId)
-
-  if (linePayState === 'line') {
-    if (LineOrderInsertId) {
-      console.log('line 0408', LineOrderInsertId)
+  if (newOrder.payState === 'line') {
+    if (yamintest.insertId) {
+      console.log('line 0408', yamintest)
 
       const lineOrder = 'SELECT * FROM YaminOrder WHERE id = ?'
       testline = await db.query(
         lineOrder,
-        [LineOrderInsertId],
+        [yamintest.insertId],
         (err, resultLine) => {
           if (err) {
             console.log(err)
@@ -476,7 +357,7 @@ router.get('/linepay', async (req, res) => {
             products: [
               {
                 id: testline[0][0].id,
-                name: `訂單編號:${testline[0][0].order_uuid}`,
+                name: '測試商品1',
                 quantity: 1,
                 price: testline[0][0].total_price,
               },
@@ -506,13 +387,13 @@ router.get('/linepay', async (req, res) => {
           linePayResponse.body.info.paymentAccessToken
 
         const LinePayUpdateInOrder =
-          'UPDATE YaminOrder SET reservation = ?, transaction_id = ? WHERE id = ?'
+          'UPDATE `yaminorder` SET `transaction_id` = ?, `reservation` = ? WHERE `yaminorder`.`id` = ?;'
         const LinePayResultOrder = await db.query(
           LinePayUpdateInOrder,
           [
             JSON.stringify(LinePayOrder),
             reservation.transactionId,
-            LineOrderInsertId,
+            reservation.id,
           ],
           (err, lineResult) => {
             if (err) {
@@ -524,10 +405,7 @@ router.get('/linepay', async (req, res) => {
             }
           }
         )
-
         console.log('test')
-        // LinePayResultOrder()
-        res.redirect(linePayResponse.body.info.paymentUrl.web)
       } catch (e) {
         console.log('錯促勿霧霧霧霧霧霧error', e)
       }
@@ -538,92 +416,23 @@ router.get('/linepay', async (req, res) => {
     }
   }
 
-  // res.json({
-  //   status: 'success',
-  //   data: { LinePayOrder },
-  //   // lineUrl: linePayResponse.body.info.paymentUrl.web,
-  // })
-  // res.redirect(linePayResponse.body.info.paymentUrl.web)
-})
-// line end
-
-// router.post('/', async (req, res) => {})
-
-router.get('/confirm', async (req, res) => {
-  // 網址上需要有transactionId
-
-  const transactionId = req.query.transactionId
-  console.log(transactionId)
-  // 從資料庫取得交易資料
-  // const dbOrder = await Purchase_Order.findOne({
-  //   where: { transaction_id: transactionId },
-  //   raw: true, // 只需要資料表中資料
-  // })
-
-  // mysql的取得方式
-  const dbOrderSql = `SELECT * FROM YaminOrder WHERE transaction_id = ${transactionId}`
-  const dbOrder = await db.query(dbOrderSql)
-  console.log('123', dbOrder)
-
-  // 交易資料
-  const transaction = JSON.parse(dbOrder[0][0].reservation)
-
-  console.log(transaction)
-  console.log('我的賴id', transaction.orderId)
-  // 交易金額
-  const amount = transaction.amount
-  console.log(amount)
-  try {
-    // 最後確認交易
-    const linePayResponse = await linePayClient.confirm.send({
-      transactionId: transactionId,
-      body: {
-        currency: 'TWD',
-        amount: amount,
-      },
-    })
-
-    // linePayResponse.body回傳的資料
-    console.log('這邊勒', linePayResponse)
-
-    //transaction.confirmBody = linePayResponse.body
-
-    // status: 'pending' | 'paid' | 'cancel' | 'fail' | 'error'
-    let status = 'paid'
-
-    if (linePayResponse.body.returnCode !== '0000') {
-      status = 'fail'
-    }
-
-    // 更新資料庫的訂單狀態
-    // const result = await Purchase_Order.update(
-    //   {
-    //     status,
-    //     return_code: linePayResponse.body.returnCode,
-    //     confirm: JSON.stringify(linePayResponse.body),
-    //   },
-    //   {
-    //     where: {
-    //       id: dbOrder.id,
-    //     },
-    //   }
-    // )
-
-    // mysql方式
-    const lineResultSql =
-      'UPDATE YaminOrder SET status = ?, return_code = ?, confirm =? WHERE id = ?'
-    const lineResult = await db.query(lineResultSql, [
-      status,
-      linePayResponse.body.returnCode,
-      JSON.stringify(linePayResponse.body),
-      transaction.orderId,
-    ])
-    console.log('我的lineResult', lineResult)
-
-    return res.json({ status: 'success', data: linePayResponse.body })
-  } catch (error) {
-    return res.json({ status: 'fail', data: error.data })
+  res.json({
+    status: 'success',
+    data: { LinePayOrder },
+    lineUrl: linePayResponse.body.info.paymentUrl.web,
+  })
+  console.log('line測試要看的', LinePayOrder)
+  function getRandomCode(length = 11) {
+    const min = Math.pow(10, length - 1)
+    const max = Math.pow(10, length) - 1
+    return Math.floor(Math.random() * (max - min + 1)) + min
   }
 })
 
+// linepay測試結束
+
+// router.post('/', async (req, res) => {})
+router.get('/getOrder', async (req, res) => {
+  const searchOrderDetail = 'SE'
+})
 export default router
