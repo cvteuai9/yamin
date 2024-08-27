@@ -188,13 +188,6 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 1rem;
-  .noFavorites {
-    color: var(--primary2);
-    & a {
-      border: 0.1rem solid var(--primary2);
-      padding: 0.5rem 1rem;
-    }
-  }
 }
 .favoritep-pcard {
   // width: 244px;
@@ -276,5 +269,12 @@
       display: grid;
       place-content: center;
     }
+  }
+}
+.noFavorites {
+  color: var(--primary2);
+  & a {
+    border: 0.1rem solid var(--primary2);
+    padding: 0.5rem 1rem;
   }
 }
