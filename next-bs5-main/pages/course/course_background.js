@@ -206,234 +206,262 @@ const ActivityPage = () => {
   }
 
   return (
-    <div className="container">
-      <div className="course_background_body">
-        <div className="d-flex justify-content-end">
-          <button
-            onClick={() => {
-              resetForm()
-              setShowForm(true)
-            }}
-            className="course_background_new"
-          >
-            新增活動
-          </button>
+    <>
+      <div className="container mb-5 mt-5">
+        <div className="d-flex justify-content-center mb-1">
+          <img
+            src="/images/yaming/course_detail/上.png"
+            alt=""
+            width={80}
+            height={8}
+          />
         </div>
-        {showForm && (
-          <div className="course_background_modal">
-            <div className="course_background_modal_content">
-              <button className="close-button" onClick={resetForm}>
-                ×
-              </button>
-              <form onSubmit={handleSubmit} encType="multipart/form-data">
-                <h2>{editingActivity ? '編輯活動' : '新增活動'}</h2>
-                <div className="form-section">
-                  <div className="row">
-                    <div className="col-6">
-                      <label>活動標題</label>
-                      <input
-                        type="text"
-                        name="name"
-                        className="p-4"
-                        value={formData.name}
-                        onChange={handleChange}
-                      />
+        <div className="d-flex justify-content-center align-items-center">
+          <div className="shane-course-wood mb-4" />
+          <div className="h1 shane-course-store row text-center justify-content-center">
+            課程後台
+            <div className="shane-course-store p text-center ">Course Background</div>
+          </div>
+          <div className="shane-course-wood mb-4" />
+        </div>
+        <div className="d-flex justify-content-center mb-1">
+          <img
+            src="/images/yaming/course/下.png"
+            alt=""
+            width={80}
+            height={8}
+          />
+        </div>
+      </div>
+      <div className="course_background_overflow">
+        <div className="course_background_body">
+          <div className="d-flex justify-content-end">
+            <button
+              onClick={() => {
+                resetForm()
+                setShowForm(true)
+              }}
+              className="course_background_new"
+            >
+              新增活動
+            </button>
+          </div>
+          {showForm && (
+            <div className="course_background_modal">
+              <div className="course_background_modal_content">
+                <button className="close-button" onClick={resetForm}>
+                  ×
+                </button>
+                <form onSubmit={handleSubmit} encType="multipart/form-data">
+                  <h2>{editingActivity ? '編輯活動' : '新增活動'}</h2>
+                  <div className="form-section">
+                    <div className="row">
+                      <div className="col-6">
+                        <label>活動標題</label>
+                        <input
+                          type="text"
+                          name="name"
+                          className="p-4"
+                          value={formData.name}
+                          onChange={handleChange}
+                        />
+                      </div>
+                      <div className="col-6">
+                        <label>活動地點</label>
+                        <select
+                          name="location"
+                          value={formData.location}
+                          onChange={handleChange}
+                        >
+                          <option value="">選擇地點</option>
+                          {location.map((loc) => (
+                            <option key={loc.id} value={loc.id}>
+                              {loc.name.trim()}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
                     </div>
-                    <div className="col-6">
-                      <label>活動地點</label>
-                      <select
-                        name="location"
-                        value={formData.location}
-                        onChange={handleChange}
-                      >
-                        <option value="">選擇地點</option>
-                        {location.map((loc) => (
-                          <option key={loc.id} value={loc.id}>
-                            {loc.name.trim()}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-                  <div className="row">
-                    <div className="col-6">
-                      <p>費用</p>
-                      <input
-                        type="number"
-                        name="price"
-                        value={formData.price}
-                        onChange={handleChange}
-                      />
-                    </div>
-                    <div className="col-6">
-                      <div className="form-item">
-                        <p>報名人數</p>
+                    <div className="row">
+                      <div className="col-6">
+                        <p>費用</p>
                         <input
                           type="number"
-                          name="limit_people"
-                          value={formData.limit_people}
+                          name="price"
+                          value={formData.price}
+                          onChange={handleChange}
+                        />
+                      </div>
+                      <div className="col-6">
+                        <div className="form-item">
+                          <p>報名人數</p>
+                          <input
+                            type="number"
+                            name="limit_people"
+                            value={formData.limit_people}
+                            onChange={handleChange}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="row">
+                      <div className="col-6">
+                        <p>活動日期-開始</p>
+                        <input
+                          type="date"
+                          name="start_time"
+                          value={formData.start_time}
+                          onChange={handleChange}
+                        />
+                      </div>
+                      <div className="col-6">
+                        <p>活動日期-結束</p>
+                        <input
+                          type="date"
+                          name="end_time"
+                          value={formData.end_time}
                           onChange={handleChange}
                         />
                       </div>
                     </div>
+                    <label>類別</label>
+                    <select
+                      name="category_id"
+                      value={formData.category_id}
+                      onChange={handleChange}
+                    >
+                      <option value="">選擇類別</option>
+                      {categories.map((category) => (
+                        <option key={category.id} value={category.id}>
+                          {category.name}
+                        </option>
+                      ))}
+                    </select>
                   </div>
-                  <div className="row">
-                    <div className="col-6">
-                      <p>活動日期-開始</p>
-                      <input
-                        type="date"
-                        name="start_time"
-                        value={formData.start_time}
-                        onChange={handleChange}
-                      />
-                    </div>
-                    <div className="col-6">
-                      <p>活動日期-結束</p>
-                      <input
-                        type="date"
-                        name="end_time"
-                        value={formData.end_time}
-                        onChange={handleChange}
-                      />
-                    </div>
-                  </div>
-                  <label>類別</label>
-                  <select
-                    name="category_id"
-                    value={formData.category_id}
-                    onChange={handleChange}
-                  >
-                    <option value="">選擇類別</option>
-                    {categories.map((category) => (
-                      <option key={category.id} value={category.id}>
-                        {category.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <div className="course_background_form-section course_background_flex-row">
-                    <div className="form-item">
-                      <label>活動簡介</label>
-                      <textarea
-                        name="description"
-                        value={formData.description}
-                        onChange={handleChange}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="course_background_image-preview">
-                    {['img1', 'img2', 'img3'].map((imgField) => (
-                      <div
-                        key={imgField}
-                        className="course_background_image-upload-item"
-                      >
-                        <label htmlFor={imgField}>
-                          Image {imgField.slice(-1)}
-                        </label>
-                        <input
-                          type="file"
-                          id={imgField}
-                          accept="image/*"
-                          onChange={(e) => handleImageChange(e, imgField)}
+                  <div>
+                    <div className="course_background_form-section course_background_flex-row">
+                      <div className="form-item">
+                        <label>活動簡介</label>
+                        <textarea
+                          name="description"
+                          value={formData.description}
+                          onChange={handleChange}
                         />
-                        {previewImages[imgField] && (
-                          <img
-                            src={`${previewImages[imgField]}`}
-                            alt={`Preview ${imgField}`}
-                            className="image-preview"
-                            style={{ maxWidth: '100px', maxHeight: '100px' }}
-                          />
-                        )}
                       </div>
-                    ))}
+                    </div>
+
+                    <div className="course_background_image-preview">
+                      {['img1', 'img2', 'img3'].map((imgField) => (
+                        <div
+                          key={imgField}
+                          className="course_background_image-upload-item"
+                        >
+                          <label htmlFor={imgField}>
+                            Image {imgField.slice(-1)}
+                          </label>
+                          <input
+                            type="file"
+                            id={imgField}
+                            accept="image/*"
+                            onChange={(e) => handleImageChange(e, imgField)}
+                          />
+                          {previewImages[imgField] && (
+                            <img
+                              src={`${previewImages[imgField]}`}
+                              alt={`Preview ${imgField}`}
+                              className="image-preview"
+                              style={{ maxWidth: '100px', maxHeight: '100px' }}
+                            />
+                          )}
+                        </div>
+                      ))}
+                    </div>
+
+                    <button
+                      type="submit"
+                      className="course_background_submit mt-2"
+                    >
+                      提交
+                    </button>
+                    <button
+                      type="button"
+                      className="course_background_cancel mt-2"
+                      onClick={resetForm}
+                    >
+                      取消
+                    </button>
                   </div>
-
-                  <button
-                    type="submit"
-                    className="course_background_submit mt-2"
-                  >
-                    提交
-                  </button>
-                  <button
-                    type="button"
-                    className="course_background_cancel mt-2"
-                    onClick={resetForm}
-                  >
-                    取消
-                  </button>
-                </div>
-              </form>
+                </form>
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        <table className="course_background_table">
-          <thead>
-            <tr>
-              <th onClick={handleSortById} style={{ cursor: 'pointer' }}>
-                編號 {sortOrder === 'ASC' ? '↑' : '↓'}
-              </th>
-              <th>標題</th>
-              <th>類別</th>
-              <th>地點</th>
-              <th>費用</th>
-              <th>活動日期</th>
-              <th>報名人數</th>
-              <th>操作</th>
-            </tr>
-          </thead>
-          <tbody>
-            {activities.map((activity) => (
-              <tr key={activity.id}>
-                <td>{activity.id}</td>
-                <td>{activity.name}</td>
-                <td>{getCategoryName(activity.category_id)}</td>
-                <td>{activity.location}</td>
-                <td>{activity.price}</td>
-                <td>
-                  {activity.start_time} - {activity.end_time}
-                </td>
-                <td>{activity.limit_people}</td>
-                <td>
-                  <button
-                    className="course_background_edit"
-                    onClick={() => handleEdit(activity)}
-                  >
-                    編輯
-                  </button>
-                  <button
-                    className="course_background_delete"
-                    onClick={() => handleDelete(activity.id)}
-                  >
-                    刪除
-                  </button>
-                </td>
+          <table className="course_background_table">
+            <thead>
+              <tr>
+                <th onClick={handleSortById} style={{ cursor: 'pointer' }}>
+                  編號 {sortOrder === 'ASC' ? '↑' : '↓'}
+                </th>
+                <th>標題</th>
+                <th>類別</th>
+                <th>地點</th>
+                <th>費用</th>
+                <th>活動日期</th>
+                <th>報名人數</th>
+                <th>操作</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {activities.map((activity) => (
+                <tr key={activity.id}>
+                  <td>{activity.id}</td>
+                  <td>{activity.name}</td>
+                  <td>{getCategoryName(activity.category_id)}</td>
+                  <td>{activity.location}</td>
+                  <td>{activity.price}</td>
+                  <td>
+                    {activity.start_time} - {activity.end_time}
+                  </td>
+                  <td>{activity.limit_people}</td>
+                  <td>
+                    <button
+                      className="course_background_edit"
+                      onClick={() => handleEdit(activity)}
+                    >
+                      編輯
+                    </button>
+                    <button
+                      className="course_background_delete"
+                      onClick={() => handleDelete(activity.id)}
+                    >
+                      刪除
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
 
-        <div className="course_background_page container">
-          <button
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-          >
-            上一頁
-          </button>
-          <span className="course_background_number">
-            {currentPage} / {totalPages}
-          </span>
-          <button
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-          >
-            下一頁
-          </button>
+          <div className="course_background_page container">
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+            >
+              上一頁
+            </button>
+            <span className="course_background_number">
+              {currentPage} / {totalPages}
+            </span>
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+            >
+              下一頁
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
 

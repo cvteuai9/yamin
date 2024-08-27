@@ -221,6 +221,7 @@ export default function CourseDetail() {
                   delay: 2500,
                   disableOnInteraction: false,
                 }}
+                // loop={true}
                 spaceBetween={10}
                 navigation={true}
                 thumbs={{ swiper: thumbsSwiper }}
@@ -482,7 +483,10 @@ export default function CourseDetail() {
                 className=".col-12 shane-course-detail-store1 col-sm-6 col-md-3 text-center"
               >
                 <div className="shane-course-detail-store_picture">
-                  <img src={`/images/yaming/tea_class_picture/${course.img1}`} alt={course.name} />
+                  <img
+                    src={`/images/yaming/tea_class_picture/${course.img1}`}
+                    alt={course.name}
+                  />
                 </div>
                 <div className="d-flex justify-content-center align-items-center m-0 ">
                   <div className="shane-course-detail-wood" />

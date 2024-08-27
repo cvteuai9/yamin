@@ -40,7 +40,7 @@ router.get('/', async function (req, res) {
       sort,
       sort2,
       page = 1,
-      limit = 37,
+      limit = 6,
       categoryId,
       locationId,
     } = req.query

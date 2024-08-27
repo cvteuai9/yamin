@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import styles from './header.module.scss'
 import { useRouter } from 'next/router'
 export default function MyHeader() {
@@ -13,6 +13,7 @@ export default function MyHeader() {
   const logo2Ref = useRef(null)
   const searchFormRef = useRef(null)
   const searchFormCloseBtnRef = useRef(null)
+  const [isScrolled, setIsScrolled] = useState(false)
 
   async function handleSearchProduct() {
     const searchForm = searchFormRef.current
@@ -64,22 +65,41 @@ export default function MyHeader() {
     })
   }, [])
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 50) {
+        setIsScrolled(true)
+      } else {
+        setIsScrolled(false)
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll)
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
   return (
     <>
-      <header className={`${styles.header}`}>
+      <header
+        className={`${styles.header} ${isScrolled ? styles.scrolled : ''}`}
+      >
         <div className={`${styles.navbar}`} ref={navbarRef}>
           <div className={`${styles.logo}`} id="logo" ref={logoRef}>
             <img
               src="/images/header/logo-x.png"
               alt=""
-              height={70}
-              width={140}
+              height={60}
+              width={120}
             />
           </div>
           <ul className={`${styles.links}`}>
             <li>
               <div className={`${styles['svgDiv']}`}>
-                <Link href="#">首頁</Link>
+                <Link href="/home">
+                  <h5>首頁</h5>
+                </Link>
                 <img
                   src="/images/header/outer-frame.png"
                   alt=""
@@ -94,7 +114,9 @@ export default function MyHeader() {
                   alt=""
                   className={`${styles.svg}`}
                 />
-                <Link href="/product/list">商品</Link>
+                <Link href="/product/list">
+                  <h5>商品</h5>
+                </Link>
               </div>
             </li>
             <li>
@@ -104,7 +126,9 @@ export default function MyHeader() {
                   alt=""
                   className={`${styles.svg}`}
                 />
-                <Link href="#">課程</Link>
+                <Link href="/course/courselist">
+                  <h5>課程</h5>
+                </Link>
               </div>
             </li>
             <li>
@@ -114,7 +138,9 @@ export default function MyHeader() {
                   alt=""
                   className={`${styles.svg}`}
                 />
-                <Link href="#">文章</Link>
+                <Link href="#">
+                  <h5>文章</h5>
+                </Link>
               </div>
             </li>
           </ul>
@@ -196,13 +222,13 @@ export default function MyHeader() {
             />
           </div>
           <li>
-            <Link href="首頁">首頁</Link>
+            <Link href="/home">首頁</Link>
           </li>
           <li>
             <Link href="/product/list">商品</Link>
           </li>
           <li>
-            <Link href="課程">課程</Link>
+            <Link href="/course/courselist">課程</Link>
           </li>
           <li>
             <Link href="文章">文章</Link>

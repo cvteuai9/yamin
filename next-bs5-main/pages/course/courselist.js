@@ -220,381 +220,389 @@ export default function Course() {
   return (
     <>
       <>
-        <div className="shane-body">
-          <div className="container mb-5">
-            <div className="d-flex justify-content-center mb-1">
-              <img
-                src="/images/yaming/course_detail/上.png"
-                alt=""
-                width={80}
-                height={8}
-              />
-            </div>
-            <div className="d-flex justify-content-center align-items-center">
-              <div className="shane-course-wood mb-4" />
-              <div className="h1 shane-course-store row text-center justify-content-center">
-                課程
-                <div className="shane-course-store p text-center ">store</div>
-              </div>
-              <div className="shane-course-wood mb-4" />
-            </div>
-            <div className="d-flex justify-content-center mb-1">
-              <img
-                src="/images/yaming/course/下.png"
-                alt=""
-                width={80}
-                height={8}
-              />
-            </div>
-          </div>
-          <div className="container shane-course-activity mt-5 px-5">
-            <img
-              src="/images/yaming/course/2304241441551418071000.jpg"
-              alt=""
-            />
-          </div>
-          <div className=" container d-flex">
-            <div className="shane-course-scroll-container  mt-5">
-              <button
-                className="shane-course-class-all "
-                onClick={() => {
-                  handleCategoryFilter(null)
-                }}
-              >
+        <div className="container">
+          <div className="shane-body-up">
+            <div className="container mb-5">
+              <div className="d-flex justify-content-center mb-1">
                 <img
-                  src="/images/yaming/course/all-inclusive (1) 1.png"
+                  src="/images/yaming/course_detail/上.png"
                   alt=""
+                  width={80}
+                  height={8}
                 />
-                <h5 className="text-center mt-3">全部</h5>
-              </button>
-              <button
-                className="shane-course-class-all "
-                onClick={() => {
-                  handleCategoryFilter(1)
-                }}
-              >
-                <img src="/images/yaming/course/history-01 1.png" alt="" />
-                <h5 className="text-center mt-3"> 茶文化與歷史課程</h5>
-              </button>
-              <button
-                className="shane-course-class-all "
-                onClick={() => {
-                  handleCategoryFilter(2)
-                }}
-              >
-                <img src="/images/yaming/course/sip 2.png" alt="" />
-                <h5 className="text-center mt-3">茶葉鑑定品茶課程</h5>
-              </button>
-              <button
-                className="shane-course-class-all "
-                onClick={() => {
-                  handleCategoryFilter(3)
-                }}
-              >
-                <img src="/images/yaming/course/hand 2.png" alt="" />
-                <h5 className="text-center mt-3">茶葉製作與加工課程</h5>
-              </button>
-              <button
-                className="shane-course-class-all "
-                onClick={() => {
-                  handleCategoryFilter(4)
-                }}
-              >
-                <img
-                  src="/images/yaming/course/all-inclusive-01 1.png"
-                  alt=""
-                />
-                <h5 className="text-center mt-3">茶藝表演與茶道學習</h5>
-              </button>
-              <button
-                className="shane-course-class-all "
-                onClick={() => {
-                  handleCategoryFilter(5)
-                }}
-              >
-                <img src="/images/yaming/course/online-learning 2.png" alt="" />
-                <h5 className="text-center mt-3">茶葉證照與經營課程</h5>
-              </button>
-            </div>
-          </div>
-          <div className="container">
-            <div className="shane-course-star mt-5 mb-5 mx-5">
-              <img
-                src="/images/yaming/course/star.png"
-                alt=""
-                width={16}
-                height={16}
-              />
-              <img
-                src="/images/yaming/course/Vector 25.png"
-                alt=""
-                width="100%"
-                height="1px"
-                style={{ margin: '0 -2px' }}
-              />
-              <img
-                src="/images/yaming/course/star.png"
-                alt=""
-                width={16}
-                height={16}
-              />
-            </div>
-          </div>
-          <div className="container justify-content-between d-flex px-5 align-items-center">
-            <div className="shane-course-breadcrumb mt-1">
-              <h5>課程共 {totalCourses} 筆資料</h5>
-            </div>
-            <div className="shane-dropdown-flex">
-              <div className="shane-dropdown text-center ">
-                <button className="shane-dropdown-toggle">
-                  <h5 className="m-0 p-0" style={{ fontWeight: 300 }}>
-                    價格
-                  </h5>
-                </button>
-                <ul className="shane-dropdown-menu">
-                  <li>
-                    <button
-                      className="btn1"
-                      href=""
-                      onClick={() => handlePriceFilter('DESC')}
-                    >
-                      價格&nbsp;▲
-                    </button>
-                  </li>
-                  <li>
-                    <button
-                      className="btn1"
-                      href=""
-                      onClick={() => handlePriceFilter('ASC')}
-                    >
-                      價格&nbsp;▼
-                    </button>
-                  </li>
-                </ul>
               </div>
-              <div className="px-2" />
-              <div className="shane-dropdown">
-                <button className="shane-dropdown-toggle">
-                  <h5 className="m-0 p-0" style={{ fontWeight: 300 }}>
-                    地區
-                  </h5>
+              <div className="d-flex justify-content-center align-items-center">
+                <div className="shane-course-wood mb-4" />
+                <div className="h1 shane-course-store row text-center justify-content-center">
+                  課程
+                  <div className="shane-course-store p text-center ">Course</div>
+                </div>
+                <div className="shane-course-wood mb-4" />
+              </div>
+              <div className="d-flex justify-content-center mb-1">
+                <img
+                  src="/images/yaming/course/下.png"
+                  alt=""
+                  width={80}
+                  height={8}
+                />
+              </div>
+            </div>
+            <div className="container shane-course-activity mt-5 px-5">
+              <img
+                src="/images/yaming/course/2304241441551418071000.jpg"
+                alt=""
+              />
+            </div>
+            <div className=" container d-flex">
+              <div className="shane-course-scroll-container  mt-5">
+                <button
+                  className="shane-course-class-all "
+                  onClick={() => {
+                    handleCategoryFilter(null)
+                  }}
+                >
+                  <img
+                    src="/images/yaming/course/all-inclusive (1) 1.png"
+                    alt=""
+                  />
+                  <h5 className="text-center mt-3">全部</h5>
                 </button>
-                <ul className="shane-dropdown-menu justify-content-center align-items-center">
-                  {locations.map((location) => (
-                    <li key={location.id}>
+                <button
+                  className="shane-course-class-all "
+                  onClick={() => {
+                    handleCategoryFilter(1)
+                  }}
+                >
+                  <img src="/images/yaming/course/history-01 1.png" alt="" />
+                  <h5 className="text-center mt-3"> 茶文化與歷史課程</h5>
+                </button>
+                <button
+                  className="shane-course-class-all "
+                  onClick={() => {
+                    handleCategoryFilter(2)
+                  }}
+                >
+                  <img src="/images/yaming/course/sip 2.png" alt="" />
+                  <h5 className="text-center mt-3">茶葉鑑定品茶課程</h5>
+                </button>
+                <button
+                  className="shane-course-class-all "
+                  onClick={() => {
+                    handleCategoryFilter(3)
+                  }}
+                >
+                  <img src="/images/yaming/course/hand 2.png" alt="" />
+                  <h5 className="text-center mt-3">茶葉製作與加工課程</h5>
+                </button>
+                <button
+                  className="shane-course-class-all "
+                  onClick={() => {
+                    handleCategoryFilter(4)
+                  }}
+                >
+                  <img
+                    src="/images/yaming/course/all-inclusive-01 1.png"
+                    alt=""
+                  />
+                  <h5 className="text-center mt-3">茶藝表演與茶道學習</h5>
+                </button>
+                <button
+                  className="shane-course-class-all "
+                  onClick={() => {
+                    handleCategoryFilter(5)
+                  }}
+                >
+                  <img
+                    src="/images/yaming/course/online-learning 2.png"
+                    alt=""
+                  />
+                  <h5 className="text-center mt-3">茶葉證照與經營課程</h5>
+                </button>
+              </div>
+            </div>
+            <div className="container">
+              <div className="shane-course-star mt-5 mb-5 mx-5">
+                <img
+                  src="/images/yaming/course/star.png"
+                  alt=""
+                  width={16}
+                  height={16}
+                />
+                <img
+                  src="/images/yaming/course/Vector 25.png"
+                  alt=""
+                  width="100%"
+                  height="1px"
+                  style={{ margin: '0 -2px' }}
+                />
+                <img
+                  src="/images/yaming/course/star.png"
+                  alt=""
+                  width={16}
+                  height={16}
+                />
+              </div>
+            </div>
+            <div className="container justify-content-between d-flex px-5 align-items-center">
+              <div className="shane-course-breadcrumb mt-1">
+                <h5>課程共 {totalCourses} 筆資料</h5>
+              </div>
+              <div className="shane-dropdown-flex">
+                <div className="shane-dropdown text-center ">
+                  <button className="shane-dropdown-toggle">
+                    <h5 className="m-0 p-0" style={{ fontWeight: 300 }}>
+                      價格
+                    </h5>
+                  </button>
+                  <ul className="shane-dropdown-menu">
+                    <li>
                       <button
                         className="btn1"
-                        onClick={() => handleLocationFilter(location.name)}
+                        href=""
+                        onClick={() => handlePriceFilter('DESC')}
                       >
-                        {location.name}
+                        價格&nbsp;▲
                       </button>
                     </li>
-                  ))}
-                </ul>
+                    <li>
+                      <button
+                        className="btn1"
+                        href=""
+                        onClick={() => handlePriceFilter('ASC')}
+                      >
+                        價格&nbsp;▼
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+                <div className="px-2" />
+                <div className="shane-dropdown">
+                  <button className="shane-dropdown-toggle">
+                    <h5 className="m-0 p-0" style={{ fontWeight: 300 }}>
+                      地區
+                    </h5>
+                  </button>
+                  <ul className="shane-dropdown-menu justify-content-center align-items-center">
+                    {locations.map((location) => (
+                      <li key={location.id}>
+                        <button
+                          className="btn1"
+                          onClick={() => handleLocationFilter(location.name)}
+                        >
+                          {location.name}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
             </div>
-          </div>
-          {/* 這邊是課程 */}
-          <div className="container mt-5 px-5">
-            {/* start */}
-            {courses.map((v, i) => {
-              return (
-                <div
-                  key={v.id}
-                  className="shane-course-card mb-3"
-                  style={{ maxWidth: 1440 }}
-                >
-                  <div className="row mt-5">
-                    {/* 這邊是圖片 */}
-                    <div className="col-md-4 shane-course-activity_left">
-                      <Link href={`/course/${v.id}`}>
-                        <img
-                          src={`/images/yaming/tea_class_picture/${v.img1}`}
-                          className="img-fluid rounded-start"
-                          alt="..."
-                        />
-                      </Link>
-                    </div>
-                    {/* 這邊是右邊的課程大致說明圖 */}
-                    <div className="col-md-8">
-                      <div className="shane-course-card-body position-relative px-3">
-                        <div className=" text-center justify-content-center position-absolute top-50 start-50 translate-middle">
+            {/* 這邊是課程 */}
+            <div className="container mt-5 px-5">
+              {/* start */}
+              {courses.map((v, i) => {
+                return (
+                  <div
+                    key={v.id}
+                    className="shane-course-card mb-3"
+                    style={{ maxWidth: 1440 }}
+                  >
+                    <div className="row mt-5">
+                      {/* 這邊是圖片 */}
+                      <div className="col-md-4 shane-course-activity_left">
+                        <Link href={`/course/${v.id}`}>
                           <img
-                            src="/images/yaming/course/LOGO 直向.png"
-                            alt=""
-                            width={150}
-                            height={240}
+                            src={`/images/yaming/tea_class_picture/${v.img1}`}
+                            className="img-fluid rounded-start"
+                            alt="..."
                           />
-                        </div>
-                        <h3 className="card-title mt-3">{v.name}</h3>
-                        <p className="card-text mb-2">
-                          {getCategoryName(v.category_id)}
-                        </p>
-                        <p className="description">{v.description}</p>
-                        <p>
-                          {v.start_time} - {v.end_time}
-                        </p>
-                        <p>
-                          已經報名 {v.current_number} 個人 /人數限制{' '}
-                          {v.limit_people} 人
-                        </p>
-                        <div className="d-flex text-center">
-                          <img
-                            src="/images/yaming/course/geo-alt (1) 1.png"
-                            alt=""
-                            width="13px"
-                            height="13px"
-                            className="mt-2 me-2"
-                          />
-                          <p>{v.location}</p>
-                        </div>
-                        <h3 className="mt-3">${v.price}</h3>
-                        <div className="d-flex align-items-center mt-3 mb-2">
-                          <button
-                            type="button"
-                            className="btn like-btn"
-                            onClick={() => handleFavToggle(courses, v.id)}
-                          >
-                            {v.fav ? (
-                              <img
-                                src="/images/yaming/course/heart-fill.svg"
-                                alt=""
-                                width={20}
-                                height={18}
-                                className="me-3"
-                              />
-                            ) : (
-                              <img
-                                src="/images/yaming/course/love.png"
-                                alt=""
-                                width={20}
-                                height={18}
-                                className="me-3"
-                              />
-                            )}
-                          </button>
-                          <img
-                            src="/images/yaming/course/Group 115.png"
-                            alt=""
-                            width={20}
-                            height={18}
-                            className="me-3"
-                          />
-                          <div className="ms-3">
+                        </Link>
+                      </div>
+                      {/* 這邊是右邊的課程大致說明圖 */}
+                      <div className="col-md-8">
+                        <div className="shane-course-card-body position-relative px-3">
+                          <div className=" text-center justify-content-center position-absolute top-50 start-50 translate-middle">
+                            <img
+                              src="/images/yaming/course/LOGO 直向.png"
+                              alt=""
+                              width={150}
+                              height={240}
+                            />
+                          </div>
+                          <h3 className="card-title mt-3">{v.name}</h3>
+                          <p className="card-text mb-2">
+                            {getCategoryName(v.category_id)}
+                          </p>
+                          <p className="description">{v.description}</p>
+                          <p>
+                            {v.start_time} - {v.end_time}
+                          </p>
+                          <p>
+                            已經報名 {v.current_number} 個人 /人數限制{' '}
+                            {v.limit_people} 人
+                          </p>
+                          <div className="d-flex text-center">
+                            <img
+                              src="/images/yaming/course/geo-alt (1) 1.png"
+                              alt=""
+                              width="13px"
+                              height="13px"
+                              className="mt-2 me-2"
+                            />
+                            <p>{v.location}</p>
+                          </div>
+                          <h3 className="mt-3">${v.price}</h3>
+                          <div className="d-flex align-items-center mt-3 mb-2">
                             <button
                               type="button"
-                              className="btn rounded-pill"
-                              onClick={() => {
-                                const item = { ...v, qty: 1 }
-                                console.log(item)
-                                notify(v.name)
-                                addItem(item)
-                              }}
+                              className="btn like-btn"
+                              onClick={() => handleFavToggle(courses, v.id)}
                             >
-                              購買
+                              {v.fav ? (
+                                <img
+                                  src="/images/yaming/course/heart-fill.svg"
+                                  alt=""
+                                  width={20}
+                                  height={18}
+                                  className="me-3"
+                                />
+                              ) : (
+                                <img
+                                  src="/images/yaming/course/love.png"
+                                  alt=""
+                                  width={20}
+                                  height={18}
+                                  className="me-3"
+                                />
+                              )}
                             </button>
+                            <img
+                              src="/images/yaming/course/Group 115.png"
+                              alt=""
+                              width={20}
+                              height={18}
+                              className="me-3"
+                            />
+                            <div className="ms-3">
+                              <button
+                                type="button"
+                                className="btn rounded-pill"
+                                onClick={() => {
+                                  const item = { ...v, qty: 1 }
+                                  console.log(item)
+                                  notify(v.name)
+                                  addItem(item)
+                                }}
+                              >
+                                購買
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
+                    {/* end */}
                   </div>
-                  {/* end */}
-                </div>
-              )
-            })}
-          </div>
-          {/* 這邊是課程 */}
-          <div className="container">
-            <div className="shane-course-star mt-5 mb-5 mx-5">
-              <img
-                src="/images/yaming/course/star.png"
-                alt=""
-                width={16}
-                height={16}
-              />
-              <img
-                src="/images/yaming/course/Vector 25.png"
-                alt=""
-                width="100%"
-                height="1px"
-                style={{ margin: '0 -2px' }}
-              />
-              <img
-                src="/images/yaming/course/star.png"
-                alt=""
-                width={16}
-                height={16}
-              />
-            </div>
-          </div>
-          <div className="container justify-content-center d-flex course-shane-number  align-items-center ">
-            <img
-              src="/images/yaming/course/Vector 34 (Stroke).png"
-              alt="上一頁"
-              width={8}
-              height={16}
-              style={{ cursor: currentPage === 1 ? 'not-allowed' : 'pointer' }}
-              className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}
-              onClick={() =>
-                currentPage > 1 && handlePageChange(currentPage - 1)
-              }
-            />
-            <div className="d-flex mt-2">
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                (page) => (
-                  <p
-                    key={page}
-                    className={`page-item ${
-                      currentPage === page ? 'active' : ''
-                    }`}
-                  >
-                    <button
-                      className="page-link"
-                      onClick={() => handlePageChange(page)}
-                    >
-                      {page}
-                    </button>
-                  </p>
                 )
-              )}
+              })}
             </div>
-            <img
-              src="/images/yaming/course/Vector 35 (Stroke).png"
-              alt="下一頁"
-              width={8}
-              height={16}
-              className={`page-item ${
-                currentPage === totalPages ? 'disabled' : ''
-              }`}
-              onClick={() =>
-                currentPage < totalPages && handlePageChange(currentPage + 1)
-              }
-              style={{
-                cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
-              }}
-            />
-          </div>
-          <div className="container">
-            <div className="shane-course-star mb-5 mx-5 align-items-center justify-content-center d-flex">
+            {/* 這邊是課程 */}
+            <div className="container">
+              <div className="shane-course-star mt-5 mb-5 mx-5">
+                <img
+                  src="/images/yaming/course/star.png"
+                  alt=""
+                  width={16}
+                  height={16}
+                />
+                <img
+                  src="/images/yaming/course/Vector 25.png"
+                  alt=""
+                  width="100%"
+                  height="1px"
+                  style={{ margin: '0 -2px' }}
+                />
+                <img
+                  src="/images/yaming/course/star.png"
+                  alt=""
+                  width={16}
+                  height={16}
+                />
+              </div>
+            </div>
+            <div className="container justify-content-center d-flex course-shane-number  align-items-center ">
               <img
-                src="/images/yaming/course/star.png"
-                alt=""
+                src="/images/yaming/course/Vector 34 (Stroke).png"
+                alt="上一頁"
                 width={8}
-                height={8}
+                height={16}
+                style={{
+                  cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
+                }}
+                className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}
+                onClick={() =>
+                  currentPage > 1 && handlePageChange(currentPage - 1)
+                }
               />
+              <div className="d-flex mt-2">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  (page) => (
+                    <p
+                      key={page}
+                      className={`page-item ${
+                        currentPage === page ? 'active' : ''
+                      }`}
+                    >
+                      <button
+                        className="page-link"
+                        onClick={() => handlePageChange(page)}
+                      >
+                        {page}
+                      </button>
+                    </p>
+                  )
+                )}
+              </div>
               <img
-                src="/images/yaming/course/Vector 25.png"
-                alt=""
-                width="240px"
-                height="1px"
-                style={{ margin: '0 -2px' }}
-              />
-              <img
-                src="/images/yaming/course/star.png"
-                alt=""
+                src="/images/yaming/course/Vector 35 (Stroke).png"
+                alt="下一頁"
                 width={8}
-                height={8}
+                height={16}
+                className={`page-item ${
+                  currentPage === totalPages ? 'disabled' : ''
+                }`}
+                onClick={() =>
+                  currentPage < totalPages && handlePageChange(currentPage + 1)
+                }
+                style={{
+                  cursor:
+                    currentPage === totalPages ? 'not-allowed' : 'pointer',
+                }}
               />
+            </div>
+            <div className="container">
+              <div className="shane-course-star mb-5 mx-5 align-items-center justify-content-center d-flex">
+                <img
+                  src="/images/yaming/course/star.png"
+                  alt=""
+                  width={8}
+                  height={8}
+                />
+                <img
+                  src="/images/yaming/course/Vector 25.png"
+                  alt=""
+                  width="240px"
+                  height="1px"
+                  style={{ margin: '0 -2px' }}
+                />
+                <img
+                  src="/images/yaming/course/star.png"
+                  alt=""
+                  width={8}
+                  height={8}
+                />
+              </div>
             </div>
           </div>
         </div>
