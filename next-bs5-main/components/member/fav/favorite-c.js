@@ -32,7 +32,7 @@ export default function FavoriteC() {
     // console.log(value);
     setOrder(value)
   }
-  async function handleFavCancel(id, userID, isAuth) {
+  async function handleFavCancel(id, userID) {
     // console.log(id);
     const agreeDelete = confirm('您確定要移除此收藏商品?')
     if (agreeDelete) {
@@ -153,7 +153,7 @@ export default function FavoriteC() {
                               className={`${styles['favoritec-fabtn']} btn`}
                               type="button"
                               onClick={() =>
-                                handleFavCancel(v.id, userID, isAuth)
+                                handleFavCancel(v.id, userID)
                               }
                             >
                               <img
