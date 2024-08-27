@@ -5,7 +5,6 @@ const router = express.Router()
 import { Op, UUIDV4 } from 'sequelize'
 import sequelize from '#configs/db.js'
 import moment from 'moment'
-import authenticate from '../middlewares/authenticate.js'
 // import { result } from 'lodash'
 const { YaminOrder, YaminOrderDetail } = sequelize.models
 
@@ -27,19 +26,6 @@ let LineOrderInsertId
 let linePayState
 /* GET home page. */
 router.use(express.json())
-router.get('/cart/coupon', async (req, res) => {
-  try {
-    const Copuser_id = req.query.user_id || 0
-    console.log('使用者id', Copuser_id)
-    let GetUserCouponSQL = `SELECT coupons.* , uc.* FROM users_coupons uc JOIN coupons ON coupons.id = uc.coupon_id WHERE user_id=${Copuser_id}`
-    const testCouSql = await db.query(GetUserCouponSQL)
-    console.log('測試撈庫鵬卷', testCouSql[0])
-    return res.json(testCouSql[0])
-  } catch (err) {
-    console.log(err)
-    return res.status(404).json({ error: 'Coupons Not Found' })
-  }
-})
 router.post('/', async (req, res) => {
   // const [user, created] = await User.findOrCreate({
   //   where: {
