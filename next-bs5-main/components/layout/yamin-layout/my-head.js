@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 import styles from './header.module.scss'
 import { useRouter } from 'next/router'
+import { useAuth } from '@/hooks/my-use-auth'
 export default function MyHeader() {
   const router = useRouter()
   const toggleBtnRef = useRef(null)
@@ -14,6 +15,8 @@ export default function MyHeader() {
   const searchFormRef = useRef(null)
   const searchFormCloseBtnRef = useRef(null)
   const [isScrolled, setIsScrolled] = useState(false)
+  const { auth } = useAuth()
+  const [isAuth, setIsAuth] = useState(false)
 
   async function handleSearchProduct() {
     const searchForm = searchFormRef.current
@@ -25,6 +28,7 @@ export default function MyHeader() {
     searchFormCloseBtn.click()
     router.push(`/product/search/${searchData}`)
   }
+
   useEffect(() => {
     const toggleBtn = toggleBtnRef.current
     const toggleBtnIcon = toggleBtnIconRef.current
@@ -64,22 +68,18 @@ export default function MyHeader() {
       }
     })
   }, [])
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 50) {
-        setIsScrolled(true)
-      } else {
-        setIsScrolled(false)
+  function handleToMyFav(isAuth) {
+    if (isAuth) {
+      router.push('/member/fav/favorite-p')
+    } else {
+      if (confirm('您尚未登入，登入後才能查看您的收藏')) {
+        router.push('/member/login')
       }
     }
-
-    window.addEventListener('scroll', handleScroll)
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll)
-    }
-  }, [])
+  }
+  useEffect(() => {
+    setIsAuth(auth.isAuth)
+  }, [auth])
   return (
     <>
       <header
@@ -161,19 +161,23 @@ export default function MyHeader() {
                   fontSize: 20,
                 }}
                 data-bs-toggle="modal"
-                data-bs-target="#exampleModal"
+                data-bs-target="#searchForm"
                 data-bs-whatever="@mdo"
               />
             </div>
             <div className={`${styles['love_btn']}`}>
-              <Link href={'/member/fav/'}>
+              <button
+                className="btn"
+                type="button"
+                onClick={() => handleToMyFav(isAuth)}
+              >
                 <img
                   src="/images/header/heart.png"
                   alt=""
                   height={25}
                   width={30}
                 />
-              </Link>
+              </button>
             </div>
             <div className={`${styles['action_btn']}`}>
               <Link href={`#`}>
@@ -203,7 +207,7 @@ export default function MyHeader() {
                 }}
                 ref={search2Ref}
                 data-bs-toggle="modal"
-                data-bs-target="#exampleModal"
+                data-bs-target="#searchForm"
                 data-bs-whatever="@mdo"
               />
               <div className={`${styles['toggle_btn']}`} ref={toggleBtnRef}>
@@ -229,12 +233,13 @@ export default function MyHeader() {
           </li>
           <li>
             <Link href="/course/courselist">課程</Link>
+            <Link href="/course/courselist">課程</Link>
           </li>
           <li>
-            <Link href="文章">文章</Link>
+            <Link href="/article">文章</Link>
           </li>
           <li>
-            <Link href="/member/fav">收藏</Link>
+            <Link href="/member/fav/favorite-p">收藏</Link>
           </li>
           <li>
             <Link href="文章">個人資料</Link>
@@ -244,7 +249,7 @@ export default function MyHeader() {
       {/* 搜尋彈出視窗 */}
       <div
         className="modal fade"
-        id="exampleModal"
+        id="searchForm"
         tabIndex={-1}
         aria-labelledby="exampleModalLabel"
         aria-hidden="true"
