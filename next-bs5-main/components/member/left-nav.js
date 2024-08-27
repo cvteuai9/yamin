@@ -17,7 +17,7 @@ export default function Leftnav({
             </Link>
           </li>
           <li>
-            <Link href="/member/order" className={`h5 ${fromOrder}`}>
+            <Link href="/order" className={`h5 ${fromOrder}`}>
               購買訂單
             </Link>
           </li>
