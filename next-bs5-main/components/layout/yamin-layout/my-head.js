@@ -135,7 +135,7 @@ export default function MyHeader() {
                   fontSize: 20,
                 }}
                 data-bs-toggle="modal"
-                data-bs-target="#exampleModal"
+                data-bs-target="#searchForm"
                 data-bs-whatever="@mdo"
               />
             </div>
@@ -177,7 +177,7 @@ export default function MyHeader() {
                 }}
                 ref={search2Ref}
                 data-bs-toggle="modal"
-                data-bs-target="#exampleModal"
+                data-bs-target="#searchForm"
                 data-bs-whatever="@mdo"
               />
               <div className={`${styles['toggle_btn']}`} ref={toggleBtnRef}>
@@ -218,7 +218,7 @@ export default function MyHeader() {
       {/* 搜尋彈出視窗 */}
       <div
         className="modal fade"
-        id="exampleModal"
+        id="searchForm"
         tabIndex={-1}
         aria-labelledby="exampleModalLabel"
         aria-hidden="true"
