@@ -35,7 +35,7 @@ export default async function (sequelize) {
         allowNull: false,
       },
       status: {
-        type: DataTypes.ENUM('unreleased', 'active', 'expired'),
+        type: DataTypes.ENUM('available', 'unreleased', 'expired'),
         allowNull: false,
       },
       status_info: {
