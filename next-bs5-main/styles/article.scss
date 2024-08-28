@@ -54,7 +54,7 @@
 .articles_group {
   display: flex;
   flex-direction: column;
-  align-items: start;
+  align-items: flex-start;
   padding: 2rem;
 
   a {
@@ -79,8 +79,10 @@
   display: inline-block;
   padding: 20px 18px;
   width: 100%;
+  z-index: 1;
 
   input {
+    position: relative;
     width: 100%;
     height: 40px;
     border: 1px solid var(--primary2);
@@ -89,6 +91,7 @@
     background-color: rgba(255, 255, 255, 0.02);
     font-size: 1.4rem;
     margin: 1rem 0;
+    z-index: 1;
 
     &:focus {
       outline: none;
@@ -207,7 +210,7 @@
     .mobile {
       display: flex;
       flex-direction: column;
-      align-items: start;
+      align-items: flex-start;
 
       .addbookmarks {
         margin: 0 0 20px 10px;
@@ -406,3 +409,5 @@
     }
   }
 }
+
+

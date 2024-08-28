@@ -131,7 +131,7 @@ router.get('/:id/recommendations', async function (req, res) {
   // console.log(articleTitle)
   // 拆分文章标题为单个字
   const words = articleTitle.match(/[\u4e00-\u9fa5]/g) || [] // 只提取中文字符
-  // console.log(words) // 查看提取的单个字
+  // console.log(words)
   try {
     // SQL 查詢：根據文章標題匹配茶名，然後返回相應的商品
     const [products] = await db.query(

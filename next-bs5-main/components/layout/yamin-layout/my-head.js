@@ -81,30 +81,7 @@ export default function MyHeader() {
       }
     })
   }, [])
-  //登出登入
-  const { auth, setAuth } = useAuth()
-
-  const { loginGoogle, logoutFirebase } = useFirebase()
-  // 處理登出
-  const handleLogout = async () => {
-    // firebase logout(注意，這並不會登出google帳號，是登出firebase的帳號)
-    logoutFirebase()
-
-    const res = await logout()
-
-    // 成功登出後，回復初始會員狀態
-    if (res.data.status === 'success') {
-      toast.success('已成功登出')
-
-      setAuth({
-        isAuth: false,
-        userData: initUserData,
-      })
-    } else {
-      toast.error(`登出失敗`)
-    }
-    toggleMenu()
-  }
+  
   // 增加是否登入會員，顯示照片
   const initUserProfile = {
     id: '',
@@ -118,6 +95,12 @@ export default function MyHeader() {
   }
   const [userProfile, setUserProfile] = useState(initUserProfile)
   const [selectedFile, setSelectedFile] = useState(null)
+
+  // 登出登入
+  const { auth, setAuth } = useAuth()
+  const { loginGoogle, logoutFirebase } = useFirebase()
+
+  // 登入後可以透過id獲取會員資料
   const getUserData = async (id) => {
     const res = await getUserById(id)
 
@@ -145,6 +128,32 @@ export default function MyHeader() {
     // eslint-disable-next-line
   }, [auth])
 
+  // 處理登出
+  const handleLogout = async () => {
+    // firebase logout(注意，這並不會登出google帳號，是登出firebase的帳號)
+    logoutFirebase()
+
+    const res = await logout()
+
+    // 成功登出後，回復初始會員狀態
+    if (res.data.status === 'success') {
+      toast.success('已成功登出')
+
+      setAuth({
+        isAuth: false,
+        userData: initUserData,
+      })
+      // 因為解除這些條件才能立刻讓圖片為初始圖片
+      setSelectedFile(null)
+      setUserProfile(initUserProfile)
+    } else {
+      toast.error(`登出失敗`)
+    }
+    toggleMenu()
+    setMenuOpen(false)
+  }
+  
+
   // 點擊使用者頭像，跳出視窗
   const [menuOpen, setMenuOpen] = useState(false)
   // 創建了一個 menuRef，並將其附加到彈出選單的 DOM 元素上。
@@ -152,8 +161,9 @@ export default function MyHeader() {
   const buttonRef = useRef(null)
 
   const toggleMenu = (e) => {
-    e.stopPropagation() // 阻止事件冒泡
-    // 這行程式碼的作用是阻止事件冒泡。事件冒泡是指當一個事件發生在某個元素上時，該事件會向父元素傳遞。如果你不希望點擊事件傳遞到父元素（例如，點擊菜單時不希望點擊事件傳遞到其他可能會關閉菜單的父級元素）
+    if (e) {
+      e.stopPropagation(); // 確保 e 不為 undefined
+    } // 阻止事件冒泡
     setMenuOpen((prevState) => !prevState) //prevState => !prevState 是一個回調函數，它接收當前的 menuOpen 狀態（prevState），並返回相反的狀態值（如果當前為 true，則返回 false，反之亦然）。
   }
 
@@ -283,11 +293,11 @@ export default function MyHeader() {
                 />
               </Link>
             </div>
-            <div className="position-relative d-flex align-items-center">
+            <div className="header-userimg position-relative d-flex align-items-center">
               <button
                 ref={buttonRef}
                 className="d-flex align-items-center btn btn-reset p-0 "
-                onClick={toggleMenu}
+                onClick={(e) => toggleMenu(e)}
                 aria-haspopup="true"
                 aria-expanded={menuOpen}
               >

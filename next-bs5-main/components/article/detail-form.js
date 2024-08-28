@@ -20,7 +20,7 @@ export default function DetailForm() {
   const [newArticles, setNewArticles] = useState([]) // 儲存前五篇最新文章
   const [recommend, setRecommend] = useState([])
 
-  console.log(id)
+  // console.log(id)
   const getArticle = async (id) => {
     // console.log(id);
     let apiUrl = `http://localhost:3005/api/my-articles/${id}`
@@ -29,7 +29,7 @@ export default function DetailForm() {
     const data = await res.json()
     setArticle(data.data.article)
   }
-  console.log(article)
+  // console.log(article)
 
   const getRecommend = async (id) => {
     // console.log(id);
@@ -37,9 +37,14 @@ export default function DetailForm() {
 
     const res = await fetch(apiUrl)
     const data = await res.json()
-    setRecommend(data.data.topMatches)
+    if(data.status==='success'){
+      setRecommend(data.data.topMatches)
+    }
+    if (data.status==='no_match'){
+      setRecommend([])
+    }
   }
-  console.log(recommend)
+  // console.log(recommend)
 
   const getViews = async (id) => {
     let apiUrl = `http://localhost:3005/api/my-articles/${id}/views`
@@ -131,13 +136,13 @@ export default function DetailForm() {
               <div className="article-text bd-b1 p-3 mt-3 mx-4">
                 <p>{article.content}</p>
               </div>
-              <div className="recom-tea mt-3 p-3 bd-b1">
+              {recommend.length > 0 && (
+                <div className="recom-tea mt-3 p-3 bd-b1">
                 <h5 className="p-3">推薦好茶</h5>
                 <div className="recom-tea_group mt-3 mb-5">
                   {recommend.map((v) => (
                     <div className="recom-tea-item p-0" key={v.id}>
                       <Link href={`/product/${v.id}`}>
-                        {/* <div className="recom-tea-img"></div> */}
                         <TeaImage
                           imagePath={`/images/product/list1/products-images/${v.paths}`}
                         />
@@ -153,6 +158,7 @@ export default function DetailForm() {
                   ))}
                 </div>
               </div>
+              )}
               <div className="comment mt-3 p-3">
                 <h5 className="p-3">留言</h5>
                 <div className="comment-block mt-3 mb-5">
@@ -225,7 +231,7 @@ export default function DetailForm() {
                     </div>
                   </div>
                 </div>
-                <div className="col-12 mt-5 mx-0">
+                {/* <div className="col-12 mt-5 mx-0">
                   <div className="search_article bgc-right mx-0">
                     <div className="article_right_title">
                       <div className="section-heading">
@@ -243,7 +249,7 @@ export default function DetailForm() {
                       />
                     </div>
                   </div>
-                </div>
+                </div> */}
                 <div className="col-12 mt-5">
                   <div className="hot_article bgc-right pb-3">
                     <div className="article_right_title">

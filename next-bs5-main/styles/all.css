@@ -629,7 +629,7 @@ input::placeholder,
   } */
 .profile-picright {
   width: 50%;
-  height: 150px;
+  /* height: 150px; */
 }
 
 /* .profile-inputtext::placeholder,
