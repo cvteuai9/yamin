@@ -242,14 +242,14 @@
 
     .recom-tea-img {
       width: 100%;
-      height: 160px;
-      background-image: url(/images/article/articledetail/tea.jpg);
+      height: 250px;
       background-size: 100%;
       /* 不能用 */
       /* background-size: cover; */
       background-position: center;
       transition: background-size 0.5s;
       background-repeat: no-repeat;
+      border-bottom: 1px solid var(--primary2);
     }
 
     &:hover {
@@ -269,6 +269,10 @@
     .recom-tea-text {
       .title {
         color: var(--form-bg-dark);
+        display: -webkit-box;
+        overflow: hidden;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
       }
 
       .price {

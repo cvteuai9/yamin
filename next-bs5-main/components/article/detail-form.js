@@ -18,8 +18,9 @@ export default function DetailForm() {
   const [categories, setCategories] = useState([])
   const [topArticles, setTopArticles] = useState([]) // 儲存前五篇熱門文章
   const [newArticles, setNewArticles] = useState([]) // 儲存前五篇最新文章
+  const [recommend, setRecommend] = useState([])
 
-  console.log(id);
+  console.log(id)
   const getArticle = async (id) => {
     // console.log(id);
     let apiUrl = `http://localhost:3005/api/my-articles/${id}`
@@ -28,7 +29,17 @@ export default function DetailForm() {
     const data = await res.json()
     setArticle(data.data.article)
   }
-  console.log(article);
+  console.log(article)
+
+  const getRecommend = async (id) => {
+    // console.log(id);
+    let apiUrl = `http://localhost:3005/api/my-articles/${id}/recommendations`
+
+    const res = await fetch(apiUrl)
+    const data = await res.json()
+    setRecommend(data.data.topMatches)
+  }
+  console.log(recommend)
 
   const getViews = async (id) => {
     let apiUrl = `http://localhost:3005/api/my-articles/${id}/views`
@@ -61,6 +72,7 @@ export default function DetailForm() {
     if (router.isReady) {
       getArticle(router.query.articleCode)
       getViews(router.query.articleCode)
+      getRecommend(router.query.articleCode)
     }
   }, [router.isReady])
 
@@ -70,6 +82,15 @@ export default function DetailForm() {
     getNewArticles()
   }, [])
 
+  // 推薦好茶圖片
+  const TeaImage = ({ imagePath }) => {
+    return (
+      <div
+        className="recom-tea-img"
+        style={{ backgroundImage: `url(${imagePath})` }}
+      ></div>
+    )
+  }
   return (
     <>
       <main className="articledetail">
@@ -113,18 +134,23 @@ export default function DetailForm() {
               <div className="recom-tea mt-3 p-3 bd-b1">
                 <h5 className="p-3">推薦好茶</h5>
                 <div className="recom-tea_group mt-3 mb-5">
-                  <div className="recom-tea-item p-0">
-                    <div className="recom-tea-img"></div>
-                    <div className="recom-tea-text p-3">
-                      <p className="title">
-                        有機紅玉紅茶 Organic Ruby Black Tea - 75g
-                      </p>
-                      <div className="price d-flex">
-                        <p className="me-3">NT$</p>
-                        <p>7500</p>
-                      </div>
+                  {recommend.map((v) => (
+                    <div className="recom-tea-item p-0" key={v.id}>
+                      <Link href={`/product/${v.id}`}>
+                        {/* <div className="recom-tea-img"></div> */}
+                        <TeaImage
+                          imagePath={`/images/product/list1/products-images/${v.paths}`}
+                        />
+                        <div className="recom-tea-text p-3">
+                          <p className="title">{v.product_name}</p>
+                          <div className="price d-flex">
+                            <p className="me-3">NT$</p>
+                            <p>{v.price}</p>
+                          </div>
+                        </div>
+                      </Link>
                     </div>
-                  </div>
+                  ))}
                 </div>
               </div>
               <div className="comment mt-3 p-3">
@@ -238,7 +264,7 @@ export default function DetailForm() {
                           <div>
                             <a
                               className="mt-3 article_title"
-                              href={`/article/detail/${topArticle.id}`}
+                              href={`/article/${topArticle.id}`}
                             >
                               {topArticle.title}
                             </a>
@@ -275,7 +301,7 @@ export default function DetailForm() {
                           <div>
                             <a
                               className="mt-3 article_title"
-                              href={`/article/detail/${newArticle.id}`}
+                              href={`/article/${newArticle.id}`}
                             >
                               {newArticle.title}
                             </a>
