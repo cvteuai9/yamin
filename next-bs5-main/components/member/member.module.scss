@@ -70,7 +70,8 @@
   }
 }
 
-.loginsignin {
+.loginsignin,
+.forgetps {
   background-color: #003e52;
   display: flex;
   flex-direction: column;
@@ -116,6 +117,13 @@
 }
 
 .signinsec2 {
+  width: 570px;
+  > p {
+    width: 100%;
+    word-wrap: break-word;
+    word-break: break-all;
+    white-space: normal;
+  }
   font-family: 'B2Hana-Regular', sans-serif;
   display: flex;
   flex-direction: column;
@@ -146,7 +154,7 @@
     input {
       margin: 12px 0px 12px 0px;
       height: 50px;
-      width: 500px;
+      width: 100%;
       padding: 1.2rem;
       color: var(--bg-text-color);
       background-color: var(--background);
@@ -202,6 +210,115 @@
   }
 }
 
+.forgetpssec {
+  width: 570px;
+  > p {
+    width: 100%;
+    word-wrap: break-word;
+    word-break: break-all;
+    white-space: normal;
+  }
+  font-family: 'B2Hana-Regular', sans-serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: var(--bg-text-color);
+
+  .fp-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* align-items: center; */
+    .error {
+      font-size: 1.6rem;
+      color: red;
+    }
+    .inputarea {
+      position: relative;
+      .icon {
+        padding: 0px;
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        /*自己本身高度往上調50%*/
+      }
+    }
+
+    input {
+      margin: 12px 0px 12px 0px;
+      height: 50px;
+      width: 100%;
+      padding: 1.2rem;
+      color: var(--bg-text-color);
+      background-color: var(--background);
+      border: var(--primary2) solid 1px;
+      font-size: 1.6rem;
+      /* 懸停指示 */
+      caret-color: var(--bg-text-color);
+      /* 讓文字從1rem後開始(首行縮排) */
+      text-indent: 0.2rem;
+
+      &:focus {
+        outline: none;
+      }
+    }
+    button {
+      margin: 12px 0px 12px 0px;
+      height: 50px;
+      width: 25%;
+      padding: 1.2rem;
+      color: var(--bg-text-color);
+      background-color: var(--background);
+      border: var(--primary2) solid 1px;
+      font-size: 1.6rem;
+      background-color: var(--primary2);
+      border-radius: 0%;
+      &:hover {
+        background-color: var(--primary-deep);
+      }
+    }
+
+    input::placeholder {
+      color: var(--primary2);
+    }
+
+    label {
+      font-size: 1.6rem;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .btn-in {
+      width: 200px;
+      background-color: var(--primary2);
+      font-size: 1.6rem;
+      border: none;
+      font-family: 'B2Hana-Regular', sans-serif;
+      padding: 1.3rem;
+      color: var(--bg-text-color);
+    }
+
+    .btn-in:hover {
+      background-color: var(--button-hover-color);
+    }
+  }
+
+  .form-footer {
+    font-size: 1.6rem;
+
+    a {
+      color: rgb(178, 149, 100);
+      font-family: 'B2Hana-Regular', sans-serif;
+      font-size: 1.6rem;
+
+      &:hover {
+        color: var(--button-hover-color);
+      }
+    }
+  }
+}
+
 @media (max-width: 576px) {
   .loginsignin {
     .orline {
@@ -216,9 +333,27 @@
   }
 
   .signinsec2 {
+    width: 100%;
     form {
       input {
         width: 100%;
+      }
+    }
+  }
+  .forgetpssec {
+    width: 100%;
+    .fp-form {
+      input {
+        width: 100%;
+      }
+      button {
+        padding: 0;
+        color: var(--bg-text-color);
+        background-color: var(--background);
+        border: var(--primary2) solid 1px;
+        font-size: 1.4rem;
+        background-color: var(--primary2);
+        border-radius: 0%;
       }
     }
   }

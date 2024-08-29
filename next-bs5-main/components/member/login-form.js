@@ -273,7 +273,7 @@ export default function LoginForm() {
                 <button
                   className={`${styles['btn-in']} mt-4`}
                   type="submit"
-                  // onClick={handleLogin}
+                // onClick={handleLogin}
                 >
                   登入
                 </button>
@@ -282,8 +282,15 @@ export default function LoginForm() {
             <div
               className={`${styles['form-footer']} d-flex justify-content-center`}
             >
-              <p className="me-2">尚未有會員帳號?</p>
-              <Link href="/member/register">會員註冊</Link>
+              <div className='d-flex flex-column'>
+                <div className='d-flex'>
+                  <p className="me-2">尚未有會員帳號?</p>
+                  <Link href="/member/register">會員註冊</Link>
+                </div>
+                <div>
+                  <Link href="/member/forget-password">忘記密碼</Link>
+                </div>
+              </div>
             </div>
           </div>
         </div>
