@@ -24,9 +24,13 @@
     transition: 0.3s;
   }
   & .favoritea-markbtn {
+    border: none;
     position: absolute;
     top: -7px;
     right: 10px;
+  }
+  & .favoritea-markbtn:hover {
+    transform: scale(1.2);
   }
 }
 .favoritea-imgbox {
@@ -46,17 +50,22 @@
 
 .favoritea-cardtext {
   width: 700px;
-
   height: 124px;
-  margin: auto 10px;
+  margin: 10px;
   line-height: 25px;
   padding-left: 10px;
   display: flex;
 }
 .favoritea-cardlefttext {
-  width: 800px;
-  height: auto;
+  // width: 800px;
+  height: 50px;
   margin-right: 80px;
+  .articleContent {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+  }
 }
 .favoritea-cardrighttext {
   width: 100px;
@@ -124,6 +133,9 @@
       width: 30px;
     }
   }
+  & .favoritec-fabtn:hover {
+    transform: scale(1.2);
+  }
 }
 
 .favoritec-cardtext {
@@ -188,13 +200,6 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 1rem;
-  .noFavorites {
-    color: var(--primary2);
-    & a {
-      border: 0.1rem solid var(--primary2);
-      padding: 0.5rem 1rem;
-    }
-  }
 }
 .favoritep-pcard {
   // width: 244px;
@@ -225,6 +230,9 @@
     width: 30px;
     bottom: 5px;
     right: 10px; /* 距离父元素左边20像素 */
+  }
+  & .favoritep-fabtn:hover {
+    transform: scale(1.2);
   }
 }
 .favoritep-cardtext {
@@ -276,5 +284,12 @@
       display: grid;
       place-content: center;
     }
+  }
+}
+.noFavorites {
+  color: var(--primary2);
+  & a {
+    border: 0.1rem solid var(--primary2);
+    padding: 0.5rem 1rem;
   }
 }

@@ -1,15 +1,28 @@
 import express from 'express'
 // 引入 Express 框架，用來構建後端應用。
-const router = express.Router()
-// 創建一個新的 Express 路由實例，命名為 router。
-
+import multer from 'multer'
+import path from 'path'
+import fs from 'fs'
 import sequelize from '#configs/db.js'
 import db from '##/configs/mysql.js'
-import { raw } from 'mysql2'
-
+const router = express.Router()
+// 創建一個新的 Express 路由實例，命名為 router。
 const { Course } = sequelize.models
 // 從 Sequelize 實例中解構出 Course 模型，用來操作課程數據表。
 
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(
+      null,
+      'C:\\Users\\user\\Documents\\yamin\\next-bs5-main\\public\\images\\yaming\\tea_class_picture'
+    ) // 確保此目錄存在
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + path.extname(file.originalname))
+  },
+})
+
+const upload = multer({ storage: storage })
 /* 
   這段代碼主要要做什麼
   這段代碼是定義並導出一個 Express 路由，用來提供課程的 API 接口。
@@ -22,13 +35,25 @@ const { Course } = sequelize.models
 // 课程列表 API，支持排序、分类、位置筛选以及分页
 router.get('/', async function (req, res) {
   // 定義一個 GET 請求的路由，用於獲取課程列表。
-
   try {
-    const { sort, page = 1, limit = 6, categoryId, locationId } = req.query
+    const {
+      sort,
+      sort2,
+      page = 1,
+      limit = 6,
+      categoryId,
+      locationId,
+    } = req.query
     // 從請求的查詢參數中解構出排序方式、頁碼、每頁顯示數量、分類 ID 和地點 ID，並設置默認值。
 
-    const order = sort === 'asc' ? ['price', 'ASC'] : ['price', 'DESC']
-    // 根據 sort 參數決定排序方式，默認根據價格升序或降序排序。
+    let order = []
+    if (sort2) {
+      order.push(['price', sort2.toUpperCase()])
+    } else if (sort) {
+      order.push(['id', sort.toUpperCase()])
+    } else {
+      order.push(['id', 'ASC']) // 默認排序
+    }
 
     const offset = (page - 1) * limit
     // 計算資料庫查詢的偏移量，用於分頁。
@@ -36,8 +61,9 @@ router.get('/', async function (req, res) {
     console.log(categoryId, locationId)
     // 輸出當前的分類 ID 和地點 ID 到控制台，主要用於調試。
 
-    const whereConditions = {}
-    // 定義一個空對象用來存儲篩選條件。
+    const whereConditions = {
+      valid: 1, // 排除 'valid' 为 0 的课程
+    }
 
     if (categoryId) {
       // 如果查詢參數中包含分類 ID，就將其加入篩選條件中。
@@ -189,12 +215,102 @@ router.get('/comment/:id', async (req, res) => {
   }
 })
 
+// 新增
+router.post(
+  '/',
+  upload.fields([
+    { name: 'img1', maxCount: 1 },
+    { name: 'img2', maxCount: 1 },
+    { name: 'img3', maxCount: 1 },
+  ]),
+  async (req, res) => {
+    try {
+      const courseData = req.body
+      if (req.files) {
+        if (req.files.img1) courseData.img1 = req.files.img1[0].filename
+        if (req.files.img2) courseData.img2 = req.files.img2[0].filename
+        if (req.files.img3) courseData.img3 = req.files.img3[0].filename
+      }
+
+      const newActivity = await Course.create(courseData)
+      res.status(201).json(newActivity)
+    } catch (error) {
+      console.error('Error creating activity:', error)
+      res.status(500).json({ message: 'Internal Server Error' })
+    }
+  }
+)
+//編輯
+router.put(
+  '/:id',
+  upload.fields([
+    { name: 'img1', maxCount: 1 },
+    { name: 'img2', maxCount: 1 },
+    { name: 'img3', maxCount: 1 },
+  ]),
+  async function (req, res) {
+    try {
+      const { id } = req.params
+      const course = await Course.findByPk(id)
+
+      if (!course) {
+        return res.status(404).json({ message: 'Course not found' })
+      }
+
+      const courseData = req.body
+      if (req.files) {
+        ;['img1', 'img2', 'img3'].forEach((imgField) => {
+          if (req.files[imgField]) {
+            if (course[imgField]) {
+              const oldImagePath = path.join(
+                'C:\\Users\\user\\Documents\\yamin\\next-bs5-main\\public\\images\\yaming\\tea_class_picture',
+                course[imgField]
+              )
+              if (fs.existsSync(oldImagePath)) {
+                fs.unlinkSync(oldImagePath)
+              }
+            }
+            courseData[imgField] = req.files[imgField][0].filename
+          }
+        })
+      }
+
+      await course.update(courseData)
+      res.status(200).json(course)
+    } catch (error) {
+      console.error('Error updating course:', error)
+      res
+        .status(500)
+        .json({ message: 'Error updating course', error: error.toString() })
+    }
+  }
+)
+//軟刪除
+router.put('/valid/:id', async function (req, res) {
+  try {
+    const { id } = req.params
+    const course = await Course.findByPk(id)
+
+    if (!course) {
+      return res.status(404).json({ message: 'Course not found' })
+    }
+
+    // 將 valid 設置為 0 來軟刪除
+    await course.update({ valid: 0 })
+
+    res.status(200).json({ message: 'Course soft deleted successfully' })
+  } catch (error) {
+    console.error('Error soft deleting course:', error)
+    res.status(500).json({ message: 'Error soft deleting course', error })
+  }
+})
+
 // Random course API
 router.get('/random/:id', async (req, res) => {
   try {
     const [rows] = await db.query(
       `SELECT * FROM course ORDER BY RAND() LIMIT 4`
-    ) // MySQL 隨機選擇5個課程
+    ) // MySQL 隨機選擇4個課程
     return res.status(200).json({ courses: rows })
   } catch (error) {
     console.log(error)

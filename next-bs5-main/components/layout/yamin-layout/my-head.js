@@ -1,7 +1,8 @@
 import Link from 'next/link'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import styles from './header.module.scss'
 import { useRouter } from 'next/router'
+import { useAuth } from '@/hooks/my-use-auth'
 export default function MyHeader() {
   const router = useRouter()
   const toggleBtnRef = useRef(null)
@@ -13,6 +14,9 @@ export default function MyHeader() {
   const logo2Ref = useRef(null)
   const searchFormRef = useRef(null)
   const searchFormCloseBtnRef = useRef(null)
+  const [isScrolled, setIsScrolled] = useState(false)
+  const { auth } = useAuth()
+  const [isAuth, setIsAuth] = useState(false)
 
   async function handleSearchProduct() {
     const searchForm = searchFormRef.current
@@ -24,6 +28,7 @@ export default function MyHeader() {
     searchFormCloseBtn.click()
     router.push(`/product/search/${searchData}`)
   }
+
   useEffect(() => {
     const toggleBtn = toggleBtnRef.current
     const toggleBtnIcon = toggleBtnIconRef.current
@@ -63,23 +68,38 @@ export default function MyHeader() {
       }
     })
   }, [])
-
+  function handleToMyFav(isAuth) {
+    if (isAuth) {
+      router.push('/member/fav/favorite-p')
+    } else {
+      if (confirm('您尚未登入，登入後才能查看您的收藏')) {
+        router.push('/member/login')
+      }
+    }
+  }
+  useEffect(() => {
+    setIsAuth(auth.isAuth)
+  }, [auth])
   return (
     <>
-      <header className={`${styles.header}`}>
+      <header
+        className={`${styles.header} ${isScrolled ? styles.scrolled : ''}`}
+      >
         <div className={`${styles.navbar}`} ref={navbarRef}>
           <div className={`${styles.logo}`} id="logo" ref={logoRef}>
             <img
               src="/images/header/logo-x.png"
               alt=""
-              height={70}
-              width={140}
+              height={60}
+              width={120}
             />
           </div>
           <ul className={`${styles.links}`}>
             <li>
               <div className={`${styles['svgDiv']}`}>
-                <Link href="#">首頁</Link>
+                <Link href="/home">
+                  <h5>首頁</h5>
+                </Link>
                 <img
                   src="/images/header/outer-frame.png"
                   alt=""
@@ -94,7 +114,9 @@ export default function MyHeader() {
                   alt=""
                   className={`${styles.svg}`}
                 />
-                <Link href="/product/list">商品</Link>
+                <Link href="/product/list">
+                  <h5>商品</h5>
+                </Link>
               </div>
             </li>
             <li>
@@ -104,7 +126,9 @@ export default function MyHeader() {
                   alt=""
                   className={`${styles.svg}`}
                 />
-                <Link href="#">課程</Link>
+                <Link href="/course/courselist">
+                  <h5>課程</h5>
+                </Link>
               </div>
             </li>
             <li>
@@ -114,7 +138,9 @@ export default function MyHeader() {
                   alt=""
                   className={`${styles.svg}`}
                 />
-                <Link href="#">文章</Link>
+                <Link href="#">
+                  <h5>文章</h5>
+                </Link>
               </div>
             </li>
           </ul>
@@ -140,14 +166,18 @@ export default function MyHeader() {
               />
             </div>
             <div className={`${styles['love_btn']}`}>
-              <Link href={'/member/fav/favorite-p'}>
+              <button
+                className="btn"
+                type="button"
+                onClick={() => handleToMyFav(isAuth)}
+              >
                 <img
                   src="/images/header/heart.png"
                   alt=""
                   height={25}
                   width={30}
                 />
-              </Link>
+              </button>
             </div>
             <div className={`${styles['action_btn']}`}>
               <Link href={`#`}>
@@ -196,19 +226,20 @@ export default function MyHeader() {
             />
           </div>
           <li>
-            <Link href="首頁">首頁</Link>
+            <Link href="/home">首頁</Link>
           </li>
           <li>
             <Link href="/product/list">商品</Link>
           </li>
           <li>
-            <Link href="課程">課程</Link>
+            <Link href="/course/courselist">課程</Link>
+            <Link href="/course/courselist">課程</Link>
           </li>
           <li>
-            <Link href="文章">文章</Link>
+            <Link href="/article">文章</Link>
           </li>
           <li>
-            <Link href="/member/fav">收藏</Link>
+            <Link href="/member/fav/favorite-p">收藏</Link>
           </li>
           <li>
             <Link href="文章">個人資料</Link>

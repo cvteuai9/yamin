@@ -1,5 +1,6 @@
-.shane-body {
+.shane-body-up{
   background-color: #003e52;
+  margin-top: 6vw;
 }
 
 .shane-course-wood {
@@ -38,7 +39,7 @@
 
 .shane-course-class-all img {
   width: 100%;
-  aspect-ratio: 4/3;
+  aspect-ratio: 16/9;
   /* 額外確保圖片縮放時會有最好的效果 */
   object-fit: contain;
   min-width: 50px;
@@ -156,10 +157,9 @@
   transform: scaleY(0);
   transform-origin: top;
   transition: opacity 0.3s ease, transform 0.3s ease;
-  pointer-events: none;
   max-height: 100px;
   /* 限制下拉選單的最大高度 */
-  overflow-y: auto;
+  overflow: auto;
   /* 當內容超過最大高度時，顯示滾動條 */
 }
 
@@ -168,6 +168,7 @@
   opacity: 1;
   transform: scaleY(1);
   pointer-events: auto;
+  z-index: 1;
 }
 
 .shane-dropdown:focus-within .shane-dropdown-toggle::after {
@@ -176,7 +177,7 @@
 
 /* 選單項目的樣式 */
 .shane-dropdown-menu li {
-  padding: 1vh 2vw;
+  padding-left: 0.5vw;
 }
 
 .shane-dropdown-menu li {
@@ -185,12 +186,12 @@
     color: #b29564;
     background: none;
     border: none;
+    z-index: 1;
   }
 }
 
 .shane-dropdown-flex {
   display: flex;
-  z-index: 1;
 }
 
 .course-shane-number {
@@ -224,7 +225,10 @@
   .shane-course-card-body {
     .description {
       width: auto;
-      height: vh;
+      height: 7vh;
     }
+  }
+  .shane-body-up{
+    margin-top: 13vw;
   }
 }

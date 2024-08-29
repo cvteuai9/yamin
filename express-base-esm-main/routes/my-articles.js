@@ -20,7 +20,61 @@ router.get('/', async function (req, res) {
   // return res.json({ status: 'success', data: { articles } })
   return res.json(articles)
 })
-
+// 拿取收藏資料
+router.get('/favorites', async (req, res) => {
+  try {
+    const user_id = Number(req.query.user_id) || 0
+    const [rows] = await db.execute(
+      'SELECT article_id FROM favorites WHERE user_id = ?',
+      [user_id]
+    )
+    // 防止撈出null或0的文章ID
+    let favoriteArticle = []
+    rows.map((v) => {
+      if (v.article_id !== 0 && v.article_id !== null) {
+        favoriteArticle.push(v.article_id)
+      }
+    })
+    res.status(200).json(favoriteArticle)
+  } catch (error) {
+    console.log(error)
+    res.status(400).json({ error: 'Favorite Article Not Found' })
+  }
+})
+// 新增收藏資訊
+router.put('/favorites', async (req, res) => {
+  try {
+    const user_id = Number(req.query.user_id) || 0
+    const article_id = Number(req.query.article_id) || 0
+    await db.execute(
+      'INSERT INTO favorites (user_id, article_id) VALUES (?, ?)',
+      [user_id, article_id]
+    )
+    return res
+      .status(200)
+      .json({ message: 'Article Favorite Insert successfully' })
+  } catch (error) {
+    console.log(error)
+    res.status(400).json({ error: 'Favorite Article Not Found' })
+  }
+})
+// 刪除收藏資訊
+router.delete('/favorites', async (req, res) => {
+  try {
+    const user_id = Number(req.query.user_id) || 0
+    const article_id = Number(req.query.article_id) || 0
+    await db.execute(
+      'DELETE FROM favorites WHERE user_id =? && article_id =?',
+      [user_id, article_id]
+    )
+    return res
+      .status(200)
+      .json({ message: 'Article Favorite DELETE successfully' })
+  } catch (error) {
+    console.log(error)
+    res.status(400).json({ error: 'Favorite Article Not Found' })
+  }
+})
 router.get('/category', async function (req, res) {
   const [rows] = await db.query('SELECT * FROM articles_category')
   const articles_category = rows
