@@ -97,6 +97,7 @@ export default function CardOne() {
 
   function testSub(e) {
     setSelectedValue(e.target.value)
+    console.log('我想取優惠券的id', e)
     console.log('要看得值', e.target.value)
   }
   function handleSubmit() {
@@ -601,17 +602,24 @@ export default function CardOne() {
                   </>
                 )
               })} */}
-              <option value="" selected>無</option>
+              <option value="" selected>
+                無
+              </option>
               {options.map((v) => {
-                if(v.min_spend_amount < (cart.totalPrice + courseCart.cart.totalPrice)){
-                return (
-                  <>
-                    {<option key={v.id} value={v.discount}>
-                      {v.name}
-                    </option>}
-                  </>
-                )
-              }
+                if (
+                  v.min_spend_amount <
+                  cart.totalPrice + courseCart.cart.totalPrice
+                ) {
+                  return (
+                    <>
+                      {
+                        <option key={v.id} value={v.discount}>
+                          {v.name}
+                        </option>
+                      }
+                    </>
+                  )
+                }
               })}
             </select>
             <div className=" cartSubTotal d-flex justify-content-between mb-5">

@@ -16,15 +16,10 @@ import {
 export default function CartTwo() {
   const [userID, setUserId] = useState(0)
   const { auth } = useAuth()
-  const [options, setOptions] = useState([])
-  const [userCoupons, setUserCoupons] = useState([])
 
   useEffect(() => {
     setUserId(auth.userData.id)
   }, [auth])
-  useEffect(() => {
-    getUserCoupon(userID)
-  }, [userID])
   const { cart, items, increment, decrement, removeItem } = YaminUseCart()
   const { selectedValue, setSelectedValue } = YaminUseCart()
   const courseCart = YaminCourseUseCart()
@@ -53,26 +48,6 @@ export default function CartTwo() {
   })
   // confirm回來用的，在記錄確認之後，line-pay回傳訊息與代碼，例如
   // {returnCode: '1172', returnMessage: 'Existing same orderId.'}
-
-  async function getUserCoupon(userID) {
-    const url = new URL('http://localhost:3005/api/yamin_cart/cart/coupon')
-
-    let searchParams = new URLSearchParams({
-      user_id: userID,
-    })
-    url.search = searchParams
-    const res = await fetch(url)
-    const couponResult = await res.json()
-    setUserCoupons(couponResult)
-    console.log(couponResult)
-    const fetchOptions = async () => {
-      const fetchedOptions = couponResult.map((v) => {
-        return v
-      })
-      setOptions(fetchedOptions)
-    }
-    fetchOptions()
-  }
 
   const allTotalItems = cart.totalItems + courseCart.cart.totalItems
   const allTotalPrice = cart.totalPrice + courseCart.cart.totalPrice
