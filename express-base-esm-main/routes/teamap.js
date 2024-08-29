@@ -22,15 +22,15 @@ router.get('/', async (req, res) => {
       if (v.opening_hours !== '(無提供)') {
         const testString = v.opening_hours
         let splitArray = testString.split('星期')
-        // console.log('splitArray: ', splitArray)
+        console.log('splitArray: ', splitArray)
         let filterArray = splitArray.filter((v) => v !== '')
-        // console.log('filterArray: ', filterArray)
+        console.log('filterArray: ', filterArray)
         let notfinalArray = filterArray.map((v) => v.split(','))
-        // console.log('notfinalArray: ', notfinalArray)
+        console.log('notfinalArray: ', notfinalArray)
         let finalArray = notfinalArray.map((v) => v.filter((x) => x !== ''))
-        // console.log('finalArray: ', finalArray)
+        console.log('finalArray: ', finalArray)
         let lastArray = finalArray.map((v) => v.join(','))
-        // console.log('last: ', lastArray)
+        console.log('last: ', lastArray)
         return { ...v, opening_hours: lastArray }
       } else {
         return v

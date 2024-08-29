@@ -21,7 +21,7 @@ export default async function (sequelize) {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      google_URL: {
+      google_url: {
         type: DataTypes.STRING,
         allowNull: true,
       },
