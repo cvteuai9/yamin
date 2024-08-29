@@ -68,6 +68,21 @@ export default function MyHeader() {
       }
     })
   }, [])
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 50) {
+        setIsScrolled(true)
+      } else {
+        setIsScrolled(false)
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll)
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
   function handleToMyFav(isAuth) {
     if (isAuth) {
       router.push('/member/fav/favorite-p')
@@ -97,7 +112,7 @@ export default function MyHeader() {
           <ul className={`${styles.links}`}>
             <li>
               <div className={`${styles['svgDiv']}`}>
-                <Link href="/home">
+                <Link href="/index">
                   <h5>首頁</h5>
                 </Link>
                 <img
