@@ -27,6 +27,9 @@ export default function CartThree() {
     )
 
     console.log(res.data)
+    if (res.data.status === 'fail') {
+      window.location.href = 'http://localhost:3000/'
+    }
     setorderUUid(res.data.data.info.packages[0].id)
 
     if (res.data.status === 'success') {
