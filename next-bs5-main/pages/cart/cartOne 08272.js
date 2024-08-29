@@ -24,7 +24,7 @@ export default function CardOne() {
   const { auth } = useAuth()
   const [userCoupons, setUserCoupons] = useState([])
   const [options, setOptions] = useState([])
-  // const [selectedValue, setSelectedValue] = useState('')
+  const [selectedValue, setSelectedValue] = useState('')
 
   // useEffect(() => {}, [auth])
   useEffect(() => {
@@ -44,7 +44,7 @@ export default function CardOne() {
   }
 
   const { cart, items, increment, decrement, removeItem } = YaminUseCart()
-  const { selectedValue, setSelectedValue } = YaminUseCart()
+
   const courseCart = YaminCourseUseCart()
   const CartMySwal = withReactContent(Swal)
 
@@ -601,17 +601,14 @@ export default function CardOne() {
                   </>
                 )
               })} */}
-              <option value="" selected>無</option>
               {options.map((v) => {
-                if(v.min_spend_amount < (cart.totalPrice + courseCart.cart.totalPrice)){
                 return (
                   <>
-                    {<option key={v.id} value={v.discount}>
+                    <option key={v.id} value={v.discount}>
                       {v.name}
-                    </option>}
+                    </option>
                   </>
                 )
-              }
               })}
             </select>
             <div className=" cartSubTotal d-flex justify-content-between mb-5">
@@ -643,11 +640,7 @@ export default function CardOne() {
                     )}
                   </h5>
                 ) : (
-                  <h5>
-                    {cart.totalPrice +
-                      courseCart.cart.totalPrice -
-                      Number(selectedValue)}
-                  </h5>
+                  <h5>{cart.totalPrice + courseCart.cart.totalPrice}</h5>
                 )
               ) : (
                 <h5>{cart.totalPrice + courseCart.cart.totalPrice}</h5>
