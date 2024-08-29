@@ -8,9 +8,11 @@ import axios from 'axios'
 const IMAGE_BASE_URL = '/images/yaming/tea_class_picture/' // 圖片基礎路徑
 
 function Viewpager() {
-  const [images, setImages] = useState([]) // 用來儲存圖片 URL 和課程名稱
+  const [images, setImages] = useState([]) // 用來儲存圖片 URL
   const [courseTitles, setCourseTitles] = useState([]) // 用來儲存課程名稱
+  const [descriptions, setDescriptions] = useState([]) // 用來儲存課程敘述
   const [currentTitle, setCurrentTitle] = useState('') // 當前顯示的課程名稱
+  const [currentDescription, setCurrentDescription] = useState('') // 當前顯示的課程敘述
   const index = useRef(0)
   const [ref, { width }] = useMeasure()
   const [props, api] = useSprings(
@@ -41,6 +43,7 @@ function Viewpager() {
           index.current = 0 // 如果在最後一張圖右滑，回到第一張
         }
         setCurrentTitle(courseTitles[index.current]) // 更新當前課程名稱
+        setCurrentDescription(descriptions[index.current]) // 更新當前課程描述
       }
 
       api.start((i) => {
@@ -54,24 +57,27 @@ function Viewpager() {
   )
 
   useEffect(() => {
-    // 從 API 獲取圖片資料和課程名稱
+    // 從 API 獲取圖片資料和課程名稱與描述
     axios
       .get('http://localhost:3005/api/course')
       .then((response) => {
-        // 提取所有課程的 img1, img2, img3 欄位，並生成完整的圖片 URL 和課程名稱
         const imgUrls = []
         const titles = []
+        const descs = []
 
         response.data.courses.forEach((course) => {
           imgUrls.push(`${IMAGE_BASE_URL}${course.img1}`)
           imgUrls.push(`${IMAGE_BASE_URL}${course.img2}`)
           imgUrls.push(`${IMAGE_BASE_URL}${course.img3}`)
           titles.push(course.name, course.name, course.name) // 為每張圖片添加課程名稱
+          descs.push(course.description, course.description, course.description) // 為每張圖片添加課程描述
         })
 
         setImages(imgUrls)
         setCourseTitles(titles)
+        setDescriptions(descs)
         setCurrentTitle(titles[0]) // 預設顯示第一個課程的名稱
+        setCurrentDescription(descs[0]) // 預設顯示第一個課程的描述
       })
       .catch((error) => {
         console.error('Error fetching images:', error)
@@ -80,7 +86,10 @@ function Viewpager() {
 
   return (
     <div ref={ref} className="shane_test_wrapper">
-      <div className="course-title">{currentTitle}</div> {/* 顯示當前課程名稱 */}
+      <div className="course-info">
+        <div className="course-title">{currentTitle}</div> {/* 顯示當前課程名稱 */}
+        <div className="course-description">{currentDescription}</div> {/* 顯示當前課程描述 */}
+      </div>
       {props.map(({ x, display, scale }, i) => (
         <animated.div
           className="shane_test_page"

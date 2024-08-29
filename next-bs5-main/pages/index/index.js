@@ -1,7 +1,61 @@
-import React from 'react'
+import React, { useEffect, useState, useRef } from 'react'
+import Slider from 'react-slick'
 import Link from 'next/link'
+import Viewpager from '@/components/course/index_course'
 
 export default function Yaming() {
+  const [products, setProducts] = useState([])
+
+  const getProducts = async () => {
+    const apiURL = `http://localhost:3005/api/my_index`
+
+    const res = await fetch(apiURL)
+    const data = await res.json()
+    console.log(data)
+    setProducts(data)
+  }
+  useEffect(() => {
+    getProducts()
+  }, [])
+  const settings = {
+    infinite: true, // 無限循環滑動
+    speed: 500, // 滑動速度
+    slidesToShow: 5, // 每次顯示的商品數
+    slidesToScroll: 5, // 每次滑動商品的數量
+    arrows: false, // 左右箭頭
+    autoplay: true, // 啟用自動播放
+    autoplaySpeed: 3000,
+    responsive: [
+      {
+        breakpoint: 1024, // 平板螢幕寬度以下的設定
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 3,
+          infinite: true,
+          autoplaySpeed: 2500,
+        },
+      },
+      {
+        breakpoint: 600, // 手機螢幕寬度以下的設定
+        settings: {
+          slidesToShow: 2, // 顯示 3 個商品
+          slidesToScroll: 2, // 每次滑動 3 個
+          infinite: true,
+          autoplaySpeed: 2000,
+        },
+      },
+      {
+        breakpoint: 480,
+        settings: {
+          slidesToShow: 1, // 顯示 1 個商品
+          slidesToScroll: 1, // 每次滑動 1 個
+          infinite: true,
+          autoplaySpeed: 1500,
+        },
+      },
+    ],
+  }
+
   return (
     <>
       {/* 首頁投影片 */}
@@ -13,16 +67,15 @@ export default function Yaming() {
               autoPlay
               muted
               loop
-              style={{ opacity: '0.5' }}
+              style={{ opacity: '0.4' }}
             />
             <div className="d-flex justify-content-center align-items-center position-absolute ">
               <div className="justify-content-center align-items-center">
                 <img
                   src="images/yaming/index/LOGO 直向.svg"
                   alt=""
-                  width="140px"
+                  width="160px"
                   className="shane-ratio1-img"
-                  style={{ opacity: '0.8' }}
                 />
               </div>
             </div>
@@ -68,7 +121,7 @@ export default function Yaming() {
               <div className="h1 shane-store row text-center justify-content-center">
                 商品
                 <div className="shane-p ">
-                  <div className="p text-center ">store</div>
+                  <div className="p text-center ">Store</div>
                 </div>
               </div>
               <div className="shane-wood  mb-4" />
@@ -83,111 +136,51 @@ export default function Yaming() {
             </div>
           </div>
           <div className="container mt-3 mb-1">
-            <div className="row d-flex justify-content-center align-items-center ms-2 me-2">
-              <div className=".col-12 shane-store1 col-sm-6 col-md-3  text-center ">
-                <div className="shane-store_picture">
-                  <img src="/images/yaming/index/Rectangle 7.png" alt="" />
-                </div>
-                <div className="d-flex justify-content-center align-items-center mt-4 m-0 ">
-                  <div className="shane-wood " />
-                  <div className="h3 shane-store">紅茶</div>
-                  <div className="shane-wood " />
-                </div>
-                <div className="shane-star2">
-                  <img
-                    src="/images/yaming/index/star.png"
-                    alt=""
-                    className="star3"
-                  />
-                  <img src="/images/yaming/index/Vector 25.png" alt="" />
-                  <img
-                    src="/images/yaming/index/star.png"
-                    alt=""
-                    className="star3"
-                  />
-                </div>
-                <div className="shane-p">
-                  <p className="">Red Tea</p>
-                </div>
-              </div>
-              <div className=".col-12 shane-store1 col-sm-6 col-md-3  text-center ">
-                <div className="shane-store_picture">
-                  <img src="/images/yaming/index/Rectangle 7.png" alt="" />
-                </div>
-                <div className="d-flex justify-content-center align-items-center mt-4 m-0 ">
-                  <div className="shane-wood " />
-                  <div className="h3 shane-store">綠茶</div>
-                  <div className="shane-wood " />
-                </div>
-                <div className="shane-star2">
-                  <img
-                    src="/images/yaming/index/star.png"
-                    alt=""
-                    className="star3"
-                  />
-                  <img src="/images/yaming/index/Vector 25.png" alt="" />
-                  <img
-                    src="/images/yaming/index/star.png"
-                    alt=""
-                    className="star3"
-                  />
-                </div>
-                <div className="shane-p">
-                  <p className="">Red Tea</p>
-                </div>
-              </div>
-              <div className=".col-12 shane-store1 col-sm-6 col-md-3  text-center">
-                <div className="shane-store_picture">
-                  <img src="/images/yaming/index/Rectangle 7.png" alt="" />
-                </div>
-                <div className="d-flex justify-content-center align-items-center mt-4 m-0 ">
-                  <div className="shane-wood " />
-                  <div className="h3 shane-store">烏龍茶</div>
-                  <div className="shane-wood " />
-                </div>
-                <div className="shane-star2">
-                  <img
-                    src="/images/yaming/index/star.png"
-                    alt=""
-                    className="star3"
-                  />
-                  <img src="/images/yaming/index/Vector 25.png" alt="" />
-                  <img
-                    src="/images/yaming/index/star.png"
-                    alt=""
-                    className="star3"
-                  />
-                </div>
-                <div className="shane-p">
-                  <p className="">Red Tea</p>
-                </div>
-              </div>
-              <div className=".col-12 shane-store1 col-sm-6 col-md-3 text-center ">
-                <div className="shane-store_picture">
-                  <img src="/images/yaming/index/Rectangle 7.png" alt="" />
-                </div>
-                <div className="d-flex justify-content-center align-items-center mt-4 m-0 ">
-                  <div className="shane-wood " />
-                  <div className="h3 shane-store">其他</div>
-                  <div className="shane-wood " />
-                </div>
-                <div className="shane-star2">
-                  <img
-                    src="/images/yaming/index/star.png"
-                    alt=""
-                    className="star3"
-                  />
-                  <img src="/images/yaming/index/Vector 25.png" alt="" />
-                  <img
-                    src="/images/yaming/index/star.png"
-                    alt=""
-                    className="star3"
-                  />
-                </div>
-                <div className="shane-p">
-                  <p className="">Red Tea</p>
-                </div>
-              </div>
+            <div className="row d-flex justify-content-center align-items-center ms-2 me-2 overflow-x-auto">
+              <Slider {...settings}>
+                {products.map((product, index) => (
+                  <div
+                    key={index}
+                    className="col-12 col-sm-6 col-md-3 text-center mx-2"
+                  >
+                    <div className="shane-store-picture">
+                      <img
+                        src={`images/product/list1/products-images/${product.paths}`}
+                        alt={product.product_name}
+                        className="shane-picture"
+                      />
+                    </div>
+                    <div className="d-flex justify-content-center align-items-center mt-4 m-0">
+                      <Link href={`/product/${product.id}`}>
+                        <div className="h3 shane-store shane-product-name">
+                          <h5>{product.product_name}</h5>
+                        </div>
+                      </Link>
+                    </div>
+                    <div className="shane-star2 ">
+                      <img
+                        src="/images/yaming/index/star.png"
+                        alt=""
+                        className="star3"
+                      />
+                      <img
+                        src="/images/yaming/index/Vector 25.png"
+                        alt=""
+                        height={1}
+                        width={160}
+                      />
+                      <img
+                        src="/images/yaming/index/star.png"
+                        alt=""
+                        className="star3"
+                      />
+                    </div>
+                    <div className="shane-p mt-1">
+                      <p>{product.tea_name}</p>
+                    </div>
+                  </div>
+                ))}
+              </Slider>
             </div>
           </div>
           <div className="container">
@@ -243,11 +236,11 @@ export default function Yaming() {
               <div className="shane-wood  mb-4" />
               <div className="h1 shane-store row text-center justify-content-center">
                 課程
-                <div className="p text-center ">store</div>
+                <div className="p text-center ">Course</div>
               </div>
               <div className="shane-wood  mb-4" />
             </div>
-            <div className="d-flex justify-content-center mb-1">
+            <div className="d-flex justify-content-center mb-1 mb-5">
               <img
                 src="/images/yaming/index/下.png"
                 alt=""
@@ -255,6 +248,7 @@ export default function Yaming() {
                 height={8}
               />
             </div>
+             <Viewpager></Viewpager>
             <div className="shane-activity m-0">
               <div className="row text-center">
                 <div className="col-12 col-md-6 shane-activity justify-content-center align-items-center mt-5">
@@ -389,15 +383,17 @@ export default function Yaming() {
                       height={16}
                     />
                   </div>
-                  <div className="shane-detail">
-                    <h5 className="mt-5 mb-5">課程詳情</h5>
-                    <img
-                      src="/images/yaming/index/Frame 23.png"
-                      alt=""
-                      width={80}
-                      height={16}
-                    />
-                  </div>
+                  <Link href="/course/courselist">
+                    <div className="shane-detail">
+                      <h5 className="mt-5">課程詳情</h5>
+                      <img
+                        src="/images/yaming/index/Frame 23.png"
+                        alt=""
+                        width={80}
+                        height={16}
+                      />
+                    </div>
+                  </Link>
                 </div>
                 <div className="col-12 col-md-6 shane-activity1">
                   <div className="shane-union d-flex justify-content-center align-items-center ms-5">

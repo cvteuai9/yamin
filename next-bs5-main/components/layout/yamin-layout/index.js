@@ -8,7 +8,7 @@ export default function YaminLayout({ children }) {
 
   return (
     <>
-      <MyHeader>
+      <MyHeader className="mt-5">
         <meta name="viewport" content="width=device-width" />
       </MyHeader>
       <main className="flex-shrink-0 mt-3">
