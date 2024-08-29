@@ -19,6 +19,9 @@ export default async function (sequelize) {
       userId: {
         type: DataTypes.INTEGER,
       },
+      coupon_id: {
+        type: DataTypes.INTEGER,
+      },
       amount: {
         type: DataTypes.INTEGER,
       },

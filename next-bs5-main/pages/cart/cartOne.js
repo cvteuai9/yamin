@@ -7,6 +7,7 @@ import withReactContent from 'sweetalert2-react-content'
 import { useRouter } from 'next/router'
 import { YaminCourseUseCart } from '@/hooks/yamin-use-Course-cart'
 import { isArray } from 'lodash'
+import { string } from 'prop-types'
 
 // // {
 //   cartItems = [],
@@ -44,7 +45,8 @@ export default function CardOne() {
   }
 
   const { cart, items, increment, decrement, removeItem } = YaminUseCart()
-  const { selectedValue, setSelectedValue } = YaminUseCart()
+  const { selectedValue, setSelectedValue, selectedId, setSelectedId } =
+    YaminUseCart()
   const courseCart = YaminCourseUseCart()
   const CartMySwal = withReactContent(Swal)
 
@@ -96,9 +98,18 @@ export default function CardOne() {
   }
 
   function testSub(e) {
-    setSelectedValue(e.target.value)
-    console.log('我想取優惠券的id', e)
-    console.log('要看得值', e.target.value)
+    console.log('我想取優惠券的id', e.target.value)
+    console.log(e.target.options[e.target.selectedIndex])
+    // 下面這一行是我select選到的option選項
+    const selectedOption = e.target.options[e.target.selectedIndex]
+    // 下面這一行是我自訂屬性取值的方式
+    const couponId = selectedOption.dataset.couponId
+    setSelectedValue(selectedOption.value)
+    setSelectedId(couponId)
+    // 正确访问 data-coupon-id
+    console.log('訪問訪問', selectedValue, couponId)
+    // setSelectedValue(e.target.value)
+    // setSelectedId
   }
   function handleSubmit() {
     router.push('http://localhost:3000/cart/cartTwoTest')
@@ -613,7 +624,11 @@ export default function CardOne() {
                   return (
                     <>
                       {
-                        <option key={v.id} value={v.discount}>
+                        <option
+                          key={v.id}
+                          data-coupon-id={v.coupon_id}
+                          value={v.discount}
+                        >
                           {v.name}
                         </option>
                       }

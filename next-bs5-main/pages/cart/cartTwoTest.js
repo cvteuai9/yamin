@@ -23,10 +23,12 @@ export default function CartTwo() {
     setUserId(auth.userData.id)
   }, [auth])
   useEffect(() => {
+    // console.log('123', userID)
     getUserCoupon(userID)
   }, [userID])
   const { cart, items, increment, decrement, removeItem } = YaminUseCart()
-  const { selectedValue, setSelectedValue } = YaminUseCart()
+  const { selectedValue, setSelectedValue, selectedId, setSelectedId } =
+    YaminUseCart()
   const courseCart = YaminCourseUseCart()
   // let testLocl = JSON.parse(localStorage.getItem('cart'))
   const router = useRouter()
@@ -56,7 +58,7 @@ export default function CartTwo() {
 
   async function getUserCoupon(userID) {
     const url = new URL('http://localhost:3005/api/yamin_cart/cart/coupon')
-
+    console.log('拿個id', userID)
     let searchParams = new URLSearchParams({
       user_id: userID,
     })
@@ -93,7 +95,9 @@ export default function CartTwo() {
     updatedFormData.amount = allTotalItems
     updatedFormData.totalPrice = allTotalPrice
     updatedFormData.selectedValue = selectedValue
+    updatedFormData.selectedCouponId = Number(selectedId)
     setFormData(updatedFormData)
+    console.log('需要看', formData)
     // formData.amount = allTotalItems
     // formData.totalPrice = allTotalPrice
   }, [
@@ -102,6 +106,8 @@ export default function CartTwo() {
     cart.totalItems,
     cart.totalPrice,
     selectedValue,
+    userID,
+    selectedId,
   ])
   // 信用卡部分
   // 測試
@@ -183,6 +189,7 @@ export default function CartTwo() {
     setFormData({ ...formData, [name]: value })
 
     console.log('111', formData)
+    console.log('222', userID)
   }
 
   const validateForm = () => {
@@ -239,6 +246,7 @@ export default function CartTwo() {
       PostformData.append('totalPrice', formData.totalPrice)
       PostformData.append('userId', formData.userId)
       PostformData.append('cartItem', cart)
+      PostformData.append('selectedCouponId', formData.selectedCouponId)
       items.forEach((item) => {
         console.log('我現在要看的', item)
         PostformData.append(
