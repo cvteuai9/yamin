@@ -1,5 +1,6 @@
 // NE為了測試修改過，如果有衝突麻煩再跟我說一下，感恩～
 import { useState, useEffect, useCallback } from 'react'
+import { useRouter } from 'next/router'
 import Leftnav from '@/components/member/left-nav'
 import Link from 'next/link'
 import {
@@ -11,8 +12,11 @@ import { useAuth } from '@/hooks/my-use-auth'
 import toast, { Toaster } from 'react-hot-toast'
 import MyPreviewUploadImage from '@/components/user/my-preview-upload-image'
 import { avatarBaseUrl } from '@/configs'
+import { useUserProfile } from '@/context/UserProfileContext'
 
 export default function Profile() {
+  const { userProfile, updateUserProfile, avatarVersion, updateAvatar } = useUserProfile()
+  // const router = useRouter()
   // 定義要在此頁呈現/編輯的會員資料初始物件
   const initUserProfile = {
     id: '',
@@ -32,10 +36,11 @@ export default function Profile() {
     phone: '',
   })
   const { auth } = useAuth()
-  const [userProfile, setUserProfile] = useState(initUserProfile)
+  // const [avatarVersion, setAvatarVersion] = useState(Date.now())移動到context去解決
+  // const [userProfile, setUserProfile] = useState(initUserProfile)
   const [hasProfile, setHasProfile] = useState(false)
   const [selectedFile, setSelectedFile] = useState(null)
-  const getUserData = async (id) => {
+  const getUserData = useCallback(async (id) => {
     const res = await getUserById(id)
 
     // console.log('res.data', res.data)
@@ -55,13 +60,13 @@ export default function Profile() {
       }
 
       // 設定到狀態中
-      setUserProfile(dbUserProfile)
+      // setUserProfile(dbUserProfile)
 
       toast.success('會員資料載入成功')
     } else {
       toast.error(`會員資料載入失敗`)
     }
-  }
+  },[])
   // auth載入完成後向資料庫要會員資料
   useEffect(() => {
     if (auth.isAuth) {
@@ -80,7 +85,7 @@ export default function Profile() {
   }, [userProfile])
 
   const handleFieldChange = (e) => {
-    setUserProfile({ ...userProfile, [e.target.name]: e.target.value })
+    updateUserProfile({ ...userProfile, [e.target.name]: e.target.value })
   }
 
   const handleSubmit = async (e) => {
@@ -137,13 +142,14 @@ export default function Profile() {
       const formData = new FormData()
       // 對照server上的檔案名稱 req.files.avatar
       formData.append('avatar', selectedFile)
-      console.log(formData)
+      // console.log(formData)
 
-      const res2 = await updateProfileAvatar(formData)
+      const res2 = await updateAvatar(formData)
 
-      console.log(res2.data)
-      if (res2.data.status === 'success') {
+      // console.log(res2.data)
+      if (res2) {
         toast.success('會員頭像修改成功')
+        // setAvatarVersion(Date.now())  // 更新版本號
       }
     }
 
@@ -195,7 +201,8 @@ export default function Profile() {
 
               {hasProfile ? (
                 <MyPreviewUploadImage
-                  avatarImg={userProfile.user_image}
+                key={avatarVersion}
+                  avatarImg={`${userProfile.user_image}?v=${avatarVersion}`}
                   // uploadImg={updateProfileAvatar}
                   avatarBaseUrl={avatarBaseUrl}
                   // toast={toast}

@@ -76,7 +76,7 @@ export default function ForgetPasswordForm() {
             <img src="/images/mobile-password.png" alt="" width={180} />
           </div>
           <h2 className="text-center my-5">重設密碼</h2>
-          <p>輸入你的會員電子郵件地址，按下&quot;取得驗證碼&ldquo;按鈕後，我們會將密碼重設指示寄送給你。</p>
+          <p className="text-center my-3">輸入你的會員電子郵件地址，按下&quot;取得驗證碼&ldquo;按鈕後，我們會將密碼重設指示寄送給你。</p>
           <div
             className={`mb-3 ${styles['fp-form']}`}
           >
@@ -126,11 +126,11 @@ export default function ForgetPasswordForm() {
             <div
               className={[
                 styles['btn-div'],
-                'm-4 d-flex justify-content-center',
+                'm-2 d-flex justify-content-center',
               ].join(' ')}
             >
               <button
-                className={`${styles['btn-in']} mt-4`}
+                className={`${styles['btn-in']} mt-4 p-0`}
                 onClick={handleResetPassword}
               >
                 重設密碼
@@ -138,10 +138,9 @@ export default function ForgetPasswordForm() {
             </div>
           </div>
           <div
-            className={`${styles['form-footer']} d-flex justify-content-center`}
+            className={`${styles['form-footer']} d-flex justify-content-center mb-5`}
           >
-            <p className="me-2">尚未有會員帳號?</p>
-            <Link href="/member/register">會員註冊</Link>
+            <Link href="/member/login">返回登入</Link>
           </div>
         </div>
         {/* 土司訊息視窗用 */}

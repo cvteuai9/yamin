@@ -19,6 +19,11 @@ import { CiHeart } from "react-icons/ci";
 import { RiCoupon2Line } from 'react-icons/ri'
 import { TiClipboard } from 'react-icons/ti'
 import { CgProfile } from 'react-icons/cg'
+import { FiUser } from "react-icons/fi";
+import { FiUserPlus } from "react-icons/fi";
+import { useUserProfile } from '@/context/UserProfileContext'
+
+
 
 export default function MyHeader() {
   const router = useRouter()
@@ -81,7 +86,7 @@ export default function MyHeader() {
       }
     })
   }, [])
-  
+
   // 增加是否登入會員，顯示照片
   const initUserProfile = {
     id: '',
@@ -93,40 +98,42 @@ export default function MyHeader() {
     user_image: '',
     email: '',
   }
-  const [userProfile, setUserProfile] = useState(initUserProfile)
+  // const [userProfile, setUserProfile] = useState(initUserProfile)
   const [selectedFile, setSelectedFile] = useState(null)
+  const { userProfile, avatarVersion, setUserProfile } = useUserProfile()
+
 
   // 登出登入
   const { auth, setAuth } = useAuth()
   const { loginGoogle, logoutFirebase } = useFirebase()
 
-  // 登入後可以透過id獲取會員資料
-  const getUserData = async (id) => {
-    const res = await getUserById(id)
+  // // 登入後可以透過id獲取會員資料
+  // const getUserData = async (id) => {
+  //   const res = await getUserById(id)
 
-    if (res.data.status === 'success') {
-      // 以下為同步化目前後端資料庫資料，與這裡定義的初始化會員資料物件的資料
-      const dbUser = res.data.data.user
-      // console.log('dbUser ', dbUser) //有ＩＤ
-      const dbUserProfile = { ...initUserProfile }
+  //   if (res.data.status === 'success') {
+  //     // 以下為同步化目前後端資料庫資料，與這裡定義的初始化會員資料物件的資料
+  //     const dbUser = res.data.data.user
+  //     // console.log('dbUser ', dbUser) //有ＩＤ
+  //     const dbUserProfile = { ...initUserProfile }
 
-      for (const key in dbUserProfile) {
-        if (Object.hasOwn(dbUser, key)) {
-          // 這裡要將null值的預設值改為空字串 ''
-          dbUserProfile[key] = dbUser[key] || ''
-        }
-      }
-      // 設定到狀態中
-      setUserProfile(dbUserProfile)
-    }
-  }
+  //     for (const key in dbUserProfile) {
+  //       if (Object.hasOwn(dbUser, key)) {
+  //         // 這裡要將null值的預設值改為空字串 ''
+  //         dbUserProfile[key] = dbUser[key] || ''
+  //       }
+  //     }
+  //     // 設定到狀態中
+  //     setUserProfile(dbUserProfile)
+  //   }
+  // }
   // auth載入完成後向資料庫要會員資料
-  useEffect(() => {
-    if (auth.isAuth) {
-      getUserData(auth.userData.id)
-    }
-    // eslint-disable-next-line
-  }, [auth])
+  // useEffect(() => {
+  //   if (auth.isAuth) {
+  //     getUserData(auth.userData.id)
+  //   }
+  //   // eslint-disable-next-line
+  // }, [auth])
 
   // 處理登出
   const handleLogout = async () => {
@@ -152,7 +159,7 @@ export default function MyHeader() {
     toggleMenu()
     setMenuOpen(false)
   }
-  
+
 
   // 點擊使用者頭像，跳出視窗
   const [menuOpen, setMenuOpen] = useState(false)
@@ -202,6 +209,7 @@ export default function MyHeader() {
       setMenuOpen(false)
     }
   }
+
 
   return (
     <>
@@ -303,7 +311,8 @@ export default function MyHeader() {
               >
                 <div className="header-personimgdiv">
                   <MyPreviewUploadImage
-                    avatarImg={userProfile.user_image}
+                    key={avatarVersion}
+                    avatarImg={`${userProfile.user_image}?v=${avatarVersion}`}
                     // uploadImg={updateProfileAvatar}
                     avatarBaseUrl={avatarBaseUrl}
                     showText={false}
@@ -328,20 +337,27 @@ export default function MyHeader() {
                   <ul className="header-dropdownMenu-ul">
                     {!auth.isAuth && (
                       <>
-                        <div className="d-flex justify-content-center">
-                          <button className="header-login btn btn-reset">
+                        <div className="d-flex">
+                          <div className="header-login btn btn-reset">
                             <div className="user-link-login">
-                              <Link href="/member/login">會員登入</Link>
+                              <Link href="/member/login" className='d-flex align-items-center'
+                              >
+                                <FiUser className="icon me-3" />
+                                會員登入
+                              </Link>
                             </div>
-                          </button>
+                          </div>
                         </div>
-                        <div className="d-flex justify-content-center">
-                          <button className="header-register btn btn-reset">
+                        <div className="d-flex mb-4">
+                          <div className="header-register btn btn-reset">
                             <div className="user-link-register">
-                              <Link href="/member/register">註冊新會員</Link>
+                              <Link href="/member/register" className='d-flex align-items-center'>
+                                <FiUserPlus className="icon me-3" />
+                                註冊新會員</Link>
                             </div>
-                          </button>
+                          </div>
                         </div>
+                        <div className='header-border'></div>
                       </>
                     )}
                     {auth.isAuth && (
@@ -350,7 +366,8 @@ export default function MyHeader() {
                           <div className="header-dropdownMenu-li">
                             <div className="header-personimgdiv-inside">
                               <MyPreviewUploadImage
-                                avatarImg={userProfile.user_image}
+                                key={avatarVersion}
+                                avatarImg={`${userProfile.user_image}?v=${avatarVersion}`}
                                 // uploadImg={updateProfileAvatar}
                                 avatarBaseUrl={avatarBaseUrl}
                                 showText={false}

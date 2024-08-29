@@ -1,5 +1,6 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { useState, useEffect } from 'react'
+import { useUserProfile } from '@/context/UserProfileContext'
 
 export default function MyPreviewUploadImage({
   avatarImg = '',
@@ -11,6 +12,7 @@ export default function MyPreviewUploadImage({
 }) {
   // 預覽圖片
   const [preview, setPreview] = useState('')
+  const { userProfile, avatarKey, avatarVersion } = useUserProfile()
 
   // 當選擇檔案更動時建立預覽圖
   useEffect(() => {
@@ -85,6 +87,7 @@ export default function MyPreviewUploadImage({
         {!showText && (
           <div className="profile-picright">
             <img
+              key={avatarKey}
               src={showImg()}
               alt=""
               width={50}

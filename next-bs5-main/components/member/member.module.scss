@@ -290,12 +290,12 @@
     }
 
     .btn-in {
-      width: 200px;
+      width: 150px;
       background-color: var(--primary2);
       font-size: 1.6rem;
       border: none;
       font-family: 'B2Hana-Regular', sans-serif;
-      padding: 1.3rem;
+      padding: 0;
       color: var(--bg-text-color);
     }
 
@@ -313,7 +313,7 @@
       font-size: 1.6rem;
 
       &:hover {
-        color: var(--button-hover-color);
+        color: var(--primary-light);
       }
     }
   }
