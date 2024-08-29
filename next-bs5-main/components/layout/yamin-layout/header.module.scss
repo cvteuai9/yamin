@@ -1,7 +1,8 @@
 /* Header */
 .header {
   background-color: #003e52;
-  position: relative;
+  position: fixed;
+  z-index: 1000;
   width: 100%;
   @font-face {
     font-family: HanaMinA;

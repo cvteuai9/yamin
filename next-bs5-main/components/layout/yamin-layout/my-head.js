@@ -152,7 +152,7 @@ export default function MyHeader() {
       })
       // 因為解除這些條件才能立刻讓圖片為初始圖片
       setSelectedFile(null)
-      setUserProfile(initUserProfile)
+      setUserProfile({})
     } else {
       toast.error(`登出失敗`)
     }
@@ -481,7 +481,7 @@ export default function MyHeader() {
           </li>
         </div>
       </header>
-      <div className={`${styles.star} mt-3`}>
+      {/* <div className={`${styles.star} mt-3`}>
         <img src="/images/header/star.png" alt="" width={16} height={16} />
         <img
           src="/images/header/vector.png"
@@ -491,7 +491,7 @@ export default function MyHeader() {
           style={{ margin: '0 -2px' }}
         />
         <img src="/images/header/star.png" alt="" width={16} height={16} />
-      </div>
+      </div> */}
       <style jsx>
         {`
           .open {

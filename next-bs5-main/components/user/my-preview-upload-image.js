@@ -12,7 +12,7 @@ export default function MyPreviewUploadImage({
 }) {
   // 預覽圖片
   const [preview, setPreview] = useState('')
-  const { userProfile, avatarKey, avatarVersion } = useUserProfile()
+  const { userProfile, avatarVersion } = useUserProfile()
 
   // 當選擇檔案更動時建立預覽圖
   useEffect(() => {
@@ -45,12 +45,11 @@ export default function MyPreviewUploadImage({
       return preview //⛳️
     }
 
-    if (avatarImg) {
-      return avatarBaseUrl + '/' + avatarImg
-      // avatarBaseUrl = 'http://localhost:3005/avatar'
+    if (userProfile && userProfile.user_image) {
+      return `${avatarBaseUrl}/${userProfile.user_image}?v=${avatarVersion}`
     }
 
-    return avatarBaseUrl + '/' + defaultImg
+    return `${avatarBaseUrl}/${defaultImg}`
   }
 
   return (
@@ -87,7 +86,7 @@ export default function MyPreviewUploadImage({
         {!showText && (
           <div className="profile-picright">
             <img
-              key={avatarKey}
+              key={avatarVersion}
               src={showImg()}
               alt=""
               width={50}

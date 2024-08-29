@@ -189,114 +189,73 @@ export default function LoginForm() {
     alert('送到伺服器去')
   }
   return (
-    <main className={`${styles['login']}`}>
-      <div className="container">
-        <div className="d-flex justify-content-center">
-          <img
-            className={`${styles['main-title']}`}
-            src="/images/main-title/login.svg"
-            alt="login"
-          />
-        </div>
-        <Star />
-        <div className={`${styles['loginsignin']}`}>
-          <div className={`${styles['signinsec1']} text-center mb-4 mt-4`}>
-            <p className="mb-5">會員登入</p>
-            <button
-              className={`${styles['gfast']} btn btn-no-radius`}
-              onClick={() => loginGoogle(callbackGoogleLoginPopup)}
-            >
-              <GoogleLogo className="mx-3" />
-              <p className="m-0 p-0">快速登入</p>
-            </button>
+    <main className={styles.loginPage}>
+      <div className={styles.imageSection}>
+        {/* 這裡可以添加一些覆蓋在圖片上的文字或logo */}
+      </div>
+      <div className={styles.formSection}>
+        <div className={styles.formContainer}>
+          <div className={styles.logoContainer}>
+            <Image src="/images/main-title/login.svg" alt="login" width={200} height={100} />
           </div>
-          <img
-            className={['img-fluid m-5', styles['orline']].join(' ')}
-            src="/images/orline.png"
-            alt=""
-          />
-          <div
-            className={['d-flex flex-column', styles['signinsec2']].join(' ')}
+          <button 
+            className={styles.googleButton} 
+            onClick={() => loginGoogle(callbackGoogleLoginPopup)}
           >
-            <div className="text-center">
-              <p>電子郵件登入</p>
+            <GoogleLogo className={styles.googleIcon} />
+            <span>快速登入</span>
+          </button>
+          <div className={styles.divider}>
+            <span>或</span>
+          </div>
+          <form onSubmit={handleSubmit} className={styles.form}>
+            <div className={styles.inputGroup}>
+              <label htmlFor="email">電子郵件</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={user.email}
+                onChange={handleFieldChange}
+                placeholder="請輸入你的電子郵件"
+              />
+              {errors.email && <span className={styles.error}>{errors.email}</span>}
             </div>
-            <form
-              className={`mb-3 ${styles['register-form']}`}
-              onSubmit={handleSubmit}
-            >
-              <label className="mt-3">
-                電子郵件*
+            <div className={styles.inputGroup}>
+              <label htmlFor="password">密碼</label>
+              <div className={styles.passwordInput}>
                 <input
-                  type="email"
-                  name="email"
-                  placeholder="請輸入你的電子郵件"
-                  value={user.email}
+                  type={showPassword ? 'text' : 'password'}
+                  id="password"
+                  name="password"
+                  value={user.password}
                   onChange={handleFieldChange}
+                  placeholder="請輸入你的密碼"
                 />
-              </label>
-              <span className={`${styles['error']}`}>{errors.email}</span>
-              <label className="mt-3">
-                密碼*
-                <div
-                  className={`${styles['inputarea']} "d-flex justify-between"`}
+                <button 
+                  type="button" 
+                  onClick={() => setShowPassword(!showPassword)}
+                  className={styles.eyeIcon}
                 >
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    name="password"
-                    placeholder="請輸入你的密碼"
-                    value={user.password}
-                    onChange={handleFieldChange}
-                  />
-                  <div>
-                    {showPassword ? (
-                      <RiEyeLine
-                        className={styles['icon']}
-                        onClick={handlePasswordIconClick}
-                      />
-                    ) : (
-                      <RiEyeOffLine
-                        className={styles['icon']}
-                        onClick={handlePasswordIconClick}
-                      />
-                    )}
-                  </div>
-                </div>
-              </label>
-              <span className={`${styles['error']}`}>{errors.password}</span>
-              <div
-                className={[
-                  styles['btn-div'],
-                  'm-4 d-flex justify-content-center',
-                ].join(' ')}
-              >
-                <button
-                  className={`${styles['btn-in']} mt-4`}
-                  type="submit"
-                // onClick={handleLogin}
-                >
-                  登入
+                  {showPassword ? <RiEyeLine /> : <RiEyeOffLine />}
                 </button>
               </div>
-            </form>
-            <div
-              className={`${styles['form-footer']} d-flex justify-content-center`}
-            >
-              <div className='d-flex flex-column'>
-                <div className='d-flex'>
-                  <p className="me-2">尚未有會員帳號?</p>
-                  <Link href="/member/register">會員註冊</Link>
-                </div>
-                <div>
-                  <Link href="/member/forget-password">忘記密碼</Link>
-                </div>
-              </div>
+              {errors.password && <span className={styles.error}>{errors.password}</span>}
             </div>
+            <button type="submit" className={styles.submitButton}>
+              登入
+            </button>
+          </form>
+          <div className={styles.links}>
+            <Link href="/member/register">註冊新帳號</Link>
+            <Link href="/member/forget-password">忘記密碼</Link>
           </div>
         </div>
       </div>
       <Toaster />
     </main>
+  
+
 
     // <main className={`form-member w-100 m-auto text-center`}>
     //   <h2 className="text-center mb-5">會員登入</h2>
