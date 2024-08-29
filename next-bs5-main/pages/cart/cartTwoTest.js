@@ -46,6 +46,7 @@ export default function CartTwo() {
   const allTotalItems = cart.totalItems + courseCart.cart.totalItems
   const allTotalPrice = cart.totalPrice + courseCart.cart.totalPrice
   useEffect(() => {
+    const updatedFormData = { ...formData }
     const allTotalItems = cart.totalItems + courseCart.cart.totalItems
     let allTotalPrice = cart.totalPrice + courseCart.cart.totalPrice
     if (selectedValue < 1) {
@@ -57,13 +58,16 @@ export default function CartTwo() {
     if (!selectedValue) {
       allTotalPrice = cart.totalPrice + courseCart.cart.totalPrice
     }
-    formData.amount = allTotalItems
-    formData.totalPrice = allTotalPrice
+    updatedFormData.amount = allTotalItems
+    updatedFormData.totalPrice = allTotalPrice
+    setFormData(updatedFormData)
+    // formData.amount = allTotalItems
+    // formData.totalPrice = allTotalPrice
   }, [
     allTotalItems,
     allTotalPrice,
     cart.totalItems,
-    cart.totalprice,
+    cart.totalPrice,
     selectedValue,
   ])
   // 信用卡部分
@@ -81,6 +85,7 @@ export default function CartTwo() {
 
   const PostformData = new FormData()
   let getorderId
+  useEffect(() => {}, [getorderId])
   const goLinePay = () => {
     if (window.confirm('確認要導向至LINE Pay進行付款?')) {
       // 先連到node伺服器後，導向至LINE Pay付款頁面
