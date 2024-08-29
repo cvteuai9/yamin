@@ -11,7 +11,8 @@ import { v4 as uuidv4 } from 'uuid'
 import { generateHash, compareHash } from '##/db-helpers/password-hash.js'
 // 檢查空物件, 轉換req.params為數字
 import { getIdParam } from '#db-helpers/db-tool.js'
-import { getAutoSentCouponList } from './coupons.js'
+// eslint-disable-next-line import/namespace
+import { getAutoSentCouponList } from '../routes/coupons.js'
 
 const router = express.Router()
 
