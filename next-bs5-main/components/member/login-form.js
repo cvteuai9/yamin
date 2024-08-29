@@ -13,14 +13,12 @@ import { useRouter } from 'next/router'
 import { login, googleLogin, parseJwt, getUserById } from '@/services/my-user'
 import toast, { Toaster } from 'react-hot-toast'
 
-// import { useAuth } from '@/hooks/use-auth'
 // import GoogleLogo from '@/components/icons/google-logo'
 
 export default function LoginForm() {
   const { auth, setAuth } = useAuth()
 
   const { loginGoogle } = useFirebase()
-  // const { auth, setAuth } = useAuth()
   const router = useRouter()
 
   // 處理google登入後，要向伺服器進行登入動作

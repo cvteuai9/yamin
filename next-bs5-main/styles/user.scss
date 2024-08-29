@@ -1,3 +1,14 @@
+// test忘記密碼
+.test-test-teacher {
+  > p {
+    color: var(--bg-text-color);
+  }
+  >label{
+    color: var(--bg-text-color);
+    font-size: 2rem;
+  }
+}
+
 //user頭像
 .header-personimgdiv {
   position: relative;
@@ -120,7 +131,7 @@
   }
 }
 
-@media (max-width:992px) {
+@media (max-width: 992px) {
   .header-dropdownMenu {
     width: 100vw;
     height: 100vh;
