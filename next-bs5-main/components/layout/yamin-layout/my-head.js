@@ -112,7 +112,7 @@ export default function MyHeader() {
           <ul className={`${styles.links}`}>
             <li>
               <div className={`${styles['svgDiv']}`}>
-                <Link href="/home">
+                <Link href="/index">
                   <h5>首頁</h5>
                 </Link>
                 <img
