@@ -744,4 +744,53 @@ input::placeholder,
   max-height: 400px;
   overflow-y: auto;
 }
-/* ====julia08-26新增--優惠券使用說明視窗 */
+/* ====julia08-26新增--優惠券使用說明視窗
+/* ==========08-27 優惠券領取視窗  */
+.floating-coupon-container {
+  position: absolute;
+  margin-bottom: 1rem;
+  right: 5vw;
+  top: 20vw;
+}
+
+.floating-coupon-button {
+  width: 5rem;
+  height: 15rem;
+  /* background: linear-gradient(to right, #b29564, #d4b690); */
+  background-color: #7d2226;
+  border: none;
+  /* border-radius: 0.5rem; */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  /* color: white; */
+  /* font-weight: bold; */
+  /* font-size: 0.875rem; */
+  display: flex;
+  align-items: center;
+  writing-mode:vertical-rl;
+  justify-content: center;
+  transition: all 0.3s ease;
+  animation: bounce 2s infinite;
+}
+
+.floating-coupon-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+  background: var(--error-color);
+
+}
+
+.floating-coupon-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(178, 149, 100, 0.5);
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+} 
