@@ -63,6 +63,7 @@ export default function ForgetPassword() {
   }
   return (
     <>
+    <div className="test-test-teacher">
       <p>
         測試前請先確認以下項目: <br />
         (a) SMTP寄信與可寄信的Email信箱 <br />
@@ -103,6 +104,7 @@ export default function ForgetPassword() {
       <button onClick={handleResetPassword}>重設密碼</button>
       {/* 土司訊息視窗用 */}
       <Toaster />
+      </div>
     </>
   )
 }

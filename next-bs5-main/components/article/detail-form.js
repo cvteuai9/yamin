@@ -19,6 +19,7 @@ export default function DetailForm() {
   const [categories, setCategories] = useState([])
   const [topArticles, setTopArticles] = useState([]) // 儲存前五篇熱門文章
   const [newArticles, setNewArticles] = useState([]) // 儲存前五篇最新文章
+  const [recommend, setRecommend] = useState([])
   const { auth } = useAuth()
   const [userID, setUserID] = useState(0)
   const [isAuth, setIsAuth] = useState(false)
@@ -32,6 +33,7 @@ export default function DetailForm() {
     let articleThis = data.data.article
     let favoriteArticle = []
     if (isAuth) {
+      // console.log(userID);
       const favoriteArticleUrl = `http://localhost:3005/api/my-articles/favorites?user_id=${userID}`
       const favoriteArticleRes = await fetch(favoriteArticleUrl)
       favoriteArticle = await favoriteArticleRes.json()
@@ -45,6 +47,7 @@ export default function DetailForm() {
     setArticle(articleThis)
   }
   // console.log(article)
+  console.log(auth.userData)
   async function handleFavToggle(article, userID, isAuth) {
     if (isAuth) {
       if (article.fav === false) {
@@ -70,6 +73,15 @@ export default function DetailForm() {
       }
     }
   }
+  const getRecommend = async (id) => {
+    // console.log(id);
+    let apiUrl = `http://localhost:3005/api/my-articles/${id}/recommendations`
+
+    const res = await fetch(apiUrl)
+    const data = await res.json()
+    setRecommend(data.data.topMatches)
+  }
+  console.log(recommend)
   const getViews = async (id) => {
     let apiUrl = `http://localhost:3005/api/my-articles/${id}/views`
 
@@ -104,6 +116,7 @@ export default function DetailForm() {
     if (router.isReady) {
       getArticle(router.query.articleCode, userID, isAuth)
       getViews(router.query.articleCode)
+      getRecommend(router.query.articleCode)
     }
   }, [router.isReady, userID, isAuth])
 
@@ -113,6 +126,15 @@ export default function DetailForm() {
     getNewArticles()
   }, [])
 
+  // 推薦好茶圖片
+  const TeaImage = ({ imagePath }) => {
+    return (
+      <div
+        className="recom-tea-img"
+        style={{ backgroundImage: `url(${imagePath})` }}
+      ></div>
+    )
+  }
   return (
     <>
       <main className="articledetail">
@@ -178,23 +200,29 @@ export default function DetailForm() {
               <div className="article-text bd-b1 p-3 mt-3 mx-4">
                 <p>{article.content}</p>
               </div>
-              <div className="recom-tea mt-3 p-3 bd-b1">
-                <h5 className="p-3">推薦好茶</h5>
-                <div className="recom-tea_group mt-3 mb-5">
-                  <div className="recom-tea-item p-0">
-                    <div className="recom-tea-img"></div>
-                    <div className="recom-tea-text p-3">
-                      <p className="title">
-                        有機紅玉紅茶 Organic Ruby Black Tea - 75g
-                      </p>
-                      <div className="price d-flex">
-                        <p className="me-3">NT$</p>
-                        <p>7500</p>
+              {recommend.length > 0 && (
+                <div className="recom-tea mt-3 p-3 bd-b1">
+                  <h5 className="p-3">推薦好茶</h5>
+                  <div className="recom-tea_group mt-3 mb-5">
+                    {recommend.map((v) => (
+                      <div className="recom-tea-item p-0" key={v.id}>
+                        <Link href={`/product/${v.id}`}>
+                          <TeaImage
+                            imagePath={`/images/product/list1/products-images/${v.paths}`}
+                          />
+                          <div className="recom-tea-text p-3">
+                            <p className="title">{v.product_name}</p>
+                            <div className="price d-flex">
+                              <p className="me-3">NT$</p>
+                              <p>{v.price}</p>
+                            </div>
+                          </div>
+                        </Link>
                       </div>
-                    </div>
+                    ))}
                   </div>
                 </div>
-              </div>
+              )}
               <div className="comment mt-3 p-3">
                 <h5 className="p-3">留言</h5>
                 <div className="comment-block mt-3 mb-5">
@@ -267,7 +295,7 @@ export default function DetailForm() {
                     </div>
                   </div>
                 </div>
-                <div className="col-12 mt-5 mx-0">
+                {/* <div className="col-12 mt-5 mx-0">
                   <div className="search_article bgc-right mx-0">
                     <div className="article_right_title">
                       <div className="section-heading">
@@ -285,7 +313,7 @@ export default function DetailForm() {
                       />
                     </div>
                   </div>
-                </div>
+                </div> */}
                 <div className="col-12 mt-5">
                   <div className="hot_article bgc-right pb-3">
                     <div className="article_right_title">
@@ -306,7 +334,7 @@ export default function DetailForm() {
                           <div>
                             <a
                               className="mt-3 article_title"
-                              href={`/article/detail/${topArticle.id}`}
+                              href={`/article/${topArticle.id}`}
                             >
                               {topArticle.title}
                             </a>
@@ -343,7 +371,7 @@ export default function DetailForm() {
                           <div>
                             <a
                               className="mt-3 article_title"
-                              href={`/article/detail/${newArticle.id}`}
+                              href={`/article/${newArticle.id}`}
                             >
                               {newArticle.title}
                             </a>

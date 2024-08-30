@@ -77,46 +77,51 @@ router.post('/login', async (req, res) => {
   if (!loginUser.email || !loginUser.password) {
     return res.json({ status: 'fail', data: null })
   }
-  const [rows] = await db.query(`SELECT * FROM users WHERE email=? LIMIT 1`, [
-    loginUser.email,
-  ])
+  try {
+    const [rows] = await db.query(`SELECT * FROM users WHERE email=? LIMIT 1`, [
+      loginUser.email,
+    ])
 
-  if (!rows) {
-    res.json({
-      status: 'fail',
-      message: '使用者不存在',
+    if (!rows) {
+      res.json({
+        status: 'fail',
+        message: '使用者不存在',
+      })
+      return
+    }
+    const [user] = rows
+    // compareHash(登入時的密碼純字串, 資料庫中的密碼hash) 比較密碼正確性
+    // isValid=true 代表正確
+    const isValid = await compareHash(loginUser.password, user.password)
+
+    // isValid=false 代表密碼錯誤
+    if (!isValid) {
+      return res.status(401).json({ status: 'error', message: '密碼錯誤' })
+    }
+    // 存取令牌(access token)只需要id和username就足夠，其它資料可以再向資料庫查詢
+    const returnUser = {
+      id: user.id,
+      email: user.email,
+      google_uid: user.google_uid,
+    }
+
+    // 產生存取令牌(access token)，其中包含會員資料
+    const accessToken = jsonwebtoken.sign(returnUser, accessTokenSecret, {
+      expiresIn: '3d',
     })
-    return
+
+    // 使用httpOnly cookie來讓瀏覽器端儲存access token
+    res.cookie('accessToken', accessToken, { httpOnly: true })
+
+    // 傳送access token回應(例如react可以儲存在state中使用)
+    res.json({
+      status: 'success',
+      data: { accessToken },
+    })
+  } catch (error) {
+    console.error('Login error:', error)
+    res.status(500).json({ status: 'error', message: '伺服器錯誤' })
   }
-  const [user] = rows
-  // compareHash(登入時的密碼純字串, 資料庫中的密碼hash) 比較密碼正確性
-  // isValid=true 代表正確
-  const isValid = await compareHash(loginUser.password, user.password)
-
-  // isValid=false 代表密碼錯誤
-  if (!isValid) {
-    return res.json({ status: 'error', message: '密碼錯誤' })
-  }
-  // 存取令牌(access token)只需要id和username就足夠，其它資料可以再向資料庫查詢
-  const returnUser = {
-    id: user.id,
-    email: user.email,
-    google_uid: user.google_uid,
-  }
-
-  // 產生存取令牌(access token)，其中包含會員資料
-  const accessToken = jsonwebtoken.sign(returnUser, accessTokenSecret, {
-    expiresIn: '3d',
-  })
-
-  // 使用httpOnly cookie來讓瀏覽器端儲存access token
-  res.cookie('accessToken', accessToken, { httpOnly: true })
-
-  // 傳送access token回應(例如react可以儲存在state中使用)
-  res.json({
-    status: 'success',
-    data: { accessToken },
-  })
 })
 router.post('/logout', authenticate, (req, res) => {
   // 清除cookie

@@ -229,7 +229,10 @@
     position: absolute;
     width: 30px;
     bottom: 5px;
-    right: 10px; /* 距离父元素左边20像素 */
+    right: 25px; /* 距离父元素左边20像素 */
+    & img {
+      width: 30px;
+    }
   }
   & .favoritep-fabtn:hover {
     transform: scale(1.2);
