@@ -14,9 +14,9 @@ const mailText = (otpToken) => `親愛的網站會員 您好，
     
 ${otpToken}
     
-敬上
+雅茗敬上
 
-台灣 NextJS Inc. 網站`
+`
 
 // create otp
 router.post('/otp', async (req, res, next) => {
@@ -35,7 +35,7 @@ router.post('/otp', async (req, res, next) => {
   // 寄送email
   const mailOptions = {
     // 這裡要改寄送人名稱，email在.env檔中代入
-    from: `"support"<${process.env.SMTP_TO_EMAIL}>`,
+    from: `"雅茗"<${process.env.SMTP_TO_EMAIL}>`,
     to: email,
     subject: '重設密碼要求的電子郵件驗証碼',
     text: mailText(otp.token),
@@ -65,8 +65,8 @@ router.post('/reset', async (req, res) => {
   // updatePassword中驗証otp的存在與合法性(是否有到期)
   const result = await updatePassword(email, token, password)
 
-  if (!result) {
-    return res.json({ status: 'error', message: '修改密碼失敗' })
+  if (result.status === 'fail') {
+    return res.json({ status: 'error', message: result.message })
   }
 
   // 成功

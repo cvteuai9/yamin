@@ -174,6 +174,55 @@ router.get('/:id/views', async (req, res) => {
     res.status(500).json({ status: 'error', message: 'Error updating views' })
   }
 })
+//推薦好茶
+router.get('/:id/recommendations', async function (req, res) {
+  const id = Number(req.params.id) // 假設文章標題從請求參數中獲取
+  const [result] = await db.query('SELECT title FROM articles WHERE id = ?', [
+    id,
+  ])
+  // console.log(result)
+  const articleTitle = result.length > 0 ? result[0].title : null
+  // console.log(articleTitle)
+  // 拆分文章标题为单个字
+  const words = articleTitle.match(/[\u4e00-\u9fa5]/g) || [] // 只提取中文字符
+  // console.log(words)
+  try {
+    // SQL 查詢：根據文章標題匹配茶名，然後返回相應的商品
+    const [products] = await db.query(
+      'SELECT id, product_name,price,paths FROM my_products'
+    )
+    // 計算每個商品的匹配度
+    const matchedProducts = products.map((product) => {
+      let matchCount = 0
+      words.forEach((word) => {
+        if (product.product_name.includes(word)) {
+          matchCount++
+        }
+      })
+      return { ...product, matchCount }
+    })
+    // 根據匹配度進行排序，選擇匹配度最高的前三個商品
+    const topMatches = matchedProducts
+      .filter((product) => product.matchCount > 0) // 只保留有匹配的商品
+      .sort((a, b) => b.matchCount - a.matchCount) // 根據匹配度排序
+      .slice(0, 4) // 取前4個
+    console.log(topMatches)
+    if (topMatches.length > 0) {
+      return res.json({ status: 'success', data: { topMatches } })
+    } else {
+      return res.json({
+        status: 'no_match',
+        message: 'No products matched the article title.',
+      })
+    }
+  } catch (error) {
+    console.error('Error querying the database:', error)
+    return res
+      .status(500)
+      .json({ status: 'error', message: 'Internal server error.' })
+  }
+})
+
 // GET - 得到單筆資料(注意，有動態參數時要寫在GET區段最後面)
 router.get('/:id', async function (req, res) {
   // 轉為數字

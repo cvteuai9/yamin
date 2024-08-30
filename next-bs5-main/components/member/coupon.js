@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react'
 import Leftnav from './left-nav'
 import { FaAngleDown } from 'react-icons/fa6'
 import option from '@/components/article/option.module.sass'
-// ==========08-26 julia_test
 import { Modal, Button } from 'react-bootstrap'
+import { Gift } from 'lucide-react'
 
 // 狀態映射對象
 const statusMapping = {
@@ -12,8 +12,11 @@ const statusMapping = {
   expired: '已過期',
 }
 
+// ========== 修改: 移除獨立的 FloatingCouponImage 組件 ==========
+
 export default function Coupon() {
   const [coupons, setCoupons] = useState([])
+  const [annivCoupons, setAnnivCoupons] = useState([])
   const [activeTab, setActiveTab] = useState('all')
   const [couponCode, setCouponCode] = useState('')
   const [isLoading, setIsLoading] = useState(true)
@@ -21,16 +24,55 @@ export default function Coupon() {
   const [filteredCoupons, setFilteredCoupons] = useState([])
   const [selectedLabel, setSelectedLabel] = useState('全部')
   const [unusedCouponCount, setUnusedCouponCount] = useState(0)
-  // ==========08-26 優惠券使用說明視窗
   const [showModal, setShowModal] = useState(false)
+
+  // ========== 新增: 浮動優惠券相關狀態 ==========
+  const [isOpen, setIsOpen] = useState(false)
+  const [floatingCoupon, setFloatingCoupon] = useState(null)
+
   const handleShowModal = () => setShowModal(true)
-  const handleCloseModal = () => setShowModal(false)
+  const handleCloseModal = () => {
+    // setIsOpen(false);
+    //  updateCouponsAfterClaim()
+    setShowModal(false)
+    setIsOpen(false)
+    updateCouponsAfterClaim()
+  }
   const handleKeyPress = (event) => {
     if (event.key === 'Enter' || event.key === ' ') {
       handleShowModal()
     }
   }
-  // ==============================
+
+  // ========== 新增: 處理浮動優惠券點擊 ==========
+
+  const handleAnnivCouponClick = async () => {
+    // 領取全館優惠券
+    await fetchAnnivCoupons()
+    // 顯示全館優惠券資料
+    setFloatingCoupon(
+      // name: '',
+      // code: '',
+      // discount: '',
+      annivCoupons.data
+    )
+    setIsOpen(true)
+  }
+  // ========== 新增: 0829 ju test ==========
+
+  const updateCouponsAfterClaim = () => {
+    const newCoupons = [...coupons, ...annivCoupons]
+    setCoupons(newCoupons)
+    setFilteredCoupons(newCoupons)
+    fetchCoupons() // 重新獲取所有優惠券
+  }
+
+  // ========== 新增: 處理浮動優惠券鍵盤事件 ==========
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      handleAnnivCouponClick()
+    }
+  }
 
   useEffect(() => {
     fetchCoupons()
@@ -65,6 +107,39 @@ export default function Coupon() {
     }
   }
 
+  const fetchAnnivCoupons = async () => {
+    try {
+      setIsLoading(true)
+      setError(null)
+      const response = await fetch(
+        `http://localhost:3005/api/coupons/claim-anniv-coupons`,
+        {
+          credentials: 'include', // 確保包含 cookies
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      )
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const data = await response.json()
+
+      console.log('Anniv coupons:', data.data)
+      setFloatingCoupon(data.data)
+      setAnnivCoupons(data.data)
+      // setIsOpen(true)
+    } catch (error) {
+      console.error('獲取全館優惠券時出錯:', error)
+      setAnnivCoupons('')
+      setError(error.message || '獲取全館優惠券時出錯')
+    } finally {
+      setIsLoading(false)
+    }
+  }
   const handleTabChange = (tab) => {
     setActiveTab(tab)
     const label =
@@ -95,6 +170,7 @@ export default function Coupon() {
         },
         credentials: 'include', // 確保包含 cookies
         body: JSON.stringify({ couponCode }),
+        // body: JSON.stringify({ isGlobalCoupon: true }), // 添加特殊參數  08-27添加
       })
       const data = await response.json()
 
@@ -129,7 +205,7 @@ export default function Coupon() {
             <img src="/images/group.svg" alt="" style={{ width: '100%' }} />
           </div>
           <div className="col-md-3 col-sm-0">
-          <Leftnav fromCupon="fromCupon" />
+            <Leftnav fromCupon="fromCupon" />
           </div>
           <div className="col-md-9 testmodal">
             <h3 className="goldenf">優惠券</h3>
@@ -169,7 +245,7 @@ export default function Coupon() {
               <Modal.Footer style={{ borderTop: 'none' }}>
                 <Button
                   variant="secondary"
-                  onClick={handleCloseModal}
+                  onClick={() => handleCloseModal()}
                   className="p2"
                 >
                   了解
@@ -255,7 +331,10 @@ export default function Coupon() {
                     ) : (
                       <tr className="">
                         <td colSpan="5" className="text-center p pt-3 goldenf">
-                          沒有可用的優惠券
+                          {/* 沒有可用的優惠券 */}
+                          {activeTab === 'all'
+                            ? '沒有任何優惠券'
+                            : `沒有${statusMapping[activeTab] || ''}優惠券`}
                         </td>
                       </tr>
                     )}
@@ -314,6 +393,57 @@ export default function Coupon() {
           </div>
         </div>
       </div>
+      {/* ==========08-27 優惠券領取視窗 */}
+      {/* ========== 修改: 更新浮動優惠券按鈕和模態框 ========== */}
+      <div className="floating-coupon-container ">
+        <button
+          className="floating-coupon-button p whitef bttn "
+          onClick={handleAnnivCouponClick}
+          onKeyDown={handleKeyDown}
+          aria-label="週年優惠領取"
+          disabled={isLoading}
+        >
+          <Gift size={26} color="white" className="mb-2" />
+
+          {isLoading ? '處理中...' : '週年優惠領取'}
+        </button>
+        <Modal show={isOpen} onHide={handleCloseModal} centered>
+          <Modal.Header closeButton>
+            <Modal.Title>
+              {error ? '領取失敗' : '恭喜您獲得優惠券！'}
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div className="coupon-info">
+              {annivCoupons && annivCoupons.length > 0 ? (
+                <table>
+                  <tbody>
+                    {annivCoupons.map((coupon, index) => (
+                      <tr key={index} className="p2">
+                        <td>優惠券名稱: {coupon.name}</td>
+                        <td>優惠碼: {coupon.code}</td>
+                        <td>折扣: {coupon.discount}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
+                <p>已領取過優惠券！</p>
+              )}
+            </div>
+          </Modal.Body>
+          <Modal.Footer style={{ borderTop: 'none' }}>
+            <Button
+              variant="secondary"
+              onClick={handleCloseModal}
+              className="p2"
+            >
+              確定
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      </div>
+      {/* ==========08-27 優惠券領取視窗 */}
     </>
   )
 }
