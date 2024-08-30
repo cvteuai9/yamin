@@ -4,6 +4,7 @@ import { FaAngleDown } from 'react-icons/fa6'
 import option from '@/components/article/option.module.sass'
 import { Modal, Button } from 'react-bootstrap'
 import { Gift } from 'lucide-react'
+import e from 'express'
 
 // 狀態映射對象
 const statusMapping = {
@@ -123,7 +124,18 @@ export default function Coupon() {
       )
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
+        switch (error) {
+          case 'COUPON_NOT_FOUND':
+            throw new Error('代碼不存在')
+          case 'COUPON_ALREADY_CLAIMED':
+            throw new Error('優惠券已領取')
+          case 'COUPON_EXPIRED':
+            throw new Error('優惠券已失效')
+          case 'ERROR_INPUT':
+            throw new Error('請重新輸入')
+          default:
+            throw new Error('未知的錯誤')
+        }
       }
 
       const data = await response.json()
@@ -416,17 +428,24 @@ export default function Coupon() {
           <Modal.Body>
             <div className="coupon-info">
               {annivCoupons && annivCoupons.length > 0 ? (
-                <table>
-                  <tbody>
-                    {annivCoupons.map((coupon, index) => (
-                      <tr key={index} className="p2">
-                        <td>優惠券名稱: {coupon.name}</td>
-                        <td>優惠碼: {coupon.code}</td>
-                        <td>折扣: {coupon.discount}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                <div>
+                  <table>
+                    <tbody>
+                      {annivCoupons.map((coupon, index) => (
+                        <tr key={index} className="p2">
+                          {/* <td>優惠券名稱: {coupon.name}</td> */}
+                          <td>優惠碼: {coupon.code}</td>
+                          {/* <td>折扣: {coupon.discount}</td> */}
+                          <td className="ps-3">使用方式: {coupon.info}。</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  <hr />
+                  <p className="p2 d-flex justify-content-end">
+                    成功嶺取，活動優惠券共{annivCoupons.length}張！
+                  </p>
+                </div>
               ) : (
                 <p>已領取過優惠券！</p>
               )}
