@@ -272,22 +272,29 @@ input::placeholder,
     /*自己本身高度往上調50%*/
   }
 }
-/* ======視窗更改============================= */
-@media screen and (max-width: 1245px) {
-  .left-nav,
-  .left-nav-line > img {
-    width: 200px;
-    height: auto;
-  }
+.left-nav-line {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-@media screen and (max-width: 960px) {
-  .left-nav,
+
+/* ======視窗更改============================= */
+/* @media screen and (max-width: 1245px) { */
+.left-nav,
+.left-nav-line > img {
+  max-width: 100%;
+  height: auto;
+}
+/* } */
+/* @media screen and (max-width: 960px) { */
+/* .left-nav,
   .left-nav-line > img {
     width: 150px;
     height: auto;
-  }
-}
-@media screen and (max-width: 780px) {
+  } */
+/* } */
+@media screen and (max-width: 768px) {
   .left-nav,
   .left-nav-line > img {
     display: none;
@@ -588,12 +595,23 @@ input::placeholder,
 }
 /* profile */
 /* =================================== */
+.profile-form {
+  width: 100%;
+  .profile-inputtext {
+    font-size: 1.6rem;
+    font-family: 'B2Hana-Regular', sans-serif;
+    font-weight: 100;
+  }
+}
 .profile-pic {
   display: flex;
-
+  margin-top: 30px;
   height: 150px;
 }
 .profile-picleft {
+  .pc-text {
+    margin-top: 30px;
+  }
   display: block;
   width: 50%;
   height: auto;
@@ -606,7 +624,7 @@ input::placeholder,
   } */
 .profile-picright {
   width: 50%;
-  height: 150px;
+  /* height: 150px; */
 }
 
 /* .profile-inputtext::placeholder,
@@ -616,10 +634,10 @@ input::placeholder,
 .profile-inputtext {
   all: unset;
   color: var(--white);
-  width: 800px;
-  height: 22px;
-  padding: 15px 0 15px 15px;
+  width: 100%;
+  padding: 15px;
   border: 1px solid var(--primary2);
+  box-sizing: border-box;
 }
 .profile-inputradio {
   padding: 0;
@@ -629,6 +647,7 @@ input::placeholder,
   align-items: center;
 }
 .profile-btns {
+  width: 100%;
   display: flex;
   padding-top: 32px;
   justify-content: center;
@@ -725,4 +744,53 @@ input::placeholder,
   max-height: 400px;
   overflow-y: auto;
 }
-/* ====julia08-26新增--優惠券使用說明視窗 */
+/* ====julia08-26新增--優惠券使用說明視窗
+/* ==========08-27 優惠券領取視窗  */
+.floating-coupon-container {
+  position: absolute;
+  margin-bottom: 1rem;
+  right: 5vw;
+  top: 20vw;
+}
+
+.floating-coupon-button {
+  width: 5rem;
+  height: 15rem;
+  /* background: linear-gradient(to right, #b29564, #d4b690); */
+  background-color: #7d2226;
+  border: none;
+  /* border-radius: 0.5rem; */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  /* color: white; */
+  /* font-weight: bold; */
+  /* font-size: 0.875rem; */
+  display: flex;
+  align-items: center;
+  writing-mode:vertical-rl;
+  justify-content: center;
+  transition: all 0.3s ease;
+  animation: bounce 2s infinite;
+}
+
+.floating-coupon-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+  background: var(--error-color);
+
+}
+
+.floating-coupon-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(178, 149, 100, 0.5);
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+} 

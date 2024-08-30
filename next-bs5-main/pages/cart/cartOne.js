@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
 import { YaminUseCart } from '@/hooks/yamin-use-cart'
+import { useAuth } from '@/hooks/my-use-auth'
 import React from 'react'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import { useRouter } from 'next/router'
 import { YaminCourseUseCart } from '@/hooks/yamin-use-Course-cart'
+import { isArray } from 'lodash'
 
 // // {
 //   cartItems = [],
@@ -16,17 +18,33 @@ import { YaminCourseUseCart } from '@/hooks/yamin-use-Course-cart'
 // }
 export default function CardOne() {
   const [hydrated, setHydrated] = useState(false)
+  const [userID, setUserId] = useState(0)
+  const [couponID, CouponId] = useState(0)
+  const router = useRouter()
+  const { auth } = useAuth()
+  const [userCoupons, setUserCoupons] = useState([])
+  const [options, setOptions] = useState([])
+  // const [selectedValue, setSelectedValue] = useState('')
 
+  // useEffect(() => {}, [auth])
   useEffect(() => {
     setHydrated(true)
   }, [])
 
+  useEffect(() => {
+    setUserId(auth.userData.id)
+  }, [auth])
+
+  useEffect(() => {
+    getUserCoupon(userID)
+  }, [userID])
+  useEffect(() => {}, [userCoupons])
   if (!hydrated) {
     return null
   }
 
   const { cart, items, increment, decrement, removeItem } = YaminUseCart()
-
+  const { selectedValue, setSelectedValue } = YaminUseCart()
   const courseCart = YaminCourseUseCart()
   const CartMySwal = withReactContent(Swal)
 
@@ -56,11 +74,35 @@ export default function CardOne() {
       }
     })
   }
-  const router = useRouter()
+
+  async function getUserCoupon(userID) {
+    const url = new URL('http://localhost:3005/api/yamin_cart/cart/coupon')
+
+    let searchParams = new URLSearchParams({
+      user_id: userID,
+    })
+    url.search = searchParams
+    const res = await fetch(url)
+    const couponResult = await res.json()
+    setUserCoupons(couponResult)
+    // console.log(couponResult)
+    const fetchOptions = async () => {
+      const fetchedOptions = couponResult.map((v) => {
+        return v
+      })
+      setOptions(fetchedOptions)
+    }
+    fetchOptions()
+  }
+
+  function testSub(e) {
+    setSelectedValue(e.target.value)
+    console.log('要看得值', e.target.value)
+  }
   function handleSubmit() {
     router.push('http://localhost:3000/cart/cartTwoTest')
   }
-  console.log('課程資訊')
+  // console.log('課程資訊')
   return (
     <>
       <div className="container-fluid cart ">
@@ -543,8 +585,34 @@ export default function CardOne() {
         <h2 className="text-center mb-5">付款摘要</h2>
         <div className="cartSubTotalBor py-5 mb-5 d-flex justify-content-center">
           <div className="cartSubTotal mb-5 h5  colorWhite">
-            <select name="" id="" className="cartSelect h5 mb-5">
-              <option value={1000}>優惠券選擇</option>
+            <select
+              name=""
+              id=""
+              className="cartSelect h5 mb-5"
+              value={selectedValue}
+              onChange={testSub}
+            >
+              {/* {userCoupons.map((v) => {
+                return (
+                  <>
+                    <option value={v.discount} key={v.id}>
+                      {v.name}
+                    </option>
+                  </>
+                )
+              })} */}
+              <option value="" selected>無</option>
+              {options.map((v) => {
+                if(v.min_spend_amount < (cart.totalPrice + courseCart.cart.totalPrice)){
+                return (
+                  <>
+                    {<option key={v.id} value={v.discount}>
+                      {v.name}
+                    </option>}
+                  </>
+                )
+              }
+              })}
             </select>
             <div className=" cartSubTotal d-flex justify-content-between mb-5">
               <h5>總計:</h5>
@@ -552,11 +620,38 @@ export default function CardOne() {
             </div>
             <div className=" cartSubTotal d-flex justify-content-between mb-5">
               <h5>優惠券折抵:</h5>
-              <h5>$3000</h5>
+              {/* <h5>{${selectedValue}}</h5> */}
+              {selectedValue ? (
+                selectedValue < 1 ? (
+                  <h5>{selectedValue * 100}折</h5>
+                ) : (
+                  <h5>${selectedValue}</h5>
+                )
+              ) : (
+                <h5>$0</h5>
+              )}
             </div>
             <div className=" cartSubTotal d-flex justify-content-between ">
               <h5>應付金額:</h5>
-              <h5>$3000</h5>
+              {/* <h5>$3000</h5> */}
+              {selectedValue ? (
+                selectedValue < 1 ? (
+                  <h5>
+                    {Math.floor(
+                      Number(selectedValue) *
+                        (cart.totalPrice + courseCart.cart.totalPrice)
+                    )}
+                  </h5>
+                ) : (
+                  <h5>
+                    {cart.totalPrice +
+                      courseCart.cart.totalPrice -
+                      Number(selectedValue)}
+                  </h5>
+                )
+              ) : (
+                <h5>{cart.totalPrice + courseCart.cart.totalPrice}</h5>
+              )}
             </div>
           </div>
         </div>

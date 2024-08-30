@@ -15,6 +15,7 @@ export const initUserData = {
   // line_uid: '',
   // name: '',
   email: '',
+  user_image: '',
 }
 
 export const AuthProvider = ({ children }) => {
@@ -65,6 +66,7 @@ export const AuthProvider = ({ children }) => {
     '/order',
   ]
   useEffect(() => {
+    // 加上protectedRoutes.includes(router.pathname)防止在不用保護的網頁檢查登入狀態而報錯
     if (!hasCheckedAuth && router.isReady) {
       handleCheckAuth()
       setHasCheckedAuth(true)
@@ -83,9 +85,43 @@ export const AuthProvider = ({ children }) => {
       localStorage.removeItem('userIntention')
     }
   }, [])
+
   const [loading, setLoading] = useState(true)
+  // 檢查會員認証用
+  // 每次重新到網站中，或重新整理，都會執行這個函式，用於向伺服器查詢取回原本登入會員的資料
+  // 因為1.	JWT 記憶體儲存：
+  // • 當使用者登入成功後，伺服器會產生一個 JWT，並將它儲存在瀏覽器的 httpOnly cookie 中。這個 JWT 會包含一些使用者的基本資訊（如 user_id）。
+  const handleCheckAuth = async () => {
+    try {
+      const res = await checkAuth()
+      if (res.data.status === 'success') {
+        const dbUser = res.data.data.user
+        const userData = { ...initUserData }
+        for (const key in userData) {
+          if (Object.hasOwn(dbUser, key)) {
+            userData[key] = dbUser[key] || ''
+          }
+        }
+        setAuth({ isAuth: true, userData })
+      } else {
+        console.warn(res.data)
+        if (protectedRoutes.includes(router.pathname)) {
+          router.push(loginRoute)
+        }
+      }
+    } catch (error) {
+      console.error('Authentication check failed:', error)
+      // 這裡的錯誤處理防止報錯
+      if (protectedRoutes.includes(router.pathname)) {
+        router.push(loginRoute)
+      }
+    } finally {
+      setLoading(false) // 認證檢查完成後停止加載狀態
+    }
+  }
 
   useEffect(() => {
+    // 等到登入驗證流程完成後，才會跑下列程式
     if (!loading) {
       if (typeof window !== 'undefined') {
         console.log('Checking auth and pathname:', auth.isAuth, router.pathname)
@@ -110,32 +146,8 @@ export const AuthProvider = ({ children }) => {
       }
     }
   }, [loading, router.isReady, router.pathname, auth])
-  // 檢查會員認証用
-  // 每次重新到網站中，或重新整理，都會執行這個函式，用於向伺服器查詢取回原本登入會員的資料
-  // 因為1.	JWT 記憶體儲存：
-  // • 當使用者登入成功後，伺服器會產生一個 JWT，並將它儲存在瀏覽器的 httpOnly cookie 中。這個 JWT 會包含一些使用者的基本資訊（如 user_id）。
-  const handleCheckAuth = async () => {
-    const res = await checkAuth()
-
-    if (res.data.status === 'success') {
-      const dbUser = res.data.data.user
-      const userData = { ...initUserData }
-
-      for (const key in userData) {
-        if (Object.hasOwn(dbUser, key)) {
-          userData[key] = dbUser[key] || ''
-        }
-      }
-      setAuth({ isAuth: true, userData })
-    } else {
-      console.warn(res.data)
-      if (protectedRoutes.includes(router.pathname)) {
-        router.push(loginRoute)
-      }
-    }
-
-    setLoading(false) // 認證檢查完成後停止加載狀態
-  }
+  
+  
 
   return (
     <AuthContext.Provider

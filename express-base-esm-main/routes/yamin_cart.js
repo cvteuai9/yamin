@@ -5,6 +5,8 @@ const router = express.Router()
 import { Op, UUIDV4 } from 'sequelize'
 import sequelize from '#configs/db.js'
 import moment from 'moment'
+import authenticate from '../middlewares/authenticate.js'
+import { v4 as uuidv4 } from 'uuid'
 // import { result } from 'lodash'
 const { YaminOrder, YaminOrderDetail } = sequelize.models
 
@@ -26,6 +28,19 @@ let LineOrderInsertId
 let linePayState
 /* GET home page. */
 router.use(express.json())
+router.get('/cart/coupon', async (req, res) => {
+  try {
+    const Copuser_id = req.query.user_id || 0
+    console.log('使用者id', Copuser_id)
+    let GetUserCouponSQL = `SELECT coupons.* , uc.* FROM users_coupons uc JOIN coupons ON coupons.id = uc.coupon_id WHERE user_id=${Copuser_id}`
+    const testCouSql = await db.query(GetUserCouponSQL)
+    console.log('測試撈庫鵬卷', testCouSql[0])
+    return res.json(testCouSql[0])
+  } catch (err) {
+    console.log(err)
+    return res.status(404).json({ error: 'Coupons Not Found' })
+  }
+})
 router.post('/', async (req, res) => {
   // const [user, created] = await User.findOrCreate({
   //   where: {
@@ -442,6 +457,7 @@ router.post('/linepay', async (req, res) => {
 
 router.get('/linepay', async (req, res) => {
   const today = moment().format()
+  const packageId = uuidv4()
   console.log(LineOrderInsertId)
 
   if (linePayState === 'line') {
@@ -466,7 +482,7 @@ router.get('/linepay', async (req, res) => {
       console.log('line416', testline[0][0])
       // 老師的部分
       LinePayOrder = {
-        orderId: testline[0][0].id,
+        orderId: testline[0][0].order_uuid,
         currency: 'TWD',
         amount: testline[0][0].total_price,
         packages: [
@@ -475,7 +491,7 @@ router.get('/linepay', async (req, res) => {
             amount: testline[0][0].total_price,
             products: [
               {
-                id: testline[0][0].id,
+                id: packageId,
                 name: `訂單編號:${testline[0][0].order_uuid}`,
                 quantity: 1,
                 price: testline[0][0].total_price,
@@ -553,7 +569,7 @@ router.get('/confirm', async (req, res) => {
   // 網址上需要有transactionId
 
   const transactionId = req.query.transactionId
-  console.log(transactionId)
+  console.log('0829看的', transactionId)
   // 從資料庫取得交易資料
   // const dbOrder = await Purchase_Order.findOne({
   //   where: { transaction_id: transactionId },
@@ -611,7 +627,7 @@ router.get('/confirm', async (req, res) => {
 
     // mysql方式
     const lineResultSql =
-      'UPDATE YaminOrder SET status = ?, return_code = ?, confirm =? WHERE id = ?'
+      'UPDATE YaminOrder SET status = ?, return_code = ?, confirm =? WHERE order_uuid = ?'
     const lineResult = await db.query(lineResultSql, [
       status,
       linePayResponse.body.returnCode,
