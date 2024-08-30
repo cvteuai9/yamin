@@ -19,6 +19,7 @@ export default function DetailForm() {
   const [categories, setCategories] = useState([])
   const [topArticles, setTopArticles] = useState([]) // 儲存前五篇熱門文章
   const [newArticles, setNewArticles] = useState([]) // 儲存前五篇最新文章
+  const [recommend, setRecommend] = useState([])
   const { auth } = useAuth()
   const [userID, setUserID] = useState(0)
   const [isAuth, setIsAuth] = useState(false)
@@ -69,6 +70,14 @@ export default function DetailForm() {
         router.push('/member/login')
       }
     }
+  }
+  const getRecommend = async (id) => {
+    // console.log(id);
+    let apiUrl = `http://localhost:3005/api/my-articles/${id}/recommendations`
+
+    const res = await fetch(apiUrl)
+    const data = await res.json()
+    setRecommend(data.data.topMatches)
   }
   const getViews = async (id) => {
     let apiUrl = `http://localhost:3005/api/my-articles/${id}/views`
@@ -190,26 +199,26 @@ export default function DetailForm() {
               </div>
               {recommend.length > 0 && (
                 <div className="recom-tea mt-3 p-3 bd-b1">
-                <h5 className="p-3">推薦好茶</h5>
-                <div className="recom-tea_group mt-3 mb-5">
-                  {recommend.map((v) => (
-                    <div className="recom-tea-item p-0" key={v.id}>
-                      <Link href={`/product/${v.id}`}>
-                        <TeaImage
-                          imagePath={`/images/product/list1/products-images/${v.paths}`}
-                        />
-                        <div className="recom-tea-text p-3">
-                          <p className="title">{v.product_name}</p>
-                          <div className="price d-flex">
-                            <p className="me-3">NT$</p>
-                            <p>{v.price}</p>
+                  <h5 className="p-3">推薦好茶</h5>
+                  <div className="recom-tea_group mt-3 mb-5">
+                    {recommend.map((v) => (
+                      <div className="recom-tea-item p-0" key={v.id}>
+                        <Link href={`/product/${v.id}`}>
+                          <TeaImage
+                            imagePath={`/images/product/list1/products-images/${v.paths}`}
+                          />
+                          <div className="recom-tea-text p-3">
+                            <p className="title">{v.product_name}</p>
+                            <div className="price d-flex">
+                              <p className="me-3">NT$</p>
+                              <p>{v.price}</p>
+                            </div>
                           </div>
-                        </div>
-                      </Link>
-                    </div>
-                  ))}
+                        </Link>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
               )}
               <div className="comment mt-3 p-3">
                 <h5 className="p-3">留言</h5>

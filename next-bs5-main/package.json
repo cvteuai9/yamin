@@ -11,8 +11,8 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.6.0",
     "@googlemaps/markerclusterer": "^2.5.3",
-    "@vis.gl/react-google-maps": "^1.1.0",
     "@react-spring/web": "^9.7.4",
+    "@vis.gl/react-google-maps": "^1.1.0",
     "axios": "^1.7.5",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
@@ -24,6 +24,7 @@
     "lodash": "^4.17.21",
     "lodash.clamp": "^4.0.3",
     "lottie-react": "^2.4.0",
+    "lucide-react": "^0.436.0",
     "next": "^14.2.3",
     "nextjs-toploader": "^1.6.12",
     "prop-types": "^15.8.1",
