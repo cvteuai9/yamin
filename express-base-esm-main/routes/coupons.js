@@ -47,6 +47,7 @@ export async function getUnClaimedAnnivCouponListById(userId) {
         name
         ,code
         ,discount
+        ,info
         ,uc.user_id
         FROM coupons AS c
           LEFT JOIN users_coupons AS uc 
@@ -71,7 +72,7 @@ export async function getUnClaimedAnnivCouponListById(userId) {
 
     // 多個元素的情況，使用 map
     return coupons
-      .map(({ name, code, discount }) => ({ name, code, discount }))
+      .map(({ name, code, discount, info }) => ({ name, code, discount, info }))
       .filter((coupon) => coupon.code)
   } catch (error) {
     console.error('Error fetching anniv coupons:', error)
@@ -93,7 +94,7 @@ router.post(
       // 全部都領過為0，返回不可重複領取
       if (annivCoupons.length === 0) {
         return res.status(401).json({
-          error: 'ALREADY_CLAIMED_ALL',
+          error: 'COUPON_ALREADY_CLAIMED',
           status: 'failed',
           data: null,
         })
@@ -183,7 +184,7 @@ router.post(
         [userId, couponCode]
       )
       if (claimed.length > 0) {
-        return res.status(404).json({ error: 'COUPON_ALREADY_CLAIMED' })
+        return res.status(401).json({ error: 'COUPON_ALREADY_CLAIMED' })
       }
 
       // 首先檢查優惠券存在且已開放
@@ -198,7 +199,7 @@ router.post(
       )
 
       if (coupons.length === 0) {
-        return res.status(404).json({ error: 'COUPON_NOT_FOUND' })
+        return res.status(401).json({ error: 'COUPON_NOT_FOUND' })
       }
 
       // 首先檢查優惠券是否過期
@@ -213,7 +214,7 @@ router.post(
       )
 
       if (expired.length === 1) {
-        return res.status(404).json({ error: 'COUPON_EXPIRED' })
+        return res.status(401).json({ error: 'COUPON_EXPIRED' })
       }
 
       const couponId = coupons[0].id
