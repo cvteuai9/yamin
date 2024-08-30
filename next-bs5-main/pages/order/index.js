@@ -1,10 +1,24 @@
 import React, { useEffect, useState } from 'react'
 import Leftnav from '@/components/member/left-nav'
+import { useAuth } from '@/hooks/my-use-auth'
 export default function OrderOne() {
+  const { auth } = useAuth()
+  const [userID, setUserId] = useState(0)
   const [orderDetail, setOrderDetail] = useState([])
-  async function getOrderDetails() {
+  useEffect(() => {
+    setUserId(auth.userData.id)
+  }, [auth])
+  useEffect(() => {
+    getOrderDetails(userID)
+  }, [userID])
+  async function getOrderDetails(userID) {
     try {
       const apiUrl = new URL('http://localhost:3005/api/yamin_order')
+      let searchParams = new URLSearchParams({
+        user_id: userID,
+      })
+      apiUrl.search = searchParams
+
       const res = await fetch(apiUrl)
       const data = await res.json()
       setOrderDetail(data)
@@ -14,9 +28,45 @@ export default function OrderOne() {
     }
   }
 
-  useEffect(() => {
-    getOrderDetails()
-  }, [])
+  async function CheckOrderDetail(orderId, orderState) {
+    try {
+      const apiUrl = new URL('http://localhost:3005/api/yamin_order/orderId')
+      let searchParams = new URLSearchParams({
+        orderId: orderId,
+        orderState: orderState,
+      })
+
+      apiUrl.search = searchParams
+      const res = await fetch(apiUrl)
+      const data = await res.json()
+      orderId = parseInt(orderId)
+      switch (orderState) {
+        case 1:
+          console.log('看switch', orderState)
+          window.location.href = `http://localhost:3000/order/orderTwoOneList?orderId=${orderId}`
+          break
+        case 2:
+          console.log('看switch', orderState)
+          window.location.href = `http://localhost:3000/order/orderTwoTwoList?orderId=${orderId}`
+          break
+        case 3:
+          console.log('看switch', orderState)
+          window.location.href = `http://localhost:3000/order/orderTwoThreeList?orderId=${orderId}`
+          break
+        case 4:
+          console.log('看switch', orderState)
+          window.location.href = `http://localhost:3000/order/orderTwoFourList?orderId=${orderId}`
+          break
+        case 5:
+          console.log('看switch', orderState)
+          window.location.href = `http://localhost:3000/order/orderTwoFiveList?orderId=${orderId}`
+          break
+      }
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
   console.log(orderDetail)
   return (
     <>
@@ -161,7 +211,12 @@ export default function OrderOne() {
                   </div>
                   <div className="orderListCol col-1">
                     <h5 className="">
-                      <button className="orderListBtn">
+                      <button
+                        className="orderListBtn"
+                        onClick={() => {
+                          CheckOrderDetail(v.id, v.state)
+                        }}
+                      >
                         <i className="fa-solid fa-magnifying-glass" />
                       </button>
                     </h5>

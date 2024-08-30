@@ -247,6 +247,7 @@ export default function CartTwo() {
       PostformData.append('userId', formData.userId)
       PostformData.append('cartItem', cart)
       PostformData.append('selectedCouponId', formData.selectedCouponId)
+      PostformData.append('selectedValue', formData.selectedValue)
       items.forEach((item) => {
         console.log('我現在要看的', item)
         PostformData.append(
@@ -286,7 +287,7 @@ export default function CartTwo() {
         console.log('123', (PostformData[key] = value))
       }
       // linepay測試
-      if (formData.payState === 'line') {
+      if (formData.payState === 'linepay') {
         const url = 'http://localhost:3005/api/yamin_cart/linepay'
         await fetch(url, {
           method: 'POST',
@@ -743,7 +744,7 @@ export default function CartTwo() {
                 type="radio"
                 id="cartBuy-linepay"
                 name="payState"
-                value="line"
+                value="linepay"
                 className="cartBuyInput cartBuy-linepay"
                 onChange={handleLinePayChange}
               />
