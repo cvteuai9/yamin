@@ -10,6 +10,8 @@ import '@/styles/order/order.scss'
 import '@/styles/order/PayCard.scss'
 import '@fortawesome/fontawesome-free/css/all.min.css'
 import 'react-credit-cards-2/dist/es/styles-compiled.css'
+// 茶館/茶廠地圖
+import '@/styles/teamap.scss'
 
 import '@/styles/star.scss'
 import '@/styles/article.scss'

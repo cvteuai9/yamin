@@ -15,15 +15,13 @@ import useFirebase from '@/hooks/use-firebase'
 import toast, { Toaster } from 'react-hot-toast'
 import { useRouter } from 'next/router'
 import { IoLogOutOutline } from 'react-icons/io5'
-import { CiHeart } from "react-icons/ci";
+import { CiHeart } from 'react-icons/ci'
 import { RiCoupon2Line } from 'react-icons/ri'
 import { TiClipboard } from 'react-icons/ti'
 import { CgProfile } from 'react-icons/cg'
-import { FiUser } from "react-icons/fi";
-import { FiUserPlus } from "react-icons/fi";
+import { FiUser } from 'react-icons/fi'
+import { FiUserPlus } from 'react-icons/fi'
 import { useUserProfile } from '@/context/UserProfileContext'
-
-
 
 export default function MyHeader() {
   const router = useRouter()
@@ -132,9 +130,7 @@ export default function MyHeader() {
   const [selectedFile, setSelectedFile] = useState(null)
   const { userProfile, avatarVersion, setUserProfile } = useUserProfile()
 
-
   // 登出登入
-
   const { loginGoogle, logoutFirebase } = useFirebase()
 
   // // 登入後可以透過id獲取會員資料
@@ -190,7 +186,6 @@ export default function MyHeader() {
     setMenuOpen(false)
   }
 
-
   // 點擊使用者頭像，跳出視窗
   const [menuOpen, setMenuOpen] = useState(false)
   // 創建了一個 menuRef，並將其附加到彈出選單的 DOM 元素上。
@@ -199,7 +194,7 @@ export default function MyHeader() {
 
   const toggleMenu = (e) => {
     if (e) {
-      e.stopPropagation(); // 確保 e 不為 undefined
+      e.stopPropagation() // 確保 e 不為 undefined
     } // 阻止事件冒泡
     setMenuOpen((prevState) => !prevState) //prevState => !prevState 是一個回調函數，它接收當前的 menuOpen 狀態（prevState），並返回相反的狀態值（如果當前為 true，則返回 false，反之亦然）。
   }
@@ -239,7 +234,6 @@ export default function MyHeader() {
       setMenuOpen(false)
     }
   }
-
 
   return (
     <>
@@ -387,7 +381,9 @@ export default function MyHeader() {
                         <div className="d-flex">
                           <div className="header-login btn btn-reset">
                             <div className="user-link-login">
-                              <Link href="/member/login" className='d-flex align-items-center'
+                              <Link
+                                href="/member/login"
+                                className="d-flex align-items-center"
                               >
                                 <FiUser className="icon me-3" />
                                 會員登入
@@ -398,13 +394,17 @@ export default function MyHeader() {
                         <div className="d-flex mb-4">
                           <div className="header-register btn btn-reset">
                             <div className="user-link-register">
-                              <Link href="/member/register" className='d-flex align-items-center'>
+                              <Link
+                                href="/member/register"
+                                className="d-flex align-items-center"
+                              >
                                 <FiUserPlus className="icon me-3" />
-                                註冊新會員</Link>
+                                註冊新會員
+                              </Link>
                             </div>
                           </div>
                         </div>
-                        <div className='header-border'></div>
+                        <div className="header-border"></div>
                       </>
                     )}
                     {auth.isAuth && (
