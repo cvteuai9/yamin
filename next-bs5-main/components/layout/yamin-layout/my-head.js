@@ -37,8 +37,8 @@ export default function MyHeader() {
   const searchFormRef = useRef(null)
   const searchFormCloseBtnRef = useRef(null)
   const [isScrolled, setIsScrolled] = useState(false)
-  const { auth } = useAuth()
   const [isAuth, setIsAuth] = useState(false)
+  const { auth, setAuth } = useAuth()
 
   async function handleSearchProduct() {
     const searchForm = searchFormRef.current
@@ -134,7 +134,7 @@ export default function MyHeader() {
 
 
   // 登出登入
-  const { auth, setAuth } = useAuth()
+
   const { loginGoogle, logoutFirebase } = useFirebase()
 
   // // 登入後可以透過id獲取會員資料
@@ -535,7 +535,7 @@ export default function MyHeader() {
         </div>
       </header>
       {/* 搜尋彈出視窗 */}
-      {/* <div
+      <div
         className="modal fade"
         id="searchForm"
         tabIndex={-1}
@@ -588,7 +588,7 @@ export default function MyHeader() {
             </div>
           </div>
         </div>
-      </div> */}
+      </div>
       <style jsx>
         {`
           .open {
