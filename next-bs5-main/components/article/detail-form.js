@@ -33,6 +33,7 @@ export default function DetailForm() {
     let articleThis = data.data.article
     let favoriteArticle = []
     if (isAuth) {
+      // console.log(userID);
       const favoriteArticleUrl = `http://localhost:3005/api/my-articles/favorites?user_id=${userID}`
       const favoriteArticleRes = await fetch(favoriteArticleUrl)
       favoriteArticle = await favoriteArticleRes.json()
@@ -46,6 +47,7 @@ export default function DetailForm() {
     setArticle(articleThis)
   }
   // console.log(article)
+  console.log(auth.userData)
   async function handleFavToggle(article, userID, isAuth) {
     if (isAuth) {
       if (article.fav === false) {
@@ -79,6 +81,7 @@ export default function DetailForm() {
     const data = await res.json()
     setRecommend(data.data.topMatches)
   }
+  console.log(recommend)
   const getViews = async (id) => {
     let apiUrl = `http://localhost:3005/api/my-articles/${id}/views`
 

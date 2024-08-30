@@ -35,8 +35,8 @@ export default function MyHeader() {
   const searchFormRef = useRef(null)
   const searchFormCloseBtnRef = useRef(null)
   const [isScrolled, setIsScrolled] = useState(false)
-  const { auth, setAuth } = useAuth()
   const [isAuth, setIsAuth] = useState(false)
+  const { auth, setAuth } = useAuth()
 
   async function handleSearchProduct() {
     const searchForm = searchFormRef.current
