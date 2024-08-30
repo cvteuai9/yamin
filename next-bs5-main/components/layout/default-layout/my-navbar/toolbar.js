@@ -51,7 +51,7 @@ export default function Toolbar({ handleShow }) {
             </p>
           </li>
           <li>
-            <Link className="dropdown-item text-center" href="/admin">
+            <Link className="dropdown-item text-center" href="/member/profile">
               會員管理區
             </Link>
           </li>

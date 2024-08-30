@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react'
 import { useAuth } from '@/hooks/use-auth'
 import toast, { Toaster } from 'react-hot-toast'
 import Link from 'next/link'
-import PreviewUploadImage from '@/components/user-test/preview-upload-image'
+import PreviewUploadImage from '@/components/user/preview-upload-image'
 import { avatarBaseUrl } from '@/configs'
 
 // 定義要在此頁呈現/編輯的會員資料初始物件
@@ -63,6 +63,7 @@ export default function Profile() {
   }, [auth])
 
   // 提示其它相關個人資料元件可以載入資料
+  // ❓可以不寫嗎？用isAuth會被重新整理auth變成false
   useEffect(() => {
     // 純粹觀察userProfile狀態變化用
     // console.log('userProfile狀態變化', userProfile)
@@ -118,35 +119,37 @@ export default function Profile() {
 
   return (
     <>
-      <h1>會員資料修改(一般)</h1>
-      <hr />
-      <p>
-        規則: username與email不能修改(這與註冊機制或網站會員的安全機制的有關)
-      </p>
-      <p>
-        注意: 密碼不在這裡修改，因機制不一樣，在
-        <Link href="/test/user/profile-password">會員資料修改(密碼)</Link>
-      </p>
-      <hr />
-      {hasProfile ? (
-        <PreviewUploadImage
-          avatarImg={userProfile.avatar}
-          // uploadImg={updateProfileAvatar}
-          avatarBaseUrl={avatarBaseUrl}
-          // toast={toast}
-          setSelectedFile={setSelectedFile}
-          selectedFile={selectedFile}
-        />
-      ) : (
-        <div>
-          <img src="/blank.webp" alt="" width="200" height="200" />
+      <div className="test-profileform">
+        <h1>會員資料修改(一般)</h1>
+        <hr />
+        <p>
+          規則: username與email不能修改(這與註冊機制或網站會員的安全機制的有關)
+        </p>
+        <p>
+          注意: 密碼不在這裡修改，因機制不一樣，在
+          <Link href="/test/user/profile-password">會員資料修改(密碼)</Link>
+        </p>
+        <hr />
+        {hasProfile ? (
+          <PreviewUploadImage
+            avatarImg={userProfile.avatar}
+            // uploadImg={updateProfileAvatar}
+            avatarBaseUrl={avatarBaseUrl}
+            // toast={toast}
+            setSelectedFile={setSelectedFile}
+            selectedFile={selectedFile}
+          />
+        ) : (
           <div>
-            <button onClick={handleSubmit}> </button>
+            <img src="/blank.webp" alt="" width="200" height="200" />
+            <div>
+              <button onClick={handleSubmit}> </button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
       <hr />
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="test-profileform">
         <p>
           <label>
             姓名

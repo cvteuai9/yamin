@@ -1,3 +1,5 @@
+// 加入下列
+import couponRoutes from './routes/coupons.js'
 import * as fs from 'fs'
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
@@ -6,6 +8,8 @@ import express from 'express'
 import logger from 'morgan'
 import path from 'path'
 import session from 'express-session'
+
+// import couponsRouter from './routes/coupons.js'
 
 // 使用檔案的session store，存在sessions資料夾
 import sessionFileStore from 'session-file-store'
@@ -32,7 +36,8 @@ app.use(
     credentials: true,
   })
 )
-
+// 設置靜態文件服務
+app.use('/images', express.static(path.join(__dirname, 'public/images')))
 // 視圖引擎設定
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'pug')
@@ -73,6 +78,8 @@ for (const filename of filenames) {
   app.use(`${apiPath}/${slug === 'index' ? '' : slug}`, item.default)
 }
 // 載入routes中的各路由檔案，並套用api路由 END
+// routers
+app.use(`${apiPath}/coupons`, couponRoutes)
 
 // 捕抓404錯誤處理
 app.use(function (req, res, next) {
@@ -90,5 +97,11 @@ app.use(function (err, req, res, next) {
   // 更改為錯誤訊息預設為JSON格式
   res.status(500).send({ error: err })
 })
-
+// // ===julia測試發放入會優惠券08-22
+// app.use(express.json())
+// app.use('/api', couponsRouter)
+// app.listen(3000, () => {
+//   console.log('Server is running on port 3000')
+// })
+// // ===julia測試發放入會優惠券08-22
 export default app

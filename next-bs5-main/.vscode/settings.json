@@ -21,5 +21,8 @@
   },
   "emmet.syntaxProfiles": {
     "javascript": "jsx"
+  },
+  "[sass]": {
+    "editor.defaultFormatter": "syler.sass-indented"
   }
 }
