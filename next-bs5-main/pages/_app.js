@@ -19,8 +19,8 @@ import '@/styles/style.scss'
 import '@/styles/course_style.scss'
 import '@/styles/course_detail.scss'
 import '@/styles/course_background.scss'
-import 'slick-carousel/slick/slick.css'
-import 'slick-carousel/slick/slick-theme.css'
+// import 'slick-carousel/slick/slick.css'
+// import 'slick-carousel/slick/slick-theme.css'
 import '@/styles/index_course.scss'
 
 // Ju-掛載
