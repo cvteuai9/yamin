@@ -245,7 +245,7 @@
 
     .recom-tea-img {
       width: 100%;
-      height: 250px;
+      height: 220px;
       background-size: 100%;
       /* 不能用 */
       /* background-size: cover; */
@@ -276,6 +276,7 @@
         overflow: hidden;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
+        min-height: 48px;
       }
 
       .price {

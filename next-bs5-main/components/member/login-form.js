@@ -190,7 +190,7 @@ export default function LoginForm() {
   }
   return (
     <main className={styles.loginPage}>
-      <div className={styles.imageSection}>
+      <div className={styles.imageSectionLog}>
         {/* 這裡可以添加一些覆蓋在圖片上的文字或logo */}
       </div>
       <div className={styles.formSection}>

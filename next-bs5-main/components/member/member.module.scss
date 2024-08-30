@@ -361,14 +361,15 @@
 
 // LoginForm.module.scss
 
-.loginPage {
+.loginPage,
+.registerPage {
   display: flex;
   margin-top: 80px;
   font-family: 'B2Hana-Regular', sans-serif;
-  background-color: #003E52;
+  background-color: #003e52;
 }
 
-.imageSection {
+.imageSectionLog {
   flex: 0 0 40%;
   background-image: url('/images/article/articlelist/black-tea.jpg');
   background-size: cover;
@@ -383,7 +384,34 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(to right, rgba(0, 62, 82, 0.7), rgba(0, 62, 82, 0));
+    background: linear-gradient(
+      to right,
+      rgba(0, 62, 82, 0.7),
+      rgba(0, 62, 82, 0)
+    );
+    mix-blend-mode: multiply;
+  }
+}
+.imageSectionReg {
+  flex: 0 0 40%;
+  background-image: url('/images/article/articlelist/black-tea2.jpg');
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  z-index: 0;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      to right,
+      rgba(0, 62, 82, 0.7),
+      rgba(0, 62, 82, 0)
+    );
     mix-blend-mode: multiply;
   }
 }
@@ -393,7 +421,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #003E52;
+  background-color: #003e52;
   // padding: 40px;
 }
 
@@ -426,14 +454,13 @@
   padding: 12px;
   background-color: #fff;
   color: #333;
-  border: 1px solid #B29564;
-  border-radius: 5px;
-  font-size: 18px;
+  border: 1px solid #b29564;
+  font-size: 1.6rem;
   cursor: pointer;
   transition: background-color 0.3s;
 
   &:hover {
-    background-color: #f5f5f5;
+    background-color: #f5f5f5f3;
   }
 
   .googleIcon {
@@ -446,15 +473,15 @@
   display: flex;
   align-items: center;
   text-align: center;
-  color: #B29564;
+  color: #b29564;
   margin: 30px 0;
-  font-size: 18px;
+  font-size: 1.6rem;
 
   &::before,
   &::after {
     content: '';
     flex: 1;
-    border-bottom: 1px solid #B29564;
+    border-bottom: 1px solid #b29564;
   }
 
   span {
@@ -464,28 +491,31 @@
 
 .form {
   .inputGroup {
-    
     margin-bottom: 25px;
 
     label {
       display: block;
       color: var(--bg-text-color);
       margin-bottom: 8px;
-      font-size: 18px;
+      font-size: 1.6rem;
       font-weight: bold;
     }
 
     input {
       width: 100%;
       padding: 12px;
-      border: 1px solid #B29564;
-      border-radius: 5px;
-      background-color: #003E52;
-      color: #003E52;
+      border: 1px solid #b29564;
+      background-color: #003e52;
+      color: var(--bg-text-color);
       font-size: 16px;
 
       &::placeholder {
-        color: #B29564;
+        color: #b29564;
+      }
+      &:focus {
+        outline: none;
+        border: 1px solid #ffe9b1;
+        transition: border 0.2s ease;
       }
     }
   }
@@ -495,30 +525,32 @@
 
     .eyeIcon {
       position: absolute;
-      right: 12px;
+      right: 14px;
       top: 50%;
       transform: translateY(-50%);
       background: none;
       border: none;
-      color: #B29564;
+      color: #b29564;
       cursor: pointer;
-      font-size: 24px;
+      font-size: 2rem;
+      display: flex; // 使用 flex 來更好地居中圖標
+      align-items: center;
+      justify-content: center;
     }
   }
 
   .submitButton {
     width: 100%;
     padding: 12px;
-    background-color: #B29564;
+    background-color: #b29564;
     color: #fff;
     border: none;
-    border-radius: 5px;
-    font-size: 18px;
+    font-size: 1.6rem;
     cursor: pointer;
     transition: background-color 0.3s;
 
     &:hover {
-      background-color: darken(#B29564, 10%);
+      background-color: darken(#b29564, 10%);
     }
   }
 }
@@ -529,14 +561,17 @@
   margin-top: 25px;
 
   a {
-    color: #B29564;
+    color: #b29564;
     text-decoration: none;
     font-size: 16px;
     font-weight: bold;
 
     &:hover {
-      text-decoration: underline;
+      color: var(--primary-light);
     }
+  }
+  p{
+    color: var(--bg-text-color);
   }
 }
 

@@ -66,7 +66,7 @@ export default function Profile() {
     } else {
       toast.error(`會員資料載入失敗`)
     }
-  },[])
+  }, [])
   // auth載入完成後向資料庫要會員資料
   useEffect(() => {
     if (auth.isAuth) {
@@ -165,193 +165,195 @@ export default function Profile() {
 
   return (
     <>
-      <div className="container mb-6">
-        <div className="d-flex">
-          <div className="titlenav">
-            <img src="/images/favorite/title.svg" alt="" className="my-3" />
-            <img
-              src="/images/favorite/group.svg"
-              alt=""
-              style={{ width: '100%' }}
-            />
-          </div>
-        </div>
-        <div className="profile-content">
-          <div className="row mt-4 ">
-            <div className="col-md-4 profile-content-left">
-              <Leftnav />
+      <main>
+        <div className="container mb-6">
+          <div className="d-flex">
+            <div className="titlenav">
+              <img src="/images/favorite/title.svg" alt="" className="my-3" />
+              <img
+                src="/images/favorite/group.svg"
+                alt=""
+                style={{ width: '100%' }}
+              />
             </div>
-            <div className="col-md-8 profile-content-right">
-              <h4 className="goldenf">
-                <Link href="/member/profile" className="h5 goldenf">
-                  個人檔案
-                </Link>
-                &nbsp;/&nbsp;
-                <Link href="/member/profile" className="h5 goldenf">
-                  已整合帳戶
-                </Link>
-                &nbsp;/&nbsp;
-                <Link href="/member/profile" className="h5 goldenf">
-                  載具管理
-                </Link>
-              </h4>
-              <p className="p whitef mt-5">
-                請放心，你的電子郵件、檔案及相關購買資料，網站將依照個人資料保護法保障你的個人隱私！
-              </p>
+          </div>
+          <div className="profile-content">
+            <div className="row mt-4 ">
+              <div className="col-md-4 profile-content-left">
+                <Leftnav />
+              </div>
+              <div className="col-md-8 profile-content-right">
+                <h4 className="goldenf">
+                  <Link href="/member/profile" className="h5 goldenf">
+                    個人檔案
+                  </Link>
+                  &nbsp;/&nbsp;
+                  <Link href="/member/profile" className="h5 goldenf">
+                    已整合帳戶
+                  </Link>
+                  &nbsp;/&nbsp;
+                  <Link href="/member/profile" className="h5 goldenf">
+                    載具管理
+                  </Link>
+                </h4>
+                <p className="p whitef mt-5">
+                  請放心，你的電子郵件、檔案及相關購買資料，網站將依照個人資料保護法保障你的個人隱私！
+                </p>
 
-              {hasProfile ? (
-                <MyPreviewUploadImage
-                key={avatarVersion}
-                  avatarImg={`${userProfile.user_image}?v=${avatarVersion}`}
-                  // uploadImg={updateProfileAvatar}
-                  avatarBaseUrl={avatarBaseUrl}
-                  // toast={toast}
-                  setSelectedFile={setSelectedFile}
-                  selectedFile={selectedFile}
-                  showText={true}
-                />
-              ) : (
-                <div>
-                  <div className="d-flex mt-3">
-                    <div className="profile-picleft mt-3">
-                      <p className="p whitef">更換頭貼</p>
-                      <p className="p2 goldenf mt-6">
-                        從電腦中選取圖檔：最佳大小為 600 x 600 px
-                      </p>
-                      {/* <button>選擇照片</button> */}
-                      <div type="file" className="p btn1 low mt-5">
-                        選擇照片
+                {hasProfile ? (
+                  <MyPreviewUploadImage
+                    key={avatarVersion}
+                    avatarImg={`${userProfile.user_image}?v=${avatarVersion}`}
+                    // uploadImg={updateProfileAvatar}
+                    avatarBaseUrl={avatarBaseUrl}
+                    // toast={toast}
+                    setSelectedFile={setSelectedFile}
+                    selectedFile={selectedFile}
+                    showText={true}
+                  />
+                ) : (
+                  <div>
+                    <div className="d-flex mt-3">
+                      <div className="profile-picleft mt-3">
+                        <p className="p whitef">更換頭貼</p>
+                        <p className="p2 goldenf mt-6">
+                          從電腦中選取圖檔：最佳大小為 600 x 600 px
+                        </p>
+                        {/* <button>選擇照片</button> */}
+                        <div type="file" className="p btn1 low mt-5">
+                          選擇照片
+                        </div>
+                      </div>
+                      <div>
+                        <div className="profile-picright">
+                          <img src="/images/favorite/user.svg" alt="" />
+                        </div>
                       </div>
                     </div>
-                    <div>
-                      <div className="profile-picright">
-                        <img src="/images/favorite/user.svg" alt="" />
-                      </div>
+                  </div>
+                )}
+                <form className="profile-form" onSubmit={handleSubmit}>
+                  <div>
+                    <p className="p whitef mt-5">真實姓名（必填）</p>
+                    <input
+                      className="profile-inputtext goldenf"
+                      type="text"
+                      name="user_name"
+                      placeholder="請輸入你的真實姓名"
+                      value={userProfile.user_name}
+                      onChange={handleFieldChange}
+                    />
+                  </div>
+                  <div className="mt-2">
+                    <span className="error">{errors.user_name}</span>
+                  </div>
+                  <div>
+                    <p className="p whitef mt-5">暱稱（必填）</p>
+                    <input
+                      className="profile-inputtext p2 goldenf"
+                      type="text"
+                      placeholder="請輸入你的暱稱"
+                      name="nick_name"
+                      value={userProfile.nick_name}
+                      onChange={handleFieldChange}
+                    />
+                  </div>
+                  <div className="mt-2">
+                    <span className="error">{errors.nick_name}</span>
+                  </div>
+                  <div>
+                    <p className="p whitef mt-5">性別&nbsp;(必填)</p>
+                    <div className="profile-inputradio">
+                      <input
+                        type="radio"
+                        id="female"
+                        name="gender"
+                        value="男性"
+                        checked={userProfile.gender === '男性'}
+                        onChange={handleFieldChange}
+                      />
+                      <p className="p whitef ms-3">男</p>
+                      <input
+                        type="radio"
+                        className="ms-3"
+                        id="female"
+                        name="gender"
+                        value="女性"
+                        checked={userProfile.gender === '女性'}
+                        onChange={handleFieldChange}
+                      />
+                      <p className="p whitef ms-3">女</p>
                     </div>
                   </div>
-                </div>
-              )}
-              <form className="profile-form" onSubmit={handleSubmit}>
-                <div>
-                  <p className="p whitef mt-5">真實姓名（必填）</p>
-                  <input
-                    className="profile-inputtext goldenf"
-                    type="text"
-                    name="user_name"
-                    placeholder="請輸入你的真實姓名"
-                    value={userProfile.user_name}
-                    onChange={handleFieldChange}
-                  />
-                </div>
-                <div className="mt-2">
-                  <span className="error">{errors.user_name}</span>
-                </div>
-                <div>
-                  <p className="p whitef mt-5">暱稱（必填）</p>
-                  <input
-                    className="profile-inputtext p2 goldenf"
-                    type="text"
-                    placeholder="請輸入你的暱稱"
-                    name="nick_name"
-                    value={userProfile.nick_name}
-                    onChange={handleFieldChange}
-                  />
-                </div>
-                <div className="mt-2">
-                  <span className="error">{errors.nick_name}</span>
-                </div>
-                <div>
-                  <p className="p whitef mt-5">性別&nbsp;(必填)</p>
-                  <div className="profile-inputradio">
+                  <div className="mt-2">
+                    <span className="error">{errors.gender}</span>
+                  </div>
+                  <div>
+                    <p className="p whitef mt-5">生日</p>
                     <input
-                      type="radio"
-                      id="female"
-                      name="gender"
-                      value="男性"
-                      checked={userProfile.gender === '男性'}
+                      className="profile-inputtext p2 goldenf"
+                      type="date"
+                      placeholder="請輸入你的生日"
+                      name="birthday"
+                      value={userProfile.birthday}
+                      onChange={handleFieldChange}
+                      onClick={(e) => e.target.showPicker()} // 使用 onClick 事件來觸發日期選擇器
+                      min="1944-01-01" // 最小日期為1944年1月1日
+                      max={new Date().toISOString().split('T')[0]} // 最大日期為今天
+                    />
+                  </div>
+                  <p2 className="p2 whitef">
+                    * 請正確填寫，註冊成功後將無法修改
+                  </p2>
+                  <div>
+                    <p className="p whitef mt-5">手機（必填）</p>
+                    <input
+                      className="profile-inputtext p2 goldenf"
+                      type="text"
+                      placeholder="請輸入你的手機"
+                      // pattern="[0-9]{4}-[0-9]{3}-[0-9]{3}"
+                      name="phone"
+                      value={userProfile.phone}
                       onChange={handleFieldChange}
                     />
-                    <p className="p whitef ms-3">男</p>
+                  </div>
+                  <div className="mt-2">
+                    <span className="error">{errors.phone}</span>
+                  </div>
+                  <div>
+                    <p className="p whitef mt-5">
+                      電子郵件（為登入帳號，不可修改）
+                    </p>
                     <input
-                      type="radio"
-                      className="ms-3"
-                      id="female"
-                      name="gender"
-                      value="女性"
-                      checked={userProfile.gender === '女性'}
-                      onChange={handleFieldChange}
+                      className="profile-inputtext p2 goldenf"
+                      type="email"
+                      name="email"
+                      placeholder="請輸入你的電子郵件"
+                      value={userProfile.email}
                     />
-                    <p className="p whitef ms-3">女</p>
                   </div>
-                </div>
-                <div className="mt-2">
-                  <span className="error">{errors.gender}</span>
-                </div>
-                <div>
-                  <p className="p whitef mt-5">生日</p>
-                  <input
-                    className="profile-inputtext p2 goldenf"
-                    type="date"
-                    placeholder="請輸入你的生日"
-                    name="birthday"
-                    value={userProfile.birthday}
-                    onChange={handleFieldChange}
-                    onClick={(e) => e.target.showPicker()} // 使用 onClick 事件來觸發日期選擇器
-                    min="1944-01-01" // 最小日期為1944年1月1日
-                    max={new Date().toISOString().split('T')[0]} // 最大日期為今天
-                  />
-                </div>
-                <p2 className="p2 whitef">
-                  * 請正確填寫，註冊成功後將無法修改
-                </p2>
-                <div>
-                  <p className="p whitef mt-5">手機（必填）</p>
-                  <input
-                    className="profile-inputtext p2 goldenf"
-                    type="text"
-                    placeholder="請輸入你的手機"
-                    // pattern="[0-9]{4}-[0-9]{3}-[0-9]{3}"
-                    name="phone"
-                    value={userProfile.phone}
-                    onChange={handleFieldChange}
-                  />
-                </div>
-                <div className="mt-2">
-                  <span className="error">{errors.phone}</span>
-                </div>
-                <div>
-                  <p className="p whitef mt-5">
-                    電子郵件（為登入帳號，不可修改）
-                  </p>
-                  <input
-                    className="profile-inputtext p2 goldenf"
-                    type="email"
-                    name="email"
-                    placeholder="請輸入你的電子郵件"
-                    value={userProfile.email}
-                  />
-                </div>
-                {/* <span className="error">{errors.email}</span> */}
-                <div className="profile-btns mt-4 ">
-                  <button type="submit" className="profile-checked  btn2 p">
-                    確認
-                  </button>
-                  <div type="button" className="profile-changepassword  btn1 p">
-                    <Link
-                      href="/member/changeps"
-                      className=" goldenf text-decoration-none  color-inherit"
-                    >
-                      修改密碼
-                    </Link>
+                  {/* <span className="error">{errors.email}</span> */}
+                  <div className="profile-btns mt-4 ">
+                    <button type="submit" className="profile-checked  btn2 p">
+                      確認
+                    </button>
+                    <div type="button" className="profile-changepassword  btn1 p">
+                      <Link
+                        href="/member/changeps"
+                        className=" goldenf text-decoration-none  color-inherit"
+                      >
+                        修改密碼
+                      </Link>
+                    </div>
                   </div>
-                </div>
-              </form>
+                </form>
+              </div>
             </div>
+            {/* 土司訊息視窗用 */}
+            <Toaster />
           </div>
-              {/* 土司訊息視窗用 */}
-              <Toaster />
         </div>
-      </div>
+      </main>
     </>
   )
 }

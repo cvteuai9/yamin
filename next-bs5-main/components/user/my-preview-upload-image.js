@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { useState, useEffect } from 'react'
 import { useUserProfile } from '@/context/UserProfileContext'
+import { useAuth, initUserData } from '@/hooks/my-use-auth'
 
 export default function MyPreviewUploadImage({
   avatarImg = '',
@@ -13,7 +14,7 @@ export default function MyPreviewUploadImage({
   // 預覽圖片
   const [preview, setPreview] = useState('')
   const { userProfile, avatarVersion } = useUserProfile()
-
+  const { auth } = useAuth()
   // 當選擇檔案更動時建立預覽圖
   useEffect(() => {
     if (!selectedFile) {
@@ -45,7 +46,8 @@ export default function MyPreviewUploadImage({
       return preview //⛳️
     }
 
-    if (userProfile && userProfile.user_image) {
+    if (userProfile && userProfile.user_image && auth.isAuth) {
+      console.log(userProfile);
       return `${avatarBaseUrl}/${userProfile.user_image}?v=${avatarVersion}`
     }
 

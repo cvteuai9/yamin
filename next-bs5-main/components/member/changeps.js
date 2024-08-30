@@ -65,10 +65,13 @@ export default function Changeps() {
     console.log(id)
 
     // try {
-    let res = await updatePassword(id, password)
+    const res = await updatePassword(id, password)
 
     // } catch (error) {
-    console.log(res.data.message)
+    if (res.status==='error'){
+
+      toast.error(res.data.message)
+    }
     // }
 
     console.log(res.data)
@@ -83,130 +86,132 @@ export default function Changeps() {
   if (!auth.isAuth) return <></>
   return (
     <>
-      <div className="container mb-6">
-        <div className="d-flex">
-          <div className="titlenav">
-            <img src="/images/favorite/title.svg" alt="title" />
-            <img
-              src="/images/favorite/group.svg"
-              alt="group"
-              style={{ width: '100%' }}
-            />
-          </div>
-        </div>
-        <div className="profile-content">
-          <div className="row mt-4">
-            <div className="col-md-4 profile-content-left">
-              <Leftnav />
-            </div>
-            <div className="col-md-8 profile-content-right">
-              <h4 className="goldenf">
-                <Link href="/user/profile" className="h5 goldenf">
-                  個人檔案
-                </Link>
-                &nbsp;/&nbsp;
-                <Link href="/member/fav/profile" className="h5 goldenf">
-                  已整合帳戶
-                </Link>
-                &nbsp;/&nbsp;
-                <Link href="/member/fav/profile" className="h5 goldenf">
-                  載具管理
-                </Link>
-              </h4>
-              <form onSubmit={handleSubmit}>
-                <div>
-                  <p className="mt-5 my-0 whitef">舊密碼(必填)</p>
-                  <div className="changeps-inputgroup d-flex">
-                    <input
-                      className="changeps-inputtext "
-                      type={showOldPassword ? 'text' : 'password'}
-                      placeholder="請輸入你的舊密碼"
-                      name="origin"
-                      value={userPassword.origin}
-                      onChange={handleFieldChange}
-                    />
-                    <div>
-                      {showOldPassword ? (
-                        <RiEyeLine
-                          className="icon"
-                          onClick={handleOldPasswordIconClick}
-                        />
-                      ) : (
-                        <RiEyeOffLine
-                          className="icon"
-                          onClick={handleOldPasswordIconClick}
-                        />
-                      )}
-                    </div>
-                  </div>
-                  <div className="mb-2 p2 whitef">
-                    * 8到12個字元，且至少需包含一個英文大寫與一個英文小寫字元
-                  </div>
-                </div>
-                <div>
-                  <p className="my-0 mt-4 whitef">密碼(必填)</p>
-                  <div className="changeps-inputgroup d-flex">
-                    <input
-                      className="changeps-inputtext"
-                      placeholder="請輸入你的密碼"
-                      value={userPassword.new}
-                      name="new"
-                      type={showPassword ? 'text' : 'password'}
-                      onChange={handleFieldChange}
-                    />
-                    <div>
-                      {showPassword ? (
-                        <RiEyeLine
-                          className="icon"
-                          onClick={handlePasswordIconClick}
-                        />
-                      ) : (
-                        <RiEyeOffLine
-                          className="icon"
-                          onClick={handlePasswordIconClick}
-                        />
-                      )}
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <p className="my-0 mt-4 whitef">密碼確認&nbsp;(必填)</p>
-                  <div className="changeps-inputgroup d-flex">
-                    <input
-                      className="changeps-inputtext"
-                      type={showConfirmPassword ? 'text' : 'password'}
-                      value={userPassword.confirm}
-                      name="confirm"
-                      placeholder="再輸入一次密碼"
-                      onChange={handleFieldChange}
-                    />
-                    <div>
-                      {showConfirmPassword ? (
-                        <RiEyeLine
-                          className="icon"
-                          onClick={handleConfirmPasswordIconClick}
-                        />
-                      ) : (
-                        <RiEyeOffLine
-                          className="icon"
-                          onClick={handleConfirmPasswordIconClick}
-                        />
-                      )}
-                    </div>
-                  </div>
-                </div>
-                <div className="changeps-btns mt-4">
-                  <button type="submit" className="btn2 checked p">
-                    確認
-                  </button>
-                </div>
-              </form>
+      <main>
+        <div className="container mb-6">
+          <div className="d-flex">
+            <div className="titlenav">
+              <img src="/images/favorite/title.svg" alt="title" />
+              <img
+                src="/images/favorite/group.svg"
+                alt="group"
+                style={{ width: '100%' }}
+              />
             </div>
           </div>
-          {/* 土司訊息視窗用 */}
-          <Toaster />
+          <div className="profile-content">
+            <div className="row mt-4">
+              <div className="col-md-4 profile-content-left">
+                <Leftnav />
+              </div>
+              <div className="col-md-8 profile-content-right">
+                <h4 className="goldenf">
+                  <Link href="/user/profile" className="h5 goldenf">
+                    個人檔案
+                  </Link>
+                  &nbsp;/&nbsp;
+                  <Link href="/member/fav/profile" className="h5 goldenf">
+                    已整合帳戶
+                  </Link>
+                  &nbsp;/&nbsp;
+                  <Link href="/member/fav/profile" className="h5 goldenf">
+                    載具管理
+                  </Link>
+                </h4>
+                <form onSubmit={handleSubmit}>
+                  <div>
+                    <p className="mt-5 my-0 whitef">舊密碼(必填)</p>
+                    <div className="changeps-inputgroup d-flex">
+                      <input
+                        className="changeps-inputtext "
+                        type={showOldPassword ? 'text' : 'password'}
+                        placeholder="請輸入你的舊密碼"
+                        name="origin"
+                        value={userPassword.origin}
+                        onChange={handleFieldChange}
+                      />
+                      <div>
+                        {showOldPassword ? (
+                          <RiEyeLine
+                            className="icon"
+                            onClick={handleOldPasswordIconClick}
+                          />
+                        ) : (
+                          <RiEyeOffLine
+                            className="icon"
+                            onClick={handleOldPasswordIconClick}
+                          />
+                        )}
+                      </div>
+                    </div>
+                    <div className="mb-2 p2 whitef">
+                      * 8到12個字元，且至少需包含一個英文大寫與一個英文小寫字元
+                    </div>
+                  </div>
+                  <div>
+                    <p className="my-0 mt-4 whitef">密碼(必填)</p>
+                    <div className="changeps-inputgroup d-flex">
+                      <input
+                        className="changeps-inputtext"
+                        placeholder="請輸入你的密碼"
+                        value={userPassword.new}
+                        name="new"
+                        type={showPassword ? 'text' : 'password'}
+                        onChange={handleFieldChange}
+                      />
+                      <div>
+                        {showPassword ? (
+                          <RiEyeLine
+                            className="icon"
+                            onClick={handlePasswordIconClick}
+                          />
+                        ) : (
+                          <RiEyeOffLine
+                            className="icon"
+                            onClick={handlePasswordIconClick}
+                          />
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <p className="my-0 mt-4 whitef">密碼確認&nbsp;(必填)</p>
+                    <div className="changeps-inputgroup d-flex">
+                      <input
+                        className="changeps-inputtext"
+                        type={showConfirmPassword ? 'text' : 'password'}
+                        value={userPassword.confirm}
+                        name="confirm"
+                        placeholder="再輸入一次密碼"
+                        onChange={handleFieldChange}
+                      />
+                      <div>
+                        {showConfirmPassword ? (
+                          <RiEyeLine
+                            className="icon"
+                            onClick={handleConfirmPasswordIconClick}
+                          />
+                        ) : (
+                          <RiEyeOffLine
+                            className="icon"
+                            onClick={handleConfirmPasswordIconClick}
+                          />
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="changeps-btns mt-4">
+                    <button type="submit" className="btn2 checked p">
+                      確認
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+            {/* 土司訊息視窗用 */}
+            <Toaster />
+          </div>
         </div>
-      </div>
+      </main>
     </>
   )
 }
