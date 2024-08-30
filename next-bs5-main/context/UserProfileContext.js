@@ -2,7 +2,7 @@
 import React, { createContext, useState, useContext, useEffect } from 'react'
 import { useAuth } from '@/hooks/my-use-auth'
 import { getUserById, updateProfileAvatar } from '@/services/my-user'
-import { v4 as uuidv4 } from 'uuid'
+// import { v4 as uuidv4 } from 'uuid'
 
 const UserProfileContext = createContext()
 
