@@ -1,6 +1,5 @@
 import React from 'react'
-import { useState, useEffect, useCallback, useContext } from 'react'
-import { FaWarehouse } from 'react-icons/fa6'
+import { useState, useEffect } from 'react'
 import {
   APIProvider,
   Map,
@@ -16,6 +15,7 @@ export default function TeaMapComponent({
   dataFromPage = [],
   dataType = '',
   storeName = '',
+  positionFromPage = {},
 }) {
   const apiKey = 'AIzaSyBAzhEGkDmxTNyMAN3hFt_rOPVLliaNulc'
   const [poi, setPoi] = useState([])
@@ -45,33 +45,9 @@ export default function TeaMapComponent({
     // console.log(poiArray)
     setPoi(poiArray)
   }
-  // 取得使用者的初始位置
-  function getUserPosition() {
-    return new Promise(async (resolve, reject) => {
-      if ('geolocation' in navigator) {
-        // 如果使用者允許位置權限，則會執行並得到一組position，反之，執行error那一段callback
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            const userPosition = {
-              lat: position.coords.latitude,
-              lng: position.coords.longitude,
-            }
-            setPosition(userPosition)
-            return resolve(userPosition)
-          },
-          (error) => {
-            // 這裡設計當用戶拒絕給位置存取權限時，初始點位置將會是台灣中心點
-            console.error('Error fetching user location:', error)
-            setPosition({ lat: 23.896271539202733, lng: 120.92187627041206 })
-            resolve({ lat: 23.896271539202733, lng: 120.92187627041206 })
-          }
-        )
-      }
-    })
-  }
   useEffect(() => {
-    getUserPosition()
-  }, [])
+    setPosition(positionFromPage)
+  }, [positionFromPage])
   useEffect(() => {
     setChooseStore(storeName)
   }, [storeName])
@@ -100,6 +76,7 @@ export default function TeaMapComponent({
           defaultZoom={12}
           defaultCenter={position}
           mapId="aef5b35a6884a3be"
+          gestureHandling="greedy"
           disableDefaultUI="true" //移除地圖上的所有控制項
           // onCameraChanged={(ev) =>
           //   console.log(
@@ -110,6 +87,9 @@ export default function TeaMapComponent({
           //   )
           // }
         >
+          {/* 顯示地圖中心點的圖釘 */}
+          <UserMaker position={position} />
+          {/* 顯示所有店家的圖釘 */}
           {poi.map((item) => {
             return (
               <SingleMarker
@@ -129,7 +109,13 @@ export default function TeaMapComponent({
 }
 
 // 製作每個圖釘的內容，以及點擊後的效果
-const SingleMarker = ({ item, dataType, isActive, onMarkClick, onClose }) => {
+const SingleMarker = ({
+  item = {},
+  dataType = '',
+  isActive = false,
+  onMarkClick = () => {},
+  onClose = () => {},
+}) => {
   // 自訂圖釘樣式
   let pinGraph = document.createElement('div')
   pinGraph.innerHTML =
@@ -191,6 +177,28 @@ const SingleMarker = ({ item, dataType, isActive, onMarkClick, onClose }) => {
           </div>
         </InfoWindow>
       )}
+    </AdvancedMarker>
+  )
+}
+
+// 製作地圖中心點標示
+const UserMaker = ({ position = {} }) => {
+  let pinGraph = document.createElement('div')
+  pinGraph.innerHTML = '<i class="fa-solid fa-user-large"></i>'
+  return (
+    <AdvancedMarker
+      key={'您的參考位置'}
+      position={position}
+      clickable={false}
+      zIndex={999}
+    >
+      <Pin
+        glyph={pinGraph.childNodes[0]}
+        background={'#0051ff'}
+        glyphColor={'#FFF'}
+        borderColor={'#B29564'}
+        scale={1.2}
+      />
     </AdvancedMarker>
   )
 }

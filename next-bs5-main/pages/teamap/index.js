@@ -1,7 +1,6 @@
 import React from 'react'
 import { useState, useEffect, useRef } from 'react'
 import TeaMapComponent from '@/components/teamap/teamap'
-import { CiGlass } from 'react-icons/ci'
 
 export default function TeaMapPage() {
   const [type, setType] = useState('teaHouse')
@@ -10,7 +9,18 @@ export default function TeaMapPage() {
   const typeRadioFactoryRef = useRef(null)
   const [getToday, setGetToday] = useState(0)
   const [today, setToday] = useState('')
+  // 設定中心點位置
+  const [position, setPosition] = useState(null)
+  // 設定選擇店家列表的某一店家，用來傳到TeaMapComponent當作開啟infoWindow的依據
   const [chooseStore, setChooseStore] = useState('')
+  // 設定預設排序
+  const [order, setOrder] = useState('starDESC')
+  // 設定預設營業狀態篩選
+  const [businessStatus, setBusinessStatus] = useState('all')
+  // 設定預設星等篩選
+  const [starRating, setStarRating] = useState('all')
+  // 設定預設搜尋範圍
+  const [searchRange, setSearchRange] = useState('1k')
 
   function handleToggleInfoWindow(name) {
     setChooseStore(name)
@@ -18,18 +28,63 @@ export default function TeaMapPage() {
   function handleTypeToggle(e) {
     setType(e.target.value)
   }
-  async function getMapData(type) {
+  async function getMapData(
+    type = '',
+    order = '',
+    businessStatus = '',
+    starRating = '',
+    searchRange = '',
+    position = {}
+  ) {
     const apiUrl = new URL(`http://localhost:3005/api/teamap?type=${type}`)
+    const searchParams = new URLSearchParams({
+      type: type,
+      order: order,
+      businessStatus: businessStatus,
+      starRating: starRating,
+      searchRange: searchRange,
+      lat: position.lat,
+      lng: position.lng,
+    })
+    apiUrl.search = searchParams
     // console.log(apiUrl.href)
     const mapDataRes = await fetch(apiUrl)
     const mapData = await mapDataRes.json()
     // console.log(mapData)
     setData(mapData)
   }
+  // 取得使用者的初始位置
+  function getUserPosition() {
+    return new Promise((resolve, reject) => {
+      if ('geolocation' in navigator) {
+        // 如果使用者允許位置權限，則會執行並得到一組position，反之，執行error那一段callback
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const userPosition = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude,
+            }
+            setPosition(userPosition)
+            return resolve(userPosition)
+          },
+          (error) => {
+            // 這裡設計當用戶拒絕給位置存取權限時，初始點位置將會是台灣中心點
+            console.error('Error fetching user location:', error)
+            setPosition({ lat: 23.896271539202733, lng: 120.92187627041206 })
+            resolve({ lat: 23.896271539202733, lng: 120.92187627041206 })
+          }
+        )
+      }
+    })
+  }
+  useEffect(() => {
+    getUserPosition()
+  }, [])
   useEffect(() => {
     let tmp = new Date().getDay()
     setGetToday(tmp)
   }, [])
+  // 設定今天為禮拜幾
   useEffect(() => {
     switch (getToday) {
       case 0:
@@ -55,6 +110,7 @@ export default function TeaMapPage() {
         break
     }
   }, [getToday])
+  // 切換type
   useEffect(() => {
     const typeRadioHouse = typeRadioHouseRef.current
     const typeRadioFactory = typeRadioFactoryRef.current
@@ -68,10 +124,9 @@ export default function TeaMapPage() {
     }
   }, [type])
   useEffect(() => {
-    // 根據 type變化重新抓取資料
-    getMapData(type)
-    // console.log(type)
-  }, [type])
+    // 根據 type, order, businessStatus, starRating, searchRange變化重新抓取資料
+    getMapData(type, order, businessStatus, starRating, searchRange, position)
+  }, [type, order, businessStatus, starRating, searchRange, position])
   return (
     <>
       <div className="teaMap">
@@ -131,6 +186,51 @@ export default function TeaMapPage() {
                 <div className="factoryRadioBackgroundDiv"></div>
                 <p>茶廠</p>
               </label>
+            </div>
+            <div className="filterGroup d-flex gap-3 mb-3">
+              {/* 營業狀態 */}
+              <select
+                name="businessStatus"
+                id="businessStatus"
+                defaultValue={'all'}
+                onChange={(e) => {
+                  setBusinessStatus(e.target.value)
+                }}
+              >
+                <option value="all">全部</option>
+                <option value="opening">營業中</option>
+                <option value="close">休息中</option>
+              </select>
+              {/* 星等 */}
+              <select
+                name="starRating"
+                id="starRating"
+                defaultValue={'all'}
+                onChange={(e) => {
+                  setStarRating(e.target.value)
+                }}
+              >
+                <option value="all">全部</option>
+                <option value="5">五顆星</option>
+                <option value="4">四顆星</option>
+                <option value="3">三顆星</option>
+                <option value="2">二顆星</option>
+                <option value="1">一顆星</option>
+              </select>
+              {/* 排序依據: 星等、評論數 */}
+              <select
+                name="order"
+                id="order"
+                defaultValue={'starDESC'}
+                onChange={(e) => {
+                  setOrder(e.target.value)
+                }}
+              >
+                <option value="starDESC">星等由高到低</option>
+                <option value="starASC">星等由低到高</option>
+                <option value="ratingCountDESC">評論數由高到低</option>
+                <option value="ratingCountASC">評論數由低到高</option>
+              </select>
             </div>
             {/* 店家列表 left-aside */}
             <div className="cardArea p-2 justify-content-center">
@@ -226,12 +326,29 @@ export default function TeaMapPage() {
               )}
             </div>
           </div>
-          <div className="googleMapArea">
-            <TeaMapComponent
-              dataFromPage={data}
-              dataType={`${type}`}
-              storeName={`${chooseStore}`}
-            />
+          <div className="googleMap">
+            <div className="searchRangeOption mb-3">
+              <select
+                name="searchRange"
+                id="searchRange"
+                defaultValue={'1k'}
+                onChange={(e) => {
+                  setSearchRange(e.target.value)
+                }}
+              >
+                <option value="1k">一公里</option>
+                <option value="5k">五公里</option>
+                <option value="10k">十公里</option>
+              </select>
+            </div>
+            <div className="googleMapArea">
+              <TeaMapComponent
+                dataFromPage={data}
+                dataType={`${type}`}
+                storeName={`${chooseStore}`}
+                positionFromPage={position}
+              />
+            </div>
           </div>
         </div>
       </div>

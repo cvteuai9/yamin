@@ -5,6 +5,10 @@ const router = express.Router()
 router.get('/', async (req, res) => {
   try {
     const type = req.query.type || 'teaHouse'
+    const order = req.query.order || 'starDESC'
+    const businessStatus = req.query.businessStatus || 'all'
+    const starRating = req.query.starRating || 'all'
+    const searchRange = req.query.searchRange || '1k'
     let queryCluse = ``
     switch (type) {
       case 'teaFactory':
@@ -18,19 +22,20 @@ router.get('/', async (req, res) => {
         break
     }
     const [rows] = await db.query(queryCluse)
+    // 處理營業時間字串，將字串轉為陣列
     let mapData = rows.map((v) => {
       if (v.opening_hours !== '(無提供)') {
         const testString = v.opening_hours
         let splitArray = testString.split('星期')
-        console.log('splitArray: ', splitArray)
+        // console.log('splitArray: ', splitArray)
         let filterArray = splitArray.filter((v) => v !== '')
-        console.log('filterArray: ', filterArray)
+        // console.log('filterArray: ', filterArray)
         let notfinalArray = filterArray.map((v) => v.split(','))
-        console.log('notfinalArray: ', notfinalArray)
+        // console.log('notfinalArray: ', notfinalArray)
         let finalArray = notfinalArray.map((v) => v.filter((x) => x !== ''))
-        console.log('finalArray: ', finalArray)
+        // console.log('finalArray: ', finalArray)
         let lastArray = finalArray.map((v) => v.join(','))
-        console.log('last: ', lastArray)
+        // console.log('last: ', lastArray)
         return { ...v, opening_hours: lastArray }
       } else {
         return v
