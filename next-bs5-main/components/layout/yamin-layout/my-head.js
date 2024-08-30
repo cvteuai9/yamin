@@ -34,6 +34,22 @@ export default function MyHeader() {
   const search2Ref = useRef(null)
   const logoRef = useRef(null)
   const logo2Ref = useRef(null)
+  const searchFormRef = useRef(null)
+  const searchFormCloseBtnRef = useRef(null)
+  const [isScrolled, setIsScrolled] = useState(false)
+  const { auth } = useAuth()
+  const [isAuth, setIsAuth] = useState(false)
+
+  async function handleSearchProduct() {
+    const searchForm = searchFormRef.current
+    const searchFormCloseBtn = searchFormCloseBtnRef.current
+    const searchData = searchForm.value
+
+    // 清空搜尋欄
+    searchForm.value = ''
+    searchFormCloseBtn.click()
+    router.push(`/product/search/${searchData}`)
+  }
 
   useEffect(() => {
     const toggleBtn = toggleBtnRef.current
@@ -64,18 +80,6 @@ export default function MyHeader() {
         : 'fa-solid fa-bars'
     })
 
-    // 添加事件監聽器，阻止事件冒泡
-    const searchInput1 = document.getElementById('search')
-    const searchInput2 = document.getElementById('search2')
-
-    searchInput1.onclick = function (event) {
-      event.stopPropagation()
-    }
-
-    searchInput2.onclick = function (event) {
-      event.stopPropagation()
-    }
-
     window.addEventListener('resize', () => {
       if (window.innerWidth >= 992) {
         dropDownMenu.classList.remove('open')
@@ -86,7 +90,33 @@ export default function MyHeader() {
       }
     })
   }, [])
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 50) {
+        setIsScrolled(true)
+      } else {
+        setIsScrolled(false)
+      }
+    }
 
+    window.addEventListener('scroll', handleScroll)
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
+  function handleToMyFav(isAuth) {
+    if (isAuth) {
+      router.push('/member/fav/favorite-p')
+    } else {
+      if (confirm('您尚未登入，登入後才能查看您的收藏')) {
+        router.push('/member/login')
+      }
+    }
+  }
+  useEffect(() => {
+    setIsAuth(auth.isAuth)
+  }, [auth])
   // 增加是否登入會員，顯示照片
   const initUserProfile = {
     id: '',
@@ -213,20 +243,24 @@ export default function MyHeader() {
 
   return (
     <>
-      <header className={`${styles.header}`}>
+      <header
+        className={`${styles.header} ${isScrolled ? styles.scrolled : ''}`}
+      >
         <div className={`${styles.navbar}`} ref={navbarRef}>
           <div className={`${styles.logo}`} id="logo" ref={logoRef}>
             <img
               src="/images/header/logo-x.png"
               alt=""
-              height={70}
-              width={140}
+              height={60}
+              width={120}
             />
           </div>
           <ul className={`${styles.links}`}>
             <li>
               <div className={`${styles['svgDiv']}`}>
-                <Link href="#">首頁</Link>
+                <Link href="/index">
+                  <h5>首頁</h5>
+                </Link>
                 <img
                   src="/images/header/outer-frame.png"
                   alt=""
@@ -241,7 +275,9 @@ export default function MyHeader() {
                   alt=""
                   className={`${styles.svg}`}
                 />
-                <Link href="/product/list">商品</Link>
+                <Link href="/product/list">
+                  <h5>商品</h5>
+                </Link>
               </div>
             </li>
             <li>
@@ -251,7 +287,9 @@ export default function MyHeader() {
                   alt=""
                   className={`${styles.svg}`}
                 />
-                <Link href="#">課程</Link>
+                <Link href="/course/courselist">
+                  <h5>課程</h5>
+                </Link>
               </div>
             </li>
             <li>
@@ -265,10 +303,10 @@ export default function MyHeader() {
               </div>
             </li>
           </ul>
-          <div className="d-flex">
+          <div className="d-flex align-items-center">
             <div className={`${styles.search}`}>
               <input
-                type="search"
+                type="button"
                 id="search"
                 name=""
                 className={`${styles.search}`}
@@ -278,21 +316,30 @@ export default function MyHeader() {
                   height: 25,
                   width: 100,
                   borderRadius: 100,
+                  color: 'white',
+                  fontSize: 20,
                 }}
+                data-bs-toggle="modal"
+                data-bs-target="#searchForm"
+                data-bs-whatever="@mdo"
               />
             </div>
             <div className={`${styles['love_btn']}`}>
-              <Link href={'/member/fav/'}>
+              <button
+                className="btn"
+                type="button"
+                onClick={() => handleToMyFav(isAuth)}
+              >
                 <img
                   src="/images/header/heart.png"
                   alt=""
                   height={25}
                   width={30}
                 />
-              </Link>
+              </button>
             </div>
             <div className={`${styles['action_btn']}`}>
-              <Link href={``}>
+              <Link href={`#`}>
                 <img
                   src="/images/header/cart.png"
                   alt=""
@@ -432,10 +479,10 @@ export default function MyHeader() {
               )}
             </div>
           </div>
-          <div className={`${styles['toggle_btn']}`} ref={toggleBtnRef}>
-            <div className="d-flex">
+          <div>
+            <div className="d-flex align-items-center">
               <input
-                type="search"
+                type="button"
                 id="search2"
                 name=""
                 className={`${styles.search2}`}
@@ -447,8 +494,13 @@ export default function MyHeader() {
                   borderRadius: 100,
                 }}
                 ref={search2Ref}
+                data-bs-toggle="modal"
+                data-bs-target="#searchForm"
+                data-bs-whatever="@mdo"
               />
-              <i className="fa-solid fa-bars" ref={toggleBtnIconRef} />
+              <div className={`${styles['toggle_btn']}`} ref={toggleBtnRef}>
+                <i className="fa-solid fa-bars" ref={toggleBtnIconRef} />
+              </div>
             </div>
           </div>
         </div>
@@ -462,35 +514,80 @@ export default function MyHeader() {
             />
           </div>
           <li>
-            <Link href="首頁">首頁</Link>
+            <Link href="/home">首頁</Link>
           </li>
           <li>
             <Link href="/product/list">商品</Link>
           </li>
           <li>
-            <Link href="課程">課程</Link>
+            <Link href="/course/courselist">課程</Link>
+            <Link href="/course/courselist">課程</Link>
           </li>
           <li>
-            <Link href="文章">文章</Link>
+            <Link href="/article">文章</Link>
           </li>
           <li>
-            <Link href="/member/fav">收藏</Link>
+            <Link href="/member/fav/favorite-p">收藏</Link>
           </li>
           <li>
             <Link href="文章">個人資料</Link>
           </li>
         </div>
       </header>
-      {/* <div className={`${styles.star} mt-3`}>
-        <img src="/images/header/star.png" alt="" width={16} height={16} />
-        <img
-          src="/images/header/vector.png"
-          alt=""
-          width="100%"
-          height="1.5px"
-          style={{ margin: '0 -2px' }}
-        />
-        <img src="/images/header/star.png" alt="" width={16} height={16} />
+      {/* 搜尋彈出視窗 */}
+      {/* <div
+        className="modal fade"
+        id="searchForm"
+        tabIndex={-1}
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+      >
+        <div className={`modal-dialog`}>
+          <div className={`${styles.searchForm} modal-content`}>
+            <div className="modal-header">
+              <h1 className="modal-title fs-3" id="exampleModalLabel">
+                搜尋商品
+              </h1>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+                ref={searchFormCloseBtnRef}
+              />
+            </div>
+            <div className="modal-body">
+              <form>
+                <div className="mb-3">
+                  <label htmlFor="product-name" className="col-form-label fs-4">
+                    請輸入商品名稱或關鍵字搜尋商品:
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control fs-4"
+                    id="product-name"
+                    ref={searchFormRef}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault()
+                        handleSearchProduct()
+                      }
+                    }}
+                  />
+                </div>
+              </form>
+            </div>
+            <div className="modal-footer">
+              <button
+                type="button"
+                className="btn"
+                onClick={() => handleSearchProduct()}
+              >
+                送出
+              </button>
+            </div>
+          </div>
+        </div>
       </div> */}
       <style jsx>
         {`

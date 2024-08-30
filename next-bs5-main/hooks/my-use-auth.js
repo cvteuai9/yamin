@@ -57,7 +57,13 @@ export const AuthProvider = ({ children }) => {
     '/member/order/info',
     '/member/coupon',
     '/member/order/review',
-    '/member/fav',
+    '/member/fav/favorite-p',
+    '/member/fav/favorite-a',
+    '/member/fav/favorite-c',
+    '/cart/cartOne',
+    '/cart/cartTwoTest',
+    '/cart/cartThree',
+    '/order',
   ]
   useEffect(() => {
     // 加上protectedRoutes.includes(router.pathname)防止在不用保護的網頁檢查登入狀態而報錯

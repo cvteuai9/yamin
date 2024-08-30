@@ -30,7 +30,6 @@ export const YaminCartProvider = ({
   localStorageKey = 'cart',
 }) => {
   let items = initialCartItems
-
   if (!items.length) {
     try {
       // 修正nextjs中window is undefined的問題
@@ -45,6 +44,7 @@ export const YaminCartProvider = ({
     }
   }
   // 初始化 cartItems, cartState
+  const [selectedValue, setSelectedValue] = useState('')
   const [cartItems, setCartItems] = useState(items)
   const [cartState, setCartState] = useState(init(initialCartItems))
 
@@ -129,6 +129,8 @@ export const YaminCartProvider = ({
         isInCart,
         increment,
         decrement,
+        selectedValue,
+        setSelectedValue,
       }}
     >
       {children}

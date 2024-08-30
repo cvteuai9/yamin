@@ -7,6 +7,7 @@ import { useAuth } from '@/hooks/my-use-auth'
 import { updatePassword } from '@/services/my-user'
 import toast, { Toaster } from 'react-hot-toast'
 
+
 // 定義要在此頁呈現/編輯的會員資料初始物件
 const initUserPassword = {
   origin: '', // 原本密碼，要比對成功才能修改

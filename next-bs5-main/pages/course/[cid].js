@@ -5,6 +5,7 @@ import { CiStar } from 'react-icons/ci'
 import categories from '@/data/course-data/category.json'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'
+import { useAuth } from '@/hooks/my-use-auth'
 // Import Swiper styles
 import 'swiper/css'
 import 'swiper/css/free-mode'
@@ -24,7 +25,10 @@ export default function CourseDetail() {
   const [comment, setComment] = useState([])
   const [currentCommentIndex, setCurrentCommentIndex] = useState(0)
   const [isMobile, setIsMobile] = useState(false)
-
+  // !!取得使用者資訊
+  const { auth } = useAuth()
+  const [userID, setUserID] = useState(0)
+  const [isAuth, setIsAuth] = useState(false)
   // 商品用狀態
   const [course, setCourse] = useState({
     id: 0,
@@ -46,21 +50,27 @@ export default function CourseDetail() {
 
   // !!收藏功能(cloud)
   // const [fav, setFav] = useState(false)
-  async function handleFavToggle(course) {
+  async function handleFavToggle(course, userID, isAuth) {
     try {
-      if (course.fav === false) {
-        await fetch(
-          `http://localhost:3005/api/course/favorites?user_id=1&course_id=${course.id}`,
-          { method: 'PUT' }
-        )
+      if (isAuth) {
+        if (course.fav === false) {
+          await fetch(
+            `http://localhost:3005/api/course/favorites?user_id=${userID}&course_id=${course.id}`,
+            { method: 'PUT' }
+          )
+        } else {
+          await fetch(
+            `http://localhost:3005/api/course/favorites?user_id=${userID}&course_id=${course.id}`,
+            { method: 'DELETE' }
+          )
+        }
+        let tmp = { ...course, fav: !course.fav }
+        setCourse(tmp)
       } else {
-        await fetch(
-          `http://localhost:3005/api/course/favorites?user_id=1&course_id=${course.id}`,
-          { method: 'DELETE' }
-        )
+        if (confirm('您尚未登入，請登入後再操作!')) {
+          router.push('/member/login')
+        }
       }
-      let tmp = { ...course, fav: !course.fav }
-      setCourse(tmp)
     } catch (error) {
       console.error('Failed to toggle favorite:', error)
     }
@@ -106,16 +116,19 @@ export default function CourseDetail() {
   }
 
   // 向伺服器fetch獲取資料
-  async function getCourse(id) {
+  async function getCourse(id, userID, isAuth) {
     try {
       const apiURL = `http://localhost:3005/api/course/${id}`
       const res = await fetch(apiURL)
       if (!res.ok) throw new Error('Network response was not ok')
       let data = await res.json()
       // !!拿取使用者收藏的course_id
-      const favoritesURL = `http://localhost:3005/api/course/favorites?user_id=1`
-      const favoritesRes = await fetch(favoritesURL)
-      const favoritesData = await favoritesRes.json()
+      let favoritesData = []
+      if (isAuth) {
+        const favoritesURL = `http://localhost:3005/api/course/favorites?user_id=${userID}`
+        const favoritesRes = await fetch(favoritesURL)
+        favoritesData = await favoritesRes.json()
+      }
       // console.log(favoritesData)
       // console.log(data)
       if (favoritesData.includes(data.id)) {
@@ -142,15 +155,18 @@ export default function CourseDetail() {
       console.error('Error fetching random courses:', error)
     }
   }
-
+  useEffect(() => {
+    setUserID(auth.userData.id)
+    setIsAuth(auth.isAuth)
+  }, [auth])
   useEffect(() => {
     if (router.isReady) {
       const courseId = router.query.cid
-      getCourse(courseId)
+      getCourse(courseId, userID, isAuth)
       getComments(courseId) // 當路由準備好後，獲取評論資料
       getRandomCourses()
     }
-  }, [router.isReady, router.query.cid])
+  }, [router.isReady, router.query.cid, userID, isAuth])
 
   const getCategoryName = (id) => {
     // 定義一個用來根據 ID 獲取課程分類名稱的函數。
@@ -221,6 +237,7 @@ export default function CourseDetail() {
                   delay: 2500,
                   disableOnInteraction: false,
                 }}
+                // loop={true}
                 spaceBetween={10}
                 navigation={true}
                 thumbs={{ swiper: thumbsSwiper }}
@@ -228,13 +245,19 @@ export default function CourseDetail() {
                 className="mySwiper2"
               >
                 <SwiperSlide>
-                  <img src={course.img1} />
+                  <img
+                    src={`/images/yaming/tea_class_picture/${course.img1}`}
+                  />
                 </SwiperSlide>
                 <SwiperSlide>
-                  <img src={course.img2} />
+                  <img
+                    src={`/images/yaming/tea_class_picture/${course.img2}`}
+                  />
                 </SwiperSlide>
                 <SwiperSlide>
-                  <img src={course.img3} />
+                  <img
+                    src={`/images/yaming/tea_class_picture/${course.img3}`}
+                  />
                 </SwiperSlide>
               </Swiper>
               <Swiper
@@ -247,13 +270,19 @@ export default function CourseDetail() {
                 className="mySwiper"
               >
                 <SwiperSlide>
-                  <img src={course.img1} />
+                  <img
+                    src={`/images/yaming/tea_class_picture/${course.img1}`}
+                  />
                 </SwiperSlide>
                 <SwiperSlide>
-                  <img src={course.img2} />
+                  <img
+                    src={`/images/yaming/tea_class_picture/${course.img2}`}
+                  />
                 </SwiperSlide>
                 <SwiperSlide>
-                  <img src={course.img3} />
+                  <img
+                    src={`/images/yaming/tea_class_picture/${course.img3}`}
+                  />
                 </SwiperSlide>
               </Swiper>
             </div>
@@ -287,7 +316,7 @@ export default function CourseDetail() {
                   <button
                     type="button"
                     className="btn like-btn"
-                    onClick={() => handleFavToggle(course)}
+                    onClick={() => handleFavToggle(course, userID, isAuth)}
                   >
                     {course.fav ? (
                       <img
@@ -470,7 +499,10 @@ export default function CourseDetail() {
                 className=".col-12 shane-course-detail-store1 col-sm-6 col-md-3 text-center"
               >
                 <div className="shane-course-detail-store_picture">
-                  <img src={course.img1} alt={course.name} />
+                  <img
+                    src={`/images/yaming/tea_class_picture/${course.img1}`}
+                    alt={course.name}
+                  />
                 </div>
                 <div className="d-flex justify-content-center align-items-center m-0 ">
                   <div className="shane-course-detail-wood" />

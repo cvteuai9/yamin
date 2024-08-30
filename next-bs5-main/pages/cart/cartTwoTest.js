@@ -5,6 +5,8 @@ import { YaminCourseUseCart } from '@/hooks/yamin-use-Course-cart'
 import Cards from 'react-credit-cards-2'
 import { useRouter } from 'next/router'
 
+import axiosInstance from '@/services/axios-instance'
+
 import {
   formatCVC,
   formatExpirationDate,
@@ -13,11 +15,13 @@ import {
 } from '@/hooks/cartCheckNumber'
 export default function CartTwo() {
   const { cart, items, increment, decrement, removeItem } = YaminUseCart()
+  const { selectedValue, setSelectedValue } = YaminUseCart()
   const courseCart = YaminCourseUseCart()
   // let testLocl = JSON.parse(localStorage.getItem('cart'))
   const router = useRouter()
   const formRef = useRef(null)
   const form2Re2 = useRef(null)
+  // const [selectedValue, setSelectValue] = YaminCoupon()
   const [formData, setFormData] = useState({
     // productId: getlocl,
     amount: '',
@@ -36,15 +40,36 @@ export default function CartTwo() {
     cvc: '',
     state: 1,
   })
+  // confirm回來用的，在記錄確認之後，line-pay回傳訊息與代碼，例如
+  // {returnCode: '1172', returnMessage: 'Existing same orderId.'}
 
   const allTotalItems = cart.totalItems + courseCart.cart.totalItems
   const allTotalPrice = cart.totalPrice + courseCart.cart.totalPrice
   useEffect(() => {
+    const updatedFormData = { ...formData }
     const allTotalItems = cart.totalItems + courseCart.cart.totalItems
-    const allTotalPrice = cart.totalPrice + courseCart.cart.totalPrice
-    formData.amount = allTotalItems
-    formData.totalPrice = allTotalPrice
-  }, [allTotalItems, allTotalPrice, cart.totalItems, cart.totalprice])
+    let allTotalPrice = cart.totalPrice + courseCart.cart.totalPrice
+    if (selectedValue < 1) {
+      allTotalPrice = Number(selectedValue) * allTotalPrice
+    }
+    if (selectedValue > 1) {
+      allTotalPrice = allTotalPrice - Number(selectedValue)
+    }
+    if (!selectedValue) {
+      allTotalPrice = cart.totalPrice + courseCart.cart.totalPrice
+    }
+    updatedFormData.amount = allTotalItems
+    updatedFormData.totalPrice = allTotalPrice
+    setFormData(updatedFormData)
+    // formData.amount = allTotalItems
+    // formData.totalPrice = allTotalPrice
+  }, [
+    allTotalItems,
+    allTotalPrice,
+    cart.totalItems,
+    cart.totalPrice,
+    selectedValue,
+  ])
   // 信用卡部分
   // 測試
   const showCard = useRef(null)
@@ -56,8 +81,17 @@ export default function CartTwo() {
     cardholder: '',
     focus: '',
   })
+  // 載入狀態(控制是否顯示載入中的訊息，和伺服器回傳時間點未完成不同步的呈現問題)
 
   const PostformData = new FormData()
+  let getorderId
+  useEffect(() => {}, [getorderId])
+  const goLinePay = () => {
+    if (window.confirm('確認要導向至LINE Pay進行付款?')) {
+      // 先連到node伺服器後，導向至LINE Pay付款頁面
+      window.location.href = `http://localhost:3005/api/yamin_cart/linepay?orderId=${getorderId}`
+    }
+  }
 
   const handleCardPayChange = (e) => {
     if (e.target.checked) {
@@ -152,7 +186,7 @@ export default function CartTwo() {
     return valid
   }
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault()
 
     // formRef.current.submit()
@@ -213,7 +247,7 @@ export default function CartTwo() {
       // linepay測試
       if (formData.payState === 'line') {
         const url = 'http://localhost:3005/api/yamin_cart/linepay'
-        fetch(url, {
+        await fetch(url, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -221,16 +255,18 @@ export default function CartTwo() {
           body: JSON.stringify(PostformData),
         })
           .then((response) => response.json())
-          .then(async (result) => {
+          .then((result) => {
             console.log('testurl', url)
             console.log('success', result)
+            getorderId = result.goLineurl
+            // window.location.href = result.lineUrl
           })
           .catch((error) => {
             console.error(error)
           })
 
-        console.log('取得', PostformData.get('username'))
-        console.log('line表單提交成功', formData)
+        // const goLineUrl = result.goLineurl
+        goLinePay()
       }
 
       // linepay測試內容結束
@@ -496,11 +532,37 @@ export default function CartTwo() {
             </div>
             <div className=" cartSubTotal d-flex justify-content-between mb-5">
               <h5 className="me-5">優惠券折抵:</h5>
-              <h5>$3000</h5>
+              {/* <h5>{${selectedValue}}</h5> */}
+              {selectedValue ? (
+                selectedValue < 1 ? (
+                  <h5>{selectedValue * 100}折</h5>
+                ) : (
+                  <h5>${selectedValue}</h5>
+                )
+              ) : (
+                <h5>$0</h5>
+              )}
             </div>
             <div className=" cartSubTotal d-flex justify-content-between ">
               <h5 className="me-5">應付金額:</h5>
-              <h5>$3000</h5>
+              {selectedValue ? (
+                selectedValue < 1 ? (
+                  <h5>
+                    {Math.floor(
+                      Number(selectedValue) *
+                        (cart.totalPrice + courseCart.cart.totalPrice)
+                    )}
+                  </h5>
+                ) : (
+                  <h5>
+                    {cart.totalPrice +
+                      courseCart.cart.totalPrice -
+                      Number(selectedValue)}
+                  </h5>
+                )
+              ) : (
+                <h5>{cart.totalPrice + courseCart.cart.totalPrice}</h5>
+              )}
             </div>
           </div>
         </div>

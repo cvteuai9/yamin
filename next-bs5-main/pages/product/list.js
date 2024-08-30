@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { func } from 'prop-types'
 import { YaminUseCart } from '@/hooks/yamin-use-cart'
 import toast, { Toaster } from 'react-hot-toast'
+import { useAuth } from '@/hooks/my-use-auth'
 
 export default function List1() {
   const router = useRouter()
@@ -45,7 +46,10 @@ export default function List1() {
   const [pc, setPackage] = useState([]) // 包材
   const [style, setStyle] = useState([]) // 茶品型態
   const [price, setPrice] = useState([]) // 價錢
-
+  // !!取得使用者資訊
+  const { auth } = useAuth()
+  const [userID, setUserID] = useState(0)
+  const [isAuth, setIsAuth] = useState(false)
   // totalData 為所有符合條件的商品數，用來顯示總共有幾筆符合的商品數量
   const [totalData, setTotalData] = useState(0)
   // 創建一個URL物件，才可以在下面使用url.search
@@ -56,7 +60,7 @@ export default function List1() {
   const pageArray = new Array(totalPage).fill(0).map((v, index) => index)
 
   // 使用fetch送請求至後端
-  async function getProducts(url) {
+  async function getProducts(url, userID, isAuth) {
     try {
       products = await fetch(url.href)
         .then((res) => res.json())
@@ -66,15 +70,18 @@ export default function List1() {
         .catch((error) => {
           console.log(error)
         })
-      const favoriteProduct = await fetch(
-        'http://localhost:3005/api/my_products/favorites?user_id=1'
-      )
-        .then((res) => res.json())
-        .then((result) => result)
-        .catch((error) => {
-          console.log(error)
-        })
-      // console.log(favoriteProduct)
+      let favoriteProduct = []
+      if (isAuth) {
+        favoriteProduct = await fetch(
+          `http://localhost:3005/api/my_products/favorites?user_id=${userID}`
+        )
+          .then((res) => res.json())
+          .then((result) => result)
+          .catch((error) => {
+            console.log(error)
+          })
+      }
+
       const tmpData = products.product.data
       let nextData = tmpData.map((v, i) => {
         if (favoriteProduct.includes(v.id)) return { ...v, fav: !v.fav }
@@ -92,34 +99,40 @@ export default function List1() {
       console.log(error)
     }
   }
-  // !!後續要處理user_id
   // 處理收藏狀態的函式
-  async function handleFavToggle(id) {
-    const nextProduct = product.map((v, i) => {
-      if (v.id === id) {
-        if (v.fav === false) {
-          fetch(
-            `http://localhost:3005/api/my_products/favorites?user_id=1&product_id=${id}`,
-            { method: 'PUT' }
-          )
-            .then((res) => res.json())
-            .then((result) => console.log(result))
-            .catch((error) => console.log(error))
+  async function handleFavToggle(id, userID, isAuth) {
+    if (isAuth) {
+      const nextProduct = product.map((v, i) => {
+        if (v.id === id) {
+          if (v.fav === false) {
+            fetch(
+              `http://localhost:3005/api/my_products/favorites?user_id=${userID}&product_id=${id}`,
+              { method: 'PUT' }
+            )
+              .then((res) => res.json())
+              .then((result) => console.log(result))
+              .catch((error) => console.log(error))
+          } else {
+            fetch(
+              `http://localhost:3005/api/my_products/favorites?user_id=${userID}&product_id=${id}`,
+              { method: 'DELETE' }
+            )
+              .then((res) => res.json())
+              .then((result) => console.log(result))
+              .catch((error) => console.log(error))
+          }
+          return { ...v, fav: !v.fav }
         } else {
-          fetch(
-            `http://localhost:3005/api/my_products/favorites?user_id=1&product_id=${id}`,
-            { method: 'DELETE' }
-          )
-            .then((res) => res.json())
-            .then((result) => console.log(result))
-            .catch((error) => console.log(error))
+          return v
         }
-        return { ...v, fav: !v.fav }
-      } else {
-        return v
+      })
+      setProduct(nextProduct)
+    } else {
+      // 如果沒有登入，則導向至登入頁面
+      if (confirm('您尚未登入，請登入後再操作!')) {
+        router.push('/member/login')
       }
-    })
-    setProduct(nextProduct)
+    }
   }
   // 處理filter改變時的函式
   // 如果沒有找到目前的value => 代表從 未勾選 -> 已勾選，反之，代表取消勾選
@@ -150,6 +163,10 @@ export default function List1() {
     // 第一次進入頁面才會有loading畫面
     showLoader()
   }, [])
+  useEffect(() => {
+    setUserID(auth.userData.id)
+    setIsAuth(auth.isAuth)
+  }, [auth])
   // 當count、order值改變時，設定新網址參數並重新抓取資料
   useEffect(() => {
     if (router.isReady) {
@@ -165,11 +182,11 @@ export default function List1() {
       })
       url.search = searchParams
       // console.log(url.href)
-      getProducts(url)
+      getProducts(url, userID, isAuth)
     }
     // 下面的註解可以省略eslint檢查下下一行(監聽的部分)
     // eslint-disable-next-line
-  }, [router.isReady, perpage, order, page, price, tea, brand, pc, style])
+  }, [router.isReady, perpage, order, page, price, tea, brand, pc, style, userID, isAuth])
 
   return (
     <>
@@ -406,7 +423,6 @@ export default function List1() {
               <div
                 className={`d-flex flex-column gap-3 ${styles.crumb} ${styles['product-total-count']} justify-content-end`}
               >
-                <h4 className="m-0">全部商品 / 茶種 / 紅茶</h4>
                 <h4 className="m-0">共 {totalData} 筆</h4>
               </div>
               {/* 排序 */}
@@ -485,7 +501,9 @@ export default function List1() {
                           >
                             <button
                               className="btn p-0"
-                              onClick={() => handleFavToggle(v.id)}
+                              onClick={() =>
+                                handleFavToggle(v.id, userID, isAuth)
+                              }
                             >
                               {v.fav === false ? (
                                 <img

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import StarLarge from '@/components/star/star-large'
 import { IoEyeSharp } from 'react-icons/io5'
+import { useAuth } from '@/hooks/my-use-auth'
 import {
   FaRegComment,
   FaBookmark,
@@ -18,34 +19,57 @@ export default function DetailForm() {
   const [categories, setCategories] = useState([])
   const [topArticles, setTopArticles] = useState([]) // 儲存前五篇熱門文章
   const [newArticles, setNewArticles] = useState([]) // 儲存前五篇最新文章
-  const [recommend, setRecommend] = useState([])
-
+  const { auth } = useAuth()
+  const [userID, setUserID] = useState(0)
+  const [isAuth, setIsAuth] = useState(false)
   // console.log(id)
-  const getArticle = async (id) => {
+  const getArticle = async (id, userID, isAuth) => {
     // console.log(id);
     let apiUrl = `http://localhost:3005/api/my-articles/${id}`
 
     const res = await fetch(apiUrl)
     const data = await res.json()
-    setArticle(data.data.article)
+    let articleThis = data.data.article
+    let favoriteArticle = []
+    if (isAuth) {
+      const favoriteArticleUrl = `http://localhost:3005/api/my-articles/favorites?user_id=${userID}`
+      const favoriteArticleRes = await fetch(favoriteArticleUrl)
+      favoriteArticle = await favoriteArticleRes.json()
+    }
+    if (favoriteArticle.includes(articleThis.id)) {
+      articleThis.fav = true
+    } else {
+      articleThis.fav = false
+    }
+    // console.log(articleThis)
+    setArticle(articleThis)
   }
   // console.log(article)
-
-  const getRecommend = async (id) => {
-    // console.log(id);
-    let apiUrl = `http://localhost:3005/api/my-articles/${id}/recommendations`
-
-    const res = await fetch(apiUrl)
-    const data = await res.json()
-    if(data.status==='success'){
-      setRecommend(data.data.topMatches)
-    }
-    if (data.status==='no_match'){
-      setRecommend([])
+  async function handleFavToggle(article, userID, isAuth) {
+    if (isAuth) {
+      if (article.fav === false) {
+        await fetch(
+          `http://localhost:3005/api/my-articles/favorites?user_id=${userID}&article_id=${article.id}`,
+          {
+            method: 'PUT',
+          }
+        )
+      } else {
+        await fetch(
+          `http://localhost:3005/api/my-articles/favorites?user_id=${userID}&article_id=${article.id}`,
+          {
+            method: 'DELETE',
+          }
+        )
+      }
+      let tmp = { ...article, fav: !article.fav }
+      setArticle(tmp)
+    } else {
+      if (confirm('您尚未登入，請登入後再操作!!')) {
+        router.push('/member/login')
+      }
     }
   }
-  // console.log(recommend)
-
   const getViews = async (id) => {
     let apiUrl = `http://localhost:3005/api/my-articles/${id}/views`
 
@@ -72,14 +96,17 @@ export default function DetailForm() {
     const data = await res.json()
     setNewArticles(data.data.new_articles)
   }
-
+  useEffect(() => {
+    setUserID(auth.userData.id)
+    setIsAuth(auth.isAuth)
+  }, [auth])
   useEffect(() => {
     if (router.isReady) {
-      getArticle(router.query.articleCode)
+      getArticle(router.query.articleCode, userID, isAuth)
       getViews(router.query.articleCode)
       getRecommend(router.query.articleCode)
     }
-  }, [router.isReady])
+  }, [router.isReady, userID, isAuth])
 
   useEffect(() => {
     getCategories()
@@ -122,13 +149,38 @@ export default function DetailForm() {
                       <FaBookmark color="#ffffffa0" />
                       <p className="p2 mb-0 me-4 ms-2">10</p>
                     </div>
-                    <div className="addbookmarks d-flex align-items-center p-3">
-                      <FaRegBookmark
-                        size={16}
-                        color="B29564"
-                        className="icon"
-                      />
-                      <p className="ms-2 m-0">加入收藏</p>
+                    <div className="addbookmarks d-flex align-items-center">
+                      {article.fav ? (
+                        <button
+                          className="btn d-flex align-items-center p-3"
+                          type="button"
+                          onClick={() =>
+                            handleFavToggle(article, userID, isAuth)
+                          }
+                        >
+                          <FaBookmark
+                            size={16}
+                            color="B29564"
+                            className="icon"
+                          />
+                          <p className="ms-2 m-0">已收藏</p>
+                        </button>
+                      ) : (
+                        <button
+                          className="btn d-flex align-items-center p-3"
+                          type="button"
+                          onClick={() =>
+                            handleFavToggle(article, userID, isAuth)
+                          }
+                        >
+                          <FaRegBookmark
+                            size={16}
+                            color="B29564"
+                            className="icon"
+                          />
+                          <p className="ms-2 m-0">加入收藏</p>
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>

@@ -4,6 +4,40 @@ import authenticate from '../middlewares/authenticate.js'
 
 const router = express.Router()
 
+// 獲取註冊後自動送出的優惠券清單
+export async function getAutoSentCouponList() {
+  try {
+    const [coupons] = await db.query(
+      `
+      SELECT code
+      FROM coupons
+      WHERE auto_send = 1
+      `
+    )
+    // 檢查查詢結果
+    if (!Array.isArray(coupons)) {
+      console.warn('Unexpected result format from database query')
+      return []
+    }
+
+    // 如果是空數組，直接返回
+    if (coupons.length === 0) {
+      return []
+    }
+
+    // 如果只有一個元素，將其包裝在數組中
+    if (coupons.length === 1) {
+      return coupons[0].code ? [coupons[0].code] : []
+    }
+
+    // 多個元素的情況，使用 map
+    return coupons.map((coupon) => coupon.code).filter(Boolean)
+  } catch (error) {
+    console.error('Error fetching auto-sent coupons:', error)
+    throw error
+  }
+}
+
 // GET /coupons 獲取特定用戶的所有優惠券
 router.get('/', authenticate, async (req, res) => {
   const userId = Number(req.user.id)
@@ -50,12 +84,13 @@ router.post('/', authenticate, async (req, res) => {
       return res.status(404).json({ error: 'COUPON_ALREADY_CLAIMED' })
     }
 
-    // 首先檢查優惠券是否存在
+    // 首先檢查優惠券存在且已開放
     const [coupons] = await db.query(
       `
         SELECT id
             FROM coupons
-            WHERE code = ?
+            WHERE code = ?   
+            AND status != 'unreleased'  
         `,
       [couponCode]
     )

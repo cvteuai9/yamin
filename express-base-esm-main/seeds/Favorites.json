@@ -30,16 +30,16 @@
   {
     "id": 5,
     "user_id": 1,
-    "article_id": null,
-    "product_id": 123,
-    "course_id": null
+    "article_id": "NULL",
+    "product_id": "NULL",
+    "course_id": 1
   },
   {
     "id": 6,
     "user_id": 1,
-    "article_id": null,
+    "article_id": "NULL",
     "product_id": 237,
-    "course_id": null
+    "course_id": "NULL"
   },
   {
     "id": 7,
