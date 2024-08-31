@@ -46,7 +46,14 @@ router.get('/orderId', async (req, res) => {
     const orderDetailProductSql = `SELECT  yaminproductdetail.* FROM yaminproductdetail  WHERE yaminproductdetail.order_id = ${orderId} `
     const SearchOrderProductDetaill = await db.query(orderDetailProductSql)
     const SearchOrderProductDetail = SearchOrderProductDetaill[0]
-
+    // 評價課程
+    const orderReviewCourse = `SELECT member_comment.order_id, course_id FROM member_comment WHERE member_comment.order_id = ${orderId}`
+    const SearchOrderReviewCoursee = await db.query(orderReviewCourse)
+    const SearchOrderReviewCourse = SearchOrderReviewCoursee[0]
+    // 評價商品
+    const orderReviewProduct = `SELECT reviews.order_id, product_id FROM reviews WHERE reviews.order_id = ${orderId}`
+    const SearchOrderReviewProductt = await db.query(orderReviewProduct)
+    const SearchOrderReviewProduct = SearchOrderReviewProductt[0]
     // res.json(SearchOrderProductDetail)
     console.log('取來的值', orderId, orderState)
     console.log('看單筆order', SearchOrderDetail)
@@ -55,6 +62,8 @@ router.get('/orderId', async (req, res) => {
       SearchOrderDetail,
       SearchOrderCourseDetail,
       SearchOrderProductDetail,
+      SearchOrderReviewCourse,
+      SearchOrderReviewProduct,
     ])
   } catch (err) {
     console.log(err)
@@ -79,6 +88,7 @@ router.get('/orderId', async (req, res) => {
 router.post('/review', upload.none(), async (req, res) => {
   console.log('檢查傳來的內容', req.body)
   console.log('使用者id', req.body.userId)
+  let CourseInsertReview
   const reviewContent = req.body
   console.log('傳到後台來的評論資料', reviewContent)
   try {
@@ -108,7 +118,8 @@ router.post('/review', upload.none(), async (req, res) => {
         }
       )
       console.log('後台sql評論內容', InsertReview)
-      res.json('評論內容如下', InsertReview)
+
+      // res.json('評論內容如下', InsertReview)
     }
     if (reviewContent.productId === 'null') {
       const today = moment().format()
@@ -135,12 +146,17 @@ router.post('/review', upload.none(), async (req, res) => {
           }
         }
       )
+
       console.log('後台sql評論內容', InsertReview)
-      res.json('評論內容如下', InsertReview)
+      // res.json('評論內容如下', InsertReview)
     }
   } catch (err) {
     console.log(err)
   }
-  // res.json('成功')
+  res.json('成功')
+})
+
+router.get('/review/course', async (req, res) => {
+  const selectCourseReviewSql = 'SELECT * FROM member_comment'
 })
 export default router

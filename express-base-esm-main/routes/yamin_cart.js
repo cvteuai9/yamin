@@ -57,8 +57,14 @@ router.post('/', async (req, res) => {
   // const uuid = shortUUID()
   // const shortCode = uuid.new()
   const newOrder = req.body
+  // if (parseFloat(newOrder.selectedValue) === NaN) {
+  //   newOrder.selectedValue = 0
+  // }
+  // if (parseFloat(newOrder.selectedValue) !== NaN) {
+  //   newOrder.selectedValue = parseFloat(newOrder.selectedValue)
+  // }
   // const resultOrder = newOrder.allProductId.
-  console.log(newOrder)
+  console.log('咱們現在要看的', newOrder)
   const testOrder = [...newOrder.allProductId]
   // console.log(testOrder)
   const ArrayProductOrderData = JSON.parse(req.body.allProductId)
@@ -73,7 +79,7 @@ router.post('/', async (req, res) => {
       getRandomCode(),
       newOrder.userId,
       newOrder.selectedCouponId,
-      parseFloat(newOrder.selectedValue),
+      Number(parseFloat(newOrder.selectedValue)),
       newOrder.amount,
       newOrder.totalPrice,
       newOrder.username,

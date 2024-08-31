@@ -94,7 +94,7 @@ export default function CartTwo() {
     updatedFormData.userId = userID
     updatedFormData.amount = allTotalItems
     updatedFormData.totalPrice = allTotalPrice
-    updatedFormData.selectedValue = selectedValue
+    updatedFormData.selectedValue = Number(selectedValue)
     updatedFormData.selectedCouponId = Number(selectedId)
     setFormData(updatedFormData)
     console.log('需要看', formData)
