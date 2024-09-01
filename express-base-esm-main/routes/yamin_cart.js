@@ -65,13 +65,15 @@ router.post('/', async (req, res) => {
   const ArrayCourseOrderData = JSON.parse(req.body.allCourseId)
   console.log('1140看', ArrayCourseOrderData)
   const orderQuery =
-    'INSERT INTO YaminOrder (state,order_uuid, user_id, amount, total_price, username, email, phone, delivery, address, note, pay_state, cardnumber, cardholder, cardexpiry, cvc,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
+    'INSERT INTO YaminOrder (state,order_uuid, user_id, coupon_id,coupon_discount, amount, total_price, username, email, phone, delivery, address, note, pay_state, cardnumber, cardholder, cardexpiry, cvc,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
   const [yamintest] = await db.query(
     orderQuery,
     [
       newOrder.state,
       getRandomCode(),
       newOrder.userId,
+      newOrder.selectedCouponId,
+      parseFloat(newOrder.selectedValue),
       newOrder.amount,
       newOrder.totalPrice,
       newOrder.username,
@@ -241,15 +243,17 @@ router.post('/linepay', async (req, res) => {
 
   const ArrayProductOrderData = JSON.parse(req.body.allProductId)
   const ArrayCourseOrderData = JSON.parse(req.body.allCourseId)
-  console.log('1140看', ArrayCourseOrderData)
+  console.log('1140看', newOrder.selectedCouponId)
   const orderQuery =
-    'INSERT INTO YaminOrder (state,order_uuid, user_id, amount, total_price, username, email, phone, delivery, address, note, pay_state, cardnumber, cardholder, cardexpiry, cvc,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
+    'INSERT INTO YaminOrder (state,order_uuid, user_id, coupon_id, coupon_discount, amount, total_price, username, email, phone, delivery, address, note, pay_state, cardnumber, cardholder, cardexpiry, cvc,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
   const [yamintest] = await db.query(
     orderQuery,
     [
       newOrder.state,
       getRandomCode(),
       newOrder.userId,
+      newOrder.selectedCouponId,
+      parseFloat(newOrder.selectedValue),
       newOrder.amount,
       newOrder.totalPrice,
       newOrder.username,
@@ -279,6 +283,21 @@ router.post('/linepay', async (req, res) => {
       }
     }
   )
+  const orderDeleteCouponQuery =
+    'DELETE FROM users_coupons WHERE users_coupons.user_id = ? AND users_coupons.coupon_id = ?'
+  const orderDeleteCouponUser = await db.query(
+    orderDeleteCouponQuery,
+    [newOrder.userId, newOrder.selectedCouponId],
+    (err, resultDeleteCoupon) => {
+      if (err) {
+        res.json(err)
+      }
+      if (resultDeleteCoupon) {
+        res.json(resultDeleteCoupon)
+      }
+    }
+  )
+  console.log(orderDeleteCouponUser)
   // const testYamin = JSON.stringify(yamintest)
   console.log('12345', yamintest.insertId)
   if (yamintest.insertId) {
@@ -460,7 +479,7 @@ router.get('/linepay', async (req, res) => {
   const packageId = uuidv4()
   console.log(LineOrderInsertId)
 
-  if (linePayState === 'line') {
+  if (linePayState === 'linepay') {
     if (LineOrderInsertId) {
       console.log('line 0408', LineOrderInsertId)
 
