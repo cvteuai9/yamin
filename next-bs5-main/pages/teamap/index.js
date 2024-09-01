@@ -10,7 +10,7 @@ export default function TeaMapPage() {
   const [getToday, setGetToday] = useState(0)
   const [today, setToday] = useState('')
   // 設定中心點位置
-  const [position, setPosition] = useState(null)
+  const [position, setPosition] = useState({ lat: null, lng: null })
   // 設定選擇店家列表的某一店家，用來傳到TeaMapComponent當作開啟infoWindow的依據
   const [chooseStore, setChooseStore] = useState('')
   // 設定預設排序

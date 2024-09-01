@@ -23,7 +23,7 @@ export default function TeaMapComponent({
   const [type, setType] = useState('')
   const [chooseStore, setChooseStore] = useState('')
   // 預設位置為null，待設定好才會渲染地圖
-  const [position, setPosition] = useState(null)
+  const [position, setPosition] = useState({ lat: null, lng: null })
   const [activeMark, setActiveMark] = useState('')
   // 接收從page來的資料
   async function getPoiData(data) {
@@ -71,7 +71,7 @@ export default function TeaMapComponent({
       apiKey={`${apiKey}`}
       onLoad={() => console.log('Maps API has loaded.')}
     >
-      {position && (
+      {position.lat && (
         <Map
           defaultZoom={12}
           defaultCenter={position}
