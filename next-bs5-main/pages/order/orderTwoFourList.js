@@ -1,11 +1,7 @@
 import { useState, useEffect } from 'react'
 import Leftnav from '@/components/member/left-nav'
 import Link from 'next/link'
-import { useAuth } from '@/hooks/my-use-auth'
 export default function OrderTwoFourList() {
-  const { auth } = useAuth()
-  const [userId, setUserId] = useState(0)
-
   const [orderDetail, setOrderDetail] = useState([])
   const [productTotalPrice, setProductTotalPrice] = useState([])
   const [productAmount, setProductAmount] = useState([])
@@ -15,27 +11,11 @@ export default function OrderTwoFourList() {
   const [allTotalPrice, setAllTotalPrice] = useState()
   const [discount, setDiscount] = useState()
   const [afterDiscount, setAfterDiscount] = useState()
-  const [selectOption, setSelectOption] = useState(0)
-  const [selectedValue, setSelectedValue] = useState(0)
-  const [star, SetStar] = useState()
-  const [note, setNote] = useState()
   const [hydrated, setHydrated] = useState(false)
-
-  const [formData, setFormData] = useState({
-    user_id: 0,
-    order_id: 0,
-    product_id: 0,
-    course_id: 0,
-    star: 0,
-    note: '',
-  })
   useEffect(() => {
     setHydrated(true)
   }, [])
-  useEffect(() => {
-    setUserId(auth.userData.id)
-  }, [auth])
-  useEffect(() => {}, [userId])
+
   // const [init]
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -52,9 +32,6 @@ export default function OrderTwoFourList() {
     allTotalPrice,
     discount,
     afterDiscount,
-    selectedValue,
-    note,
-    formData,
   ])
   if (!hydrated) {
     return null
@@ -109,71 +86,6 @@ export default function OrderTwoFourList() {
     }
   }
 
-  async function SelectStar(e) {
-    console.log('星級', e.target.options[e.target.selectedIndex].value)
-    const selectStar = { ...formData }
-    selectStar.star = e.target.options[e.target.selectedIndex].value
-    setFormData(selectStar)
-    setSelectedValue(e.target.options[e.target.selectedIndex].value)
-  }
-  async function GoComment(e) {
-    console.log('評論內容', e.target.value)
-    setNote(e.target.value)
-    const selectNote = { ...formData }
-    selectNote.note = e.target.value
-    setFormData(selectNote)
-    console.log('檢查評論', formData)
-  }
-  async function SelectProduct(productId, orderId) {
-    console.log('檢查點開', userId, productId, orderId)
-    if (productId) {
-      const selectId = { ...formData }
-      selectId.user_id = userId
-      selectId.order_id = orderId
-      selectId.product_id = productId
-      selectId.course_id = null
-      setFormData(selectId)
-    }
-  }
-  async function SelectCourse(courseId, orderId) {
-    console.log('檢查點開', userId, courseId, orderId)
-    if (courseId) {
-      const selectId = { ...formData }
-      selectId.user_id = userId
-      selectId.order_id = orderId
-      selectId.course_id = courseId
-      selectId.product_id = null
-      setFormData(selectId)
-    }
-  }
-  async function GoSendReview(e) {
-    // e.preventdefault()
-    const PostFormData = new FormData()
-    console.log(formData)
-    PostFormData.append('userId', formData.user_id)
-    PostFormData.append('orderId', formData.order_id)
-    PostFormData.append('productId', formData.product_id)
-    PostFormData.append('courseId', formData.course_id)
-    PostFormData.append('star', formData.star)
-    PostFormData.append('note', formData.note)
-
-    try {
-      const url = 'http://localhost:3005/api/yamin_order/review'
-      const res = await fetch(url, {
-        method: 'POST',
-
-        body: PostFormData,
-      })
-        .then((response) => response.json())
-        .then((result) => {
-          console.log('回傳結果', result)
-        })
-      console.log(res)
-      // PostFormData = new FormData()
-    } catch (err) {
-      console.log(err)
-    }
-  }
   return (
     <>
       <div className="container-fluid order">
@@ -213,23 +125,23 @@ export default function OrderTwoFourList() {
                 <div className="col-2">
                   <h3 className="orderStateMargin ">已出貨</h3>
                   <div className="orderStateImg">
-                    <img src="/images/cart/truck,state=default.svg" alt="" />
+                    <img src="/images/cart/truck,state=hover.svg" alt="" />
                   </div>
                 </div>
                 <div className="col-2">
                   <h3 className="orderStateMargin ">已到貨</h3>
                   <div className="orderStateImg">
-                    <img src="/images/cart/Arrived,state=default.svg" alt="" />
+                    <img src="/images/cart/Arrived,state=hover.svg" alt="" />
                   </div>
                 </div>
                 <div className="col-2">
                   <h3 className="orderStateMargin ">已取貨</h3>
                   <div className="orderStateImg">
-                    <img src="/images/cart/box,state=default.svg" alt="" />
+                    <img src="/images/cart/box,state=hover.svg" alt="" />
                   </div>
                 </div>
                 <div className="col-3">
-                  <h3 className="orderStateMargin ">完成評價</h3>
+                  <h3 className="orderStateMargin ">完成訂單</h3>
                   <div className="orderStateImg">
                     <img src="/images/cart/star,state=default.svg" alt="" />
                   </div>
@@ -276,15 +188,7 @@ export default function OrderTwoFourList() {
                         {v.product_totalprice}
                       </div>
                       <div className="col-1 text-center colorWhite cartlistCol">
-                        <button
-                          type="button"
-                          className="orderProductBtn"
-                          data-bs-toggle="modal"
-                          data-bs-target="#exampleModal"
-                          onClick={() => {
-                            SelectProduct(v.product_id, v.order_id)
-                          }}
-                        >
+                        <button type="button" className="orderProductBtnDone">
                           <i className="fa-regular fa-pen-to-square" />
                         </button>
                       </div>
@@ -366,7 +270,7 @@ export default function OrderTwoFourList() {
                     <div key={v.id} className="row cartlistBor h5">
                       <div className="col-2 text-center colorWhite py-4">
                         <img
-                          src="/images/cart/image_0001.jpg"
+                          src={`/images/yaming/tea_class_picture/${v.course_image}`}
                           className="orderCartImg"
                           alt=""
                         />
@@ -389,15 +293,7 @@ export default function OrderTwoFourList() {
                         {v.course_totalprice}
                       </div>
                       <div className="col-1 text-center colorWhite cartlistCol">
-                        <button
-                          type="button"
-                          className="orderProductBtn"
-                          data-bs-toggle="modal"
-                          data-bs-target="#exampleModal"
-                          onClick={() => {
-                            SelectCourse(v.course_id, v.order_id)
-                          }}
-                        >
+                        <button type="button" className="orderProductBtnDone">
                           <i className="fa-regular fa-pen-to-square" />
                         </button>
                       </div>
@@ -573,66 +469,6 @@ export default function OrderTwoFourList() {
             {/* 付款摘要end */}
           </div>
           {/* 歷史訂單部分 end*/}
-          {/* Modal */}
-          <div
-            className="modal fade"
-            id="exampleModal"
-            tabIndex={-1}
-            aria-labelledby="exampleModalLabel"
-            aria-hidden="true"
-          >
-            <div className="modal-dialog">
-              <div className="modal-content">
-                <div className="modal-header">
-                  <h5 className="modal-title " id="exampleModalLabel">
-                    評價
-                  </h5>
-                  <button
-                    type="button"
-                    className="btn-close"
-                    data-bs-dismiss="modal"
-                    aria-label="Close"
-                  />
-                </div>
-                <div className="modal-body">
-                  <h5>滿意度</h5>
-                  <select
-                    name=""
-                    id=""
-                    value={selectedValue}
-                    className="form-select mb-4 h5"
-                    onChange={SelectStar}
-                  >
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                  </select>
-                  <h5>內容</h5>
-                  <textarea
-                    name=""
-                    id=""
-                    className="w-100"
-                    cols={30}
-                    rows={10}
-                    defaultValue={''}
-                    onChange={GoComment}
-                  />
-                </div>
-                <div className="modal-footer">
-                  <button
-                    type="button"
-                    className=" h5 modalBtnSend"
-                    onClick={GoSendReview}
-                  >
-                    送出
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-          {/* modal end */}
         </div>
       </div>
     </>

@@ -22,7 +22,8 @@ import { CgProfile } from 'react-icons/cg'
 import { FiUser } from 'react-icons/fi'
 import { FiUserPlus } from 'react-icons/fi'
 import { useUserProfile } from '@/context/UserProfileContext'
-
+import { YaminUseCart } from '@/hooks/yamin-use-cart'
+import { YaminCourseUseCart } from '@/hooks/yamin-use-Course-cart'
 export default function MyHeader() {
   const router = useRouter()
   const toggleBtnRef = useRef(null)
@@ -37,7 +38,17 @@ export default function MyHeader() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isAuth, setIsAuth] = useState(false)
   const { auth, setAuth } = useAuth()
-
+  // 購物車部分
+  const { cart, items, increment, decrement, removeItem } = YaminUseCart()
+  const { selectedValue, setSelectedValue, selectedId, setSelectedId } =
+    YaminUseCart()
+  const courseCart = YaminCourseUseCart()
+  const [productCartLength, setProductCartLength] = useState(0)
+  const [courseCartLength, setCourseCartLength] = useState(0)
+  const [cartAllLength, setCartAllLength] = useState(0)
+  console.log('看長度', items.length)
+  console.log('看長度2', courseCart.items.length)
+  //
   async function handleSearchProduct() {
     const searchForm = searchFormRef.current
     const searchFormCloseBtn = searchFormCloseBtnRef.current
@@ -89,6 +100,12 @@ export default function MyHeader() {
     })
   }, [])
   useEffect(() => {
+    setProductCartLength(items.length)
+    setCourseCartLength(courseCart.items.length)
+    setCartAllLength(items.length + courseCart.items.length)
+    console.log('我要長度', cartAllLength)
+  }, [items.length, courseCart.items.length])
+  useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 50) {
         setIsScrolled(true)
@@ -103,6 +120,7 @@ export default function MyHeader() {
       window.removeEventListener('scroll', handleScroll)
     }
   }, [])
+
   function handleToMyFav(isAuth) {
     if (isAuth) {
       router.push('/member/fav/favorite-p')
@@ -332,8 +350,8 @@ export default function MyHeader() {
                 />
               </button>
             </div>
-            <div className={`${styles['action_btn']}`}>
-              <Link href={`#`}>
+            <div className={`${styles['action_btn']} cartNumberTotalP`}>
+              <Link href={`/cart/cartOne`}>
                 <img
                   src="/images/header/cart.png"
                   alt=""
@@ -341,6 +359,7 @@ export default function MyHeader() {
                   width={30}
                 />
               </Link>
+              <div className="cartNumberTotal">{cartAllLength}</div>
             </div>
             <div className="header-userimg position-relative d-flex align-items-center">
               <button
@@ -442,7 +461,7 @@ export default function MyHeader() {
                       <div className="d-flex align-items-center">
                         <TiClipboard className="icon" />
                       </div>
-                      <Link href="/member/order" className="user-link ms-3">
+                      <Link href="/order" className="user-link ms-3">
                         我的訂單
                       </Link>
                     </li>
