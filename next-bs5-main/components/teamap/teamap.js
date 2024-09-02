@@ -17,7 +17,7 @@ export default function TeaMapComponent({
   storeName = '',
   positionFromPage = {},
 }) {
-  const apiKey = 'AIzaSyBAzhEGkDmxTNyMAN3hFt_rOPVLliaNulc'
+  const apiKey = process.env.NEXT_PUBLIC_VITE_GOOGLE_MAP_API_KEY
   const [poi, setPoi] = useState([])
   const [data, setData] = useState([])
   const [type, setType] = useState('')
@@ -68,7 +68,7 @@ export default function TeaMapComponent({
   }, [data])
   return (
     <APIProvider
-      apiKey={`${apiKey}`}
+      apiKey={apiKey}
       onLoad={() => console.log('Maps API has loaded.')}
     >
       {position.lat && (

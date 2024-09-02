@@ -26,11 +26,11 @@ export default async function (sequelize) {
         allowNull: true,
       },
       rating: {
-        type: DataTypes.STRING(20),
+        type: DataTypes.FLOAT,
         allowNull: true,
       },
       user_ratings_total: {
-        type: DataTypes.STRING(20),
+        type: DataTypes.INTEGER(10),
         allowNull: true,
       },
       latitude: {
