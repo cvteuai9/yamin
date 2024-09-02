@@ -1,3 +1,7 @@
+//修改密碼
+.profile-cps-main {
+  margin-top: 70px;
+}
 .profile-content {
   display: flex;
   justify-content: center;
@@ -17,7 +21,7 @@
   padding-right: 50px;
   .error {
     font-size: 1.6rem;
-    color: red;
+    color: #ff4d4f;
   }
 }
 .profile-form {
@@ -28,5 +32,15 @@
   input[type='email'] {
     border: none;
     background-color: #ffffff39;
+  }
+}
+@media (max-width: 992px) {
+  .profile-form {
+    padding-right: 10px;
+  }
+  .profile-content {
+    .profile-content-right {
+      padding: 0px 20px 0px 20px;
+    }
   }
 }
