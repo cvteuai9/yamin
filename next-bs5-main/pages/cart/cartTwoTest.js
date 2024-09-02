@@ -572,7 +572,7 @@ export default function CartTwo() {
           )}
           {/* 390的list */}
           {courseCart.items.length === 0 ? (
-            <div className="checkCart">
+            <div className="checkCartMd">
               <h1>課程購物車為空</h1>
             </div>
           ) : (
