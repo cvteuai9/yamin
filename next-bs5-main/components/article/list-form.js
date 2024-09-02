@@ -143,6 +143,9 @@ export default function ListForm() {
   return (
     <main className={styles['article-list']}>
       <div className="container">
+      <div className={styles.headerImg}>
+        <img src="/images/article/articlelist/article-header.webp" alt="" />
+      </div>
         <div className={styles['typetitle_group']}>
           {categories.map((category) => (
             <a
