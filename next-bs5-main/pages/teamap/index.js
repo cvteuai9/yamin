@@ -16,22 +16,24 @@ export default function TeaMapPage() {
   // 設定預設排序
   const [order, setOrder] = useState('starDESC')
   // 設定預設營業狀態篩選
-  const [businessStatus, setBusinessStatus] = useState('all')
+  // const [businessStatus, setBusinessStatus] = useState('all')
   // 設定預設星等篩選
   const [starRating, setStarRating] = useState('all')
   // 設定預設搜尋範圍
-  const [searchRange, setSearchRange] = useState('1k')
-
+  const [searchRange, setSearchRange] = useState('10k')
+  // 處理使用者點擊商店列表後，要開啟地圖上對應的infoWindow函式
   function handleToggleInfoWindow(name) {
     setChooseStore(name)
   }
+  // 處理茶館/茶廠type設定值的函式
   function handleTypeToggle(e) {
     setType(e.target.value)
   }
+  // 取得商店列表與決定地圖上標記的資料
+  // !! 營業時間判斷還沒寫出來QQ
   async function getMapData(
     type = '',
     order = '',
-    businessStatus = '',
     starRating = '',
     searchRange = '',
     position = {}
@@ -40,7 +42,6 @@ export default function TeaMapPage() {
     const searchParams = new URLSearchParams({
       type: type,
       order: order,
-      businessStatus: businessStatus,
       starRating: starRating,
       searchRange: searchRange,
       lat: position.lat,
@@ -69,9 +70,9 @@ export default function TeaMapPage() {
           },
           (error) => {
             // 這裡設計當用戶拒絕給位置存取權限時，初始點位置將會是台灣中心點
-            console.error('Error fetching user location:', error)
-            setPosition({ lat: 23.896271539202733, lng: 120.92187627041206 })
-            resolve({ lat: 23.896271539202733, lng: 120.92187627041206 })
+            // console.error('Error fetching user location:', error)
+            setPosition({ lat: 25.03746, lng: 121.564558 })
+            resolve({ lat: 25.03746, lng: 121.564558 })
           }
         )
       }
@@ -124,9 +125,9 @@ export default function TeaMapPage() {
     }
   }, [type])
   useEffect(() => {
-    // 根據 type, order, businessStatus, starRating, searchRange變化重新抓取資料
-    getMapData(type, order, businessStatus, starRating, searchRange, position)
-  }, [type, order, businessStatus, starRating, searchRange, position])
+    // 根據 type, order, starRating, searchRange變化重新抓取資料
+    getMapData(type, order, starRating, searchRange, position)
+  }, [type, order, starRating, searchRange, position])
   return (
     <>
       <div className="teaMap">
@@ -189,7 +190,7 @@ export default function TeaMapPage() {
             </div>
             <div className="filterGroup d-flex gap-3 mb-3">
               {/* 營業狀態 */}
-              <select
+              {/* <select
                 name="businessStatus"
                 id="businessStatus"
                 defaultValue={'all'}
@@ -200,7 +201,7 @@ export default function TeaMapPage() {
                 <option value="all">全部</option>
                 <option value="opening">營業中</option>
                 <option value="close">休息中</option>
-              </select>
+              </select> */}
               {/* 星等 */}
               <select
                 name="starRating"
@@ -230,6 +231,8 @@ export default function TeaMapPage() {
                 <option value="starASC">星等由低到高</option>
                 <option value="ratingCountDESC">評論數由高到低</option>
                 <option value="ratingCountASC">評論數由低到高</option>
+                <option value="distanceDESC">距離由遠到近</option>
+                <option value="distanceASC">距離由近到遠</option>
               </select>
             </div>
             {/* 店家列表 left-aside */}
@@ -331,7 +334,7 @@ export default function TeaMapPage() {
               <select
                 name="searchRange"
                 id="searchRange"
-                defaultValue={'1k'}
+                defaultValue={'10k'}
                 onChange={(e) => {
                   setSearchRange(e.target.value)
                 }}
