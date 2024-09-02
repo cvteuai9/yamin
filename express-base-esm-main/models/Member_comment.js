@@ -13,6 +13,10 @@ export default async function (sequelize) {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
+      order_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+      },
       course_id: {
         type: DataTypes.INTEGER,
         allowNull: true,

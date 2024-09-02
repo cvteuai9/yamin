@@ -4,7 +4,7 @@ import { YaminUseCart } from '@/hooks/yamin-use-cart'
 import { YaminCourseUseCart } from '@/hooks/yamin-use-Course-cart'
 import Cards from 'react-credit-cards-2'
 import { useRouter } from 'next/router'
-
+import { useAuth } from '@/hooks/my-use-auth'
 import axiosInstance from '@/services/axios-instance'
 
 import {
@@ -14,8 +14,21 @@ import {
   formatFormData,
 } from '@/hooks/cartCheckNumber'
 export default function CartTwo() {
+  const [userID, setUserId] = useState(0)
+  const { auth } = useAuth()
+  const [options, setOptions] = useState([])
+  const [userCoupons, setUserCoupons] = useState([])
+
+  useEffect(() => {
+    setUserId(auth.userData.id)
+  }, [auth])
+  useEffect(() => {
+    // console.log('123', userID)
+    getUserCoupon(userID)
+  }, [userID])
   const { cart, items, increment, decrement, removeItem } = YaminUseCart()
-  const { selectedValue, setSelectedValue } = YaminUseCart()
+  const { selectedValue, setSelectedValue, selectedId, setSelectedId } =
+    YaminUseCart()
   const courseCart = YaminCourseUseCart()
   // let testLocl = JSON.parse(localStorage.getItem('cart'))
   const router = useRouter()
@@ -26,7 +39,7 @@ export default function CartTwo() {
     // productId: getlocl,
     amount: '',
     totalPrice: '',
-    userId: 12,
+    userId: '',
     username: '',
     email: '',
     phone: '',
@@ -43,6 +56,26 @@ export default function CartTwo() {
   // confirm回來用的，在記錄確認之後，line-pay回傳訊息與代碼，例如
   // {returnCode: '1172', returnMessage: 'Existing same orderId.'}
 
+  async function getUserCoupon(userID) {
+    const url = new URL('http://localhost:3005/api/yamin_cart/cart/coupon')
+    console.log('拿個id', userID)
+    let searchParams = new URLSearchParams({
+      user_id: userID,
+    })
+    url.search = searchParams
+    const res = await fetch(url)
+    const couponResult = await res.json()
+    setUserCoupons(couponResult)
+    console.log(couponResult)
+    const fetchOptions = async () => {
+      const fetchedOptions = couponResult.map((v) => {
+        return v
+      })
+      setOptions(fetchedOptions)
+    }
+    fetchOptions()
+  }
+
   const allTotalItems = cart.totalItems + courseCart.cart.totalItems
   const allTotalPrice = cart.totalPrice + courseCart.cart.totalPrice
   useEffect(() => {
@@ -50,7 +83,7 @@ export default function CartTwo() {
     const allTotalItems = cart.totalItems + courseCart.cart.totalItems
     let allTotalPrice = cart.totalPrice + courseCart.cart.totalPrice
     if (selectedValue < 1) {
-      allTotalPrice = Number(selectedValue) * allTotalPrice
+      allTotalPrice = Math.floor(Number(selectedValue) * allTotalPrice)
     }
     if (selectedValue > 1) {
       allTotalPrice = allTotalPrice - Number(selectedValue)
@@ -58,9 +91,13 @@ export default function CartTwo() {
     if (!selectedValue) {
       allTotalPrice = cart.totalPrice + courseCart.cart.totalPrice
     }
+    updatedFormData.userId = userID
     updatedFormData.amount = allTotalItems
     updatedFormData.totalPrice = allTotalPrice
+    updatedFormData.selectedValue = Number(selectedValue)
+    updatedFormData.selectedCouponId = Number(selectedId)
     setFormData(updatedFormData)
+    console.log('需要看', formData)
     // formData.amount = allTotalItems
     // formData.totalPrice = allTotalPrice
   }, [
@@ -69,6 +106,8 @@ export default function CartTwo() {
     cart.totalItems,
     cart.totalPrice,
     selectedValue,
+    userID,
+    selectedId,
   ])
   // 信用卡部分
   // 測試
@@ -150,6 +189,7 @@ export default function CartTwo() {
     setFormData({ ...formData, [name]: value })
 
     console.log('111', formData)
+    console.log('222', userID)
   }
 
   const validateForm = () => {
@@ -206,6 +246,8 @@ export default function CartTwo() {
       PostformData.append('totalPrice', formData.totalPrice)
       PostformData.append('userId', formData.userId)
       PostformData.append('cartItem', cart)
+      PostformData.append('selectedCouponId', formData.selectedCouponId)
+      PostformData.append('selectedValue', formData.selectedValue)
       items.forEach((item) => {
         console.log('我現在要看的', item)
         PostformData.append(
@@ -245,7 +287,7 @@ export default function CartTwo() {
         console.log('123', (PostformData[key] = value))
       }
       // linepay測試
-      if (formData.payState === 'line') {
+      if (formData.payState === 'linepay') {
         const url = 'http://localhost:3005/api/yamin_cart/linepay'
         await fetch(url, {
           method: 'POST',
@@ -702,7 +744,7 @@ export default function CartTwo() {
                 type="radio"
                 id="cartBuy-linepay"
                 name="payState"
-                value="line"
+                value="linepay"
                 className="cartBuyInput cartBuy-linepay"
                 onChange={handleLinePayChange}
               />

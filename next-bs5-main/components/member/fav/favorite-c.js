@@ -147,7 +147,7 @@ export default function FavoriteC() {
                         <div className={`${styles['favoritec-pcard']}`}>
                           <div className={`${styles['favoritec-imgbox']}`}>
                             <Link href={`http://localhost:3000/course/${v.id}`}>
-                              <img src={`${v.img1}`} alt="" />
+                              <img src={`/images/yaming/tea_class_picture/${v.img1}`} alt="" />
                             </Link>
                             <button
                               className={`${styles['favoritec-fabtn']} btn`}

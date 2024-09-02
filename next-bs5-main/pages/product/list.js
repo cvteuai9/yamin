@@ -196,16 +196,18 @@ export default function List1() {
         <div
           className={`${styles['title']} d-flex justify-content-center mb-5`}
         >
-          <img src="/images/product/list1/dash.svg" alt="" />
           <div className="text-center">
             <img src="/images/product/list1/decoration-top.svg" alt="" />
             <div>
-              <h1 className="m-0">商品</h1>
+              <div className="d-flex gap-3">
+                <img src="/images/product/list1/dash.svg" alt="" />
+                <h1 className="m-0">商品</h1>
+                <img src="/images/product/list1/dash.svg" alt="" />
+              </div>
               <h5 className="m-0">Store</h5>
             </div>
             <img src="/images/product/list1/decoration-bottom.svg" alt="" />
           </div>
-          <img src="/images/product/list1/dash.svg" alt="" />
         </div>
         {/* product-list */}
         <div className={`${styles.main} row justify-content-between`}>
