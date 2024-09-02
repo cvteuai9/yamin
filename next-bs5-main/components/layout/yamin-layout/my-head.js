@@ -15,16 +15,15 @@ import useFirebase from '@/hooks/use-firebase'
 import toast, { Toaster } from 'react-hot-toast'
 import { useRouter } from 'next/router'
 import { IoLogOutOutline } from 'react-icons/io5'
-import { CiHeart } from "react-icons/ci";
+import { CiHeart } from 'react-icons/ci'
 import { RiCoupon2Line } from 'react-icons/ri'
 import { TiClipboard } from 'react-icons/ti'
 import { CgProfile } from 'react-icons/cg'
-import { FiUser } from "react-icons/fi";
-import { FiUserPlus } from "react-icons/fi";
+import { FiUser } from 'react-icons/fi'
+import { FiUserPlus } from 'react-icons/fi'
 import { useUserProfile } from '@/context/UserProfileContext'
-
-
-
+import { YaminUseCart } from '@/hooks/yamin-use-cart'
+import { YaminCourseUseCart } from '@/hooks/yamin-use-Course-cart'
 export default function MyHeader() {
   const router = useRouter()
   const toggleBtnRef = useRef(null)
@@ -37,9 +36,19 @@ export default function MyHeader() {
   const searchFormRef = useRef(null)
   const searchFormCloseBtnRef = useRef(null)
   const [isScrolled, setIsScrolled] = useState(false)
-  const { auth, setAuth } = useAuth()
   const [isAuth, setIsAuth] = useState(false)
-
+  const { auth, setAuth } = useAuth()
+  // 購物車部分
+  const { cart, items, increment, decrement, removeItem } = YaminUseCart()
+  const { selectedValue, setSelectedValue, selectedId, setSelectedId } =
+    YaminUseCart()
+  const courseCart = YaminCourseUseCart()
+  const [productCartLength, setProductCartLength] = useState(0)
+  const [courseCartLength, setCourseCartLength] = useState(0)
+  const [cartAllLength, setCartAllLength] = useState(0)
+  console.log('看長度', items.length)
+  console.log('看長度2', courseCart.items.length)
+  //
   async function handleSearchProduct() {
     const searchForm = searchFormRef.current
     const searchFormCloseBtn = searchFormCloseBtnRef.current
@@ -91,6 +100,12 @@ export default function MyHeader() {
     })
   }, [])
   useEffect(() => {
+    setProductCartLength(items.length)
+    setCourseCartLength(courseCart.items.length)
+    setCartAllLength(items.length + courseCart.items.length)
+    console.log('我要長度', cartAllLength)
+  }, [items.length, courseCart.items.length])
+  useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 50) {
         setIsScrolled(true)
@@ -105,6 +120,7 @@ export default function MyHeader() {
       window.removeEventListener('scroll', handleScroll)
     }
   }, [])
+
   function handleToMyFav(isAuth) {
     if (isAuth) {
       router.push('/member/fav/favorite-p')
@@ -131,7 +147,6 @@ export default function MyHeader() {
   // const [userProfile, setUserProfile] = useState(initUserProfile)
   const [selectedFile, setSelectedFile] = useState(null)
   const { userProfile, avatarVersion, setUserProfile } = useUserProfile()
-
 
   // 登出登入
   const { loginGoogle, logoutFirebase } = useFirebase()
@@ -189,7 +204,6 @@ export default function MyHeader() {
     setMenuOpen(false)
   }
 
-
   // 點擊使用者頭像，跳出視窗
   const [menuOpen, setMenuOpen] = useState(false)
   // 創建了一個 menuRef，並將其附加到彈出選單的 DOM 元素上。
@@ -198,7 +212,7 @@ export default function MyHeader() {
 
   const toggleMenu = (e) => {
     if (e) {
-      e.stopPropagation(); // 確保 e 不為 undefined
+      e.stopPropagation() // 確保 e 不為 undefined
     } // 阻止事件冒泡
     setMenuOpen((prevState) => !prevState) //prevState => !prevState 是一個回調函數，它接收當前的 menuOpen 狀態（prevState），並返回相反的狀態值（如果當前為 true，則返回 false，反之亦然）。
   }
@@ -238,7 +252,6 @@ export default function MyHeader() {
       setMenuOpen(false)
     }
   }
-
 
   return (
     <>
@@ -339,8 +352,8 @@ export default function MyHeader() {
                 />
               </button>
             </div>
-            <div className={`${styles['action_btn']}`}>
-              <Link href={`#`}>
+            <div className={`${styles['action_btn']} cartNumberTotalP`}>
+              <Link href={`/cart/cartOne`}>
                 <img
                   src="/images/header/cart.png"
                   alt=""
@@ -348,6 +361,7 @@ export default function MyHeader() {
                   width={30}
                 />
               </Link>
+              <div className="cartNumberTotal">{cartAllLength}</div>
             </div>
             <div className="header-userimg position-relative d-flex align-items-center">
               <button
@@ -388,7 +402,9 @@ export default function MyHeader() {
                         <div className="d-flex">
                           <div className="header-login btn btn-reset">
                             <div className="user-link-login">
-                              <Link href="/member/login" className='d-flex align-items-center'
+                              <Link
+                                href="/member/login"
+                                className="d-flex align-items-center"
                               >
                                 <FiUser className="icon me-3" />
                                 會員登入
@@ -399,13 +415,17 @@ export default function MyHeader() {
                         <div className="d-flex mb-4">
                           <div className="header-register btn btn-reset">
                             <div className="user-link-register">
-                              <Link href="/member/register" className='d-flex align-items-center'>
+                              <Link
+                                href="/member/register"
+                                className="d-flex align-items-center"
+                              >
                                 <FiUserPlus className="icon me-3" />
-                                註冊新會員</Link>
+                                註冊新會員
+                              </Link>
                             </div>
                           </div>
                         </div>
-                        <div className='header-border'></div>
+                        <div className="header-border"></div>
                       </>
                     )}
                     {auth.isAuth && (
@@ -443,7 +463,7 @@ export default function MyHeader() {
                       <div className="d-flex align-items-center">
                         <TiClipboard className="icon" />
                       </div>
-                      <Link href="/member/order" className="user-link ms-3">
+                      <Link href="/order" className="user-link ms-3">
                         我的訂單
                       </Link>
                     </li>

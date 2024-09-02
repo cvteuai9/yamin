@@ -45,6 +45,9 @@ export const YaminCartProvider = ({
   }
   // 初始化 cartItems, cartState
   const [selectedValue, setSelectedValue] = useState('')
+  const [selectedId, setSelectedId] = useState('')
+  const [selectOrderId, setSelectOrderId] = useState([])
+  const [selectCourseId, setSelectCourseId] = useState([])
   const [cartItems, setCartItems] = useState(items)
   const [cartState, setCartState] = useState(init(initialCartItems))
 
@@ -131,6 +134,12 @@ export const YaminCartProvider = ({
         decrement,
         selectedValue,
         setSelectedValue,
+        selectedId,
+        setSelectedId,
+        selectOrderId,
+        setSelectOrderId,
+        selectCourseId,
+        setSelectCourseId,
       }}
     >
       {children}

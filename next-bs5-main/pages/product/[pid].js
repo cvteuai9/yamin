@@ -535,6 +535,7 @@ export default function Detail() {
                 {review.map((v, i) => {
                   const starArray = new Array(v.rating).fill(0)
                   const starArrayUnfill = new Array(5 - v.rating).fill(0)
+                  console.log(v)
                   return (
                     <div
                       className={`${styles['review-card']} d-flex flex-row gap-5 mb-3`}
@@ -544,11 +545,11 @@ export default function Detail() {
                         <div className={`${styles.avatar}`}>
                           <img
                             className="img-fluid object-fit-cover"
-                            src="/images/product/list1/boy3.png"
+                            src="http://localhost:3005/avatar/1.png"
                             alt=""
                           />
                         </div>
-                        <h5 className="text-center">{v.user_name}</h5>
+                        <h5 className="text-center fw-bold">{v.user_name}</h5>
                       </div>
                       <div>
                         <div
@@ -641,7 +642,7 @@ export default function Detail() {
                                     alt=""
                                   />
                                 </div>
-                                <h5 className="text-center">{v.user_name}</h5>
+                                <h5 className="text-center fw-bold">{v.user_name}</h5>
                               </div>
                               <div>
                                 <div

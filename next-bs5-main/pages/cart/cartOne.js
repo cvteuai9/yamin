@@ -7,6 +7,7 @@ import withReactContent from 'sweetalert2-react-content'
 import { useRouter } from 'next/router'
 import { YaminCourseUseCart } from '@/hooks/yamin-use-Course-cart'
 import { isArray } from 'lodash'
+import { string } from 'prop-types'
 
 // // {
 //   cartItems = [],
@@ -44,7 +45,8 @@ export default function CardOne() {
   }
 
   const { cart, items, increment, decrement, removeItem } = YaminUseCart()
-  const { selectedValue, setSelectedValue } = YaminUseCart()
+  const { selectedValue, setSelectedValue, selectedId, setSelectedId } =
+    YaminUseCart()
   const courseCart = YaminCourseUseCart()
   const CartMySwal = withReactContent(Swal)
 
@@ -96,8 +98,18 @@ export default function CardOne() {
   }
 
   function testSub(e) {
-    setSelectedValue(e.target.value)
-    console.log('要看得值', e.target.value)
+    console.log('我想取優惠券的id', e.target.value)
+    console.log(e.target.options[e.target.selectedIndex])
+    // 下面這一行是我select選到的option選項
+    const selectedOption = e.target.options[e.target.selectedIndex]
+    // 下面這一行是我自訂屬性取值的方式
+    const couponId = selectedOption.dataset.couponId
+    setSelectedValue(selectedOption.value)
+    setSelectedId(couponId)
+    // 正确访问 data-coupon-id
+    console.log('訪問訪問', selectedValue, couponId)
+    // setSelectedValue(e.target.value)
+    // setSelectedId
   }
   function handleSubmit() {
     router.push('http://localhost:3000/cart/cartTwoTest')
@@ -155,7 +167,7 @@ export default function CardOne() {
             <div className="col-1 text-center colorWhite">移除</div>
           </div>
 
-          <div className="row cartlistBor h5">
+          {/* <div className="row cartlistBor h5">
             <div className="col-2 text-center colorWhite py-4">
               <img src="/images/cart/image_0001.jpg" alt="" />
             </div>
@@ -186,7 +198,7 @@ export default function CardOne() {
                 <i className="fa-solid fa-trash-can colorWhite p-3" />
               </button>
             </div>
-          </div>
+          </div> */}
           {/* itemsMap開始 */}
           {items.length === 0 ? (
             <div className="checkCart">
@@ -401,7 +413,10 @@ export default function CardOne() {
               return (
                 <div key={v.id} className="row cartlistBor h5">
                   <div className="col-2 text-center colorWhite py-4">
-                    <img src={v.img1} alt="" />
+                    <img
+                      src={`/images/yaming/tea_class_picture/${v.img1}`}
+                      alt=""
+                    />
                   </div>
                   <div className=" col-4 text-center colorWhite cartlistCol">
                     {v.name}
@@ -458,7 +473,7 @@ export default function CardOne() {
               )
             })
           )}
-          <div className="row cartlistBor h5">
+          {/* <div className="row cartlistBor h5">
             <div className="col-2 text-center colorWhite py-4">
               <img src="/images/cart/image_0001.jpg" alt="" />
             </div>
@@ -483,7 +498,7 @@ export default function CardOne() {
                 <i className="fa-solid fa-trash-can colorWhite p-3" />
               </button>
             </div>
-          </div>
+          </div> */}
           {/* 390的list */}
           {courseCart.items.length === 0 ? (
             <div className="checkCartMd">
@@ -601,17 +616,28 @@ export default function CardOne() {
                   </>
                 )
               })} */}
-              <option value="" selected>無</option>
+              <option value="" selected>
+                無
+              </option>
               {options.map((v) => {
-                if(v.min_spend_amount < (cart.totalPrice + courseCart.cart.totalPrice)){
-                return (
-                  <>
-                    {<option key={v.id} value={v.discount}>
-                      {v.name}
-                    </option>}
-                  </>
-                )
-              }
+                if (
+                  v.min_spend_amount <
+                  cart.totalPrice + courseCart.cart.totalPrice
+                ) {
+                  return (
+                    <>
+                      {
+                        <option
+                          key={v.id}
+                          data-coupon-id={v.coupon_id}
+                          value={v.discount}
+                        >
+                          {v.name}
+                        </option>
+                      }
+                    </>
+                  )
+                }
               })}
             </select>
             <div className=" cartSubTotal d-flex justify-content-between mb-5">

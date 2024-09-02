@@ -4,7 +4,8 @@ import { YaminUseCart } from '@/hooks/yamin-use-cart'
 import { YaminCourseUseCart } from '@/hooks/yamin-use-Course-cart'
 import Cards from 'react-credit-cards-2'
 import { useRouter } from 'next/router'
-
+import { useAuth } from '@/hooks/my-use-auth'
+import { useShip711StoreOpener } from '@/hooks/use-ship-711-store'
 import axiosInstance from '@/services/axios-instance'
 
 import {
@@ -14,8 +15,26 @@ import {
   formatFormData,
 } from '@/hooks/cartCheckNumber'
 export default function CartTwo() {
+  const [userID, setUserId] = useState(0)
+  const { auth } = useAuth()
+  const [options, setOptions] = useState([])
+  const [userCoupons, setUserCoupons] = useState([])
+  const [cardPayInsertId, setCardPayInsertId] = useState(0)
+  useEffect(() => {
+    setUserId(auth.userData.id)
+  }, [auth])
+  useEffect(() => {
+    // console.log('123', userID)
+    getUserCoupon(userID)
+  }, [userID])
+  useEffect(() => {}, [cardPayInsertId])
+  const { store711, openWindow, closeWindow } = useShip711StoreOpener(
+    'http://localhost:3005/api/shipment/711',
+    { autoCloseMins: 3 } // x分鐘沒完成選擇會自動關閉，預設5分鐘。
+  )
   const { cart, items, increment, decrement, removeItem } = YaminUseCart()
-  const { selectedValue, setSelectedValue } = YaminUseCart()
+  const { selectedValue, setSelectedValue, selectedId, setSelectedId } =
+    YaminUseCart()
   const courseCart = YaminCourseUseCart()
   // let testLocl = JSON.parse(localStorage.getItem('cart'))
   const router = useRouter()
@@ -26,7 +45,7 @@ export default function CartTwo() {
     // productId: getlocl,
     amount: '',
     totalPrice: '',
-    userId: 12,
+    userId: '',
     username: '',
     email: '',
     phone: '',
@@ -43,6 +62,26 @@ export default function CartTwo() {
   // confirm回來用的，在記錄確認之後，line-pay回傳訊息與代碼，例如
   // {returnCode: '1172', returnMessage: 'Existing same orderId.'}
 
+  async function getUserCoupon(userID) {
+    const url = new URL('http://localhost:3005/api/yamin_cart/cart/coupon')
+    console.log('拿個id', userID)
+    let searchParams = new URLSearchParams({
+      user_id: userID,
+    })
+    url.search = searchParams
+    const res = await fetch(url)
+    const couponResult = await res.json()
+    setUserCoupons(couponResult)
+    console.log(couponResult)
+    const fetchOptions = async () => {
+      const fetchedOptions = couponResult.map((v) => {
+        return v
+      })
+      setOptions(fetchedOptions)
+    }
+    fetchOptions()
+  }
+
   const allTotalItems = cart.totalItems + courseCart.cart.totalItems
   const allTotalPrice = cart.totalPrice + courseCart.cart.totalPrice
   useEffect(() => {
@@ -50,7 +89,7 @@ export default function CartTwo() {
     const allTotalItems = cart.totalItems + courseCart.cart.totalItems
     let allTotalPrice = cart.totalPrice + courseCart.cart.totalPrice
     if (selectedValue < 1) {
-      allTotalPrice = Number(selectedValue) * allTotalPrice
+      allTotalPrice = Math.floor(Number(selectedValue) * allTotalPrice)
     }
     if (selectedValue > 1) {
       allTotalPrice = allTotalPrice - Number(selectedValue)
@@ -58,9 +97,13 @@ export default function CartTwo() {
     if (!selectedValue) {
       allTotalPrice = cart.totalPrice + courseCart.cart.totalPrice
     }
+    updatedFormData.userId = userID
     updatedFormData.amount = allTotalItems
     updatedFormData.totalPrice = allTotalPrice
+    updatedFormData.selectedValue = Number(selectedValue)
+    updatedFormData.selectedCouponId = Number(selectedId)
     setFormData(updatedFormData)
+    console.log('需要看', formData)
     // formData.amount = allTotalItems
     // formData.totalPrice = allTotalPrice
   }, [
@@ -69,6 +112,9 @@ export default function CartTwo() {
     cart.totalItems,
     cart.totalPrice,
     selectedValue,
+    userID,
+    selectedId,
+    store711.storename,
   ])
   // 信用卡部分
   // 測試
@@ -92,7 +138,10 @@ export default function CartTwo() {
       window.location.href = `http://localhost:3005/api/yamin_cart/linepay?orderId=${getorderId}`
     }
   }
-
+  const gocardPay = (cardPayId) => {
+    console.log('我的cardpay', cardPayId)
+    window.location.href = `http://localhost:3000/cart/cartThree?orderId=${cardPayId}`
+  }
   const handleCardPayChange = (e) => {
     if (e.target.checked) {
       showCard.current.classList.remove('d-none')
@@ -146,10 +195,13 @@ export default function CartTwo() {
 
   const handleChange = (event) => {
     const { name, value } = event.target
-
+    if (formData.delivery === '超商取貨') {
+      console.log('取貨', formData.delivery)
+    }
     setFormData({ ...formData, [name]: value })
 
     console.log('111', formData)
+    console.log('222', userID)
   }
 
   const validateForm = () => {
@@ -173,10 +225,6 @@ export default function CartTwo() {
       newErrors.delivery = '請選擇配送方式'
       valid = false
     }
-    if (!formData.address) {
-      newErrors.address = '配送地址是必填項'
-      valid = false
-    }
 
     setErrors(newErrors)
     if (!valid) {
@@ -195,7 +243,15 @@ export default function CartTwo() {
       PostformData.append('email', formData.email)
       PostformData.append('phone', formData.phone)
       PostformData.append('delivery', formData.delivery)
-      PostformData.append('address', formData.address)
+      if (formData.delivery === '超商取貨') {
+        console.log('超商地址')
+        PostformData.append('address', store711.storeaddress)
+      }
+      if (formData.delivery === '宅配取貨') {
+        console.log('一般地址')
+        PostformData.append('address', formData.address)
+      }
+
       PostformData.append('note', formData.note)
       PostformData.append('payState', formData.payState)
       PostformData.append('cardnumber', formData.cardnumber)
@@ -206,6 +262,8 @@ export default function CartTwo() {
       PostformData.append('totalPrice', formData.totalPrice)
       PostformData.append('userId', formData.userId)
       PostformData.append('cartItem', cart)
+      PostformData.append('selectedCouponId', formData.selectedCouponId)
+      PostformData.append('selectedValue', formData.selectedValue)
       items.forEach((item) => {
         console.log('我現在要看的', item)
         PostformData.append(
@@ -245,7 +303,7 @@ export default function CartTwo() {
         console.log('123', (PostformData[key] = value))
       }
       // linepay測試
-      if (formData.payState === 'line') {
+      if (formData.payState === 'linepay') {
         const url = 'http://localhost:3005/api/yamin_cart/linepay'
         await fetch(url, {
           method: 'POST',
@@ -264,15 +322,30 @@ export default function CartTwo() {
           .catch((error) => {
             console.error(error)
           })
-
+        const sendUrl = new URL(
+          'http://localhost:3005/api/yamin_cart/linepay/send'
+        )
+        try {
+          const res = await fetch(sendUrl, {
+            method: 'POST',
+            header: {
+              'Content-Type': 'application/json',
+            },
+            body: PostformData,
+          })
+          const data = await res.json()
+          console.log(data)
+        } catch (err) {
+          console.log(err)
+        }
         // const goLineUrl = result.goLineurl
         goLinePay()
       }
 
       // linepay測試內容結束
-      if (formData.payState === 'cardPay') {
+      if (formData.payState === 'cardpay') {
         const url = 'http://localhost:3005/api/yamin_cart'
-        fetch(url, {
+        await fetch(url, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -283,10 +356,26 @@ export default function CartTwo() {
           .then((result) => {
             console.log('testurl', url)
             console.log('success', result)
+            setCardPayInsertId(result.insertId)
+            gocardPay(result.insertId)
           })
           .catch((error) => {
             console.error(error)
           })
+        const sendUrl = new URL('http://localhost:3005/api/yamin_cart/send')
+        try {
+          const res = await fetch(sendUrl, {
+            method: 'POST',
+            header: {
+              'Content-Type': 'application/json',
+            },
+            body: PostformData,
+          })
+          const data = await res.json()
+          console.log(data)
+        } catch (err) {
+          console.log(err)
+        }
         console.log('取得', PostformData.get('username'))
         console.log('信用卡表單提交成功', formData)
       }
@@ -469,7 +558,10 @@ export default function CartTwo() {
               return (
                 <div key={v.id} className="row cartlistBor h5">
                   <div className="col-2 text-center colorWhite py-4">
-                    <img src={v.img1} alt="" />
+                    <img
+                      src={`/images/yaming/tea_class_picture/${v.img1}`}
+                      alt=""
+                    />
                   </div>
                   <div className="col-4 text-center colorWhite cartlistCol">
                     {v.name}
@@ -648,22 +740,52 @@ export default function CartTwo() {
                 <div className="error-message">{errors.delivery}</div>
               )}
             </div>
-            <div className="d-flex flex-column  mb-5">
-              <label htmlFor="" className="mb-4">
-                配送地址
-              </label>
-              <input
-                type="text"
-                className="w-100"
-                name="address"
-                value={formData.address}
-                ref={inputRefs.address}
-                onChange={handleChange}
-              />
-              {errors.address && (
-                <div className="error-message">{errors.address}</div>
-              )}
-            </div>
+            {formData.delivery === '超商取貨' ? (
+              <div className="d-flex flex-column  mb-5">
+                <button
+                  type="button"
+                  className="mb-5"
+                  onClick={() => {
+                    openWindow()
+                  }}
+                >
+                  選擇門市
+                </button>
+                <label>選擇門市</label>
+                <input type="text" value={store711.storename} disabled />
+                <label htmlFor="" className="mb-4">
+                  配送地址
+                </label>
+                <input
+                  type="text"
+                  className="w-100"
+                  name="address"
+                  value={store711.storeaddress}
+                  ref={inputRefs.address}
+                  onChange={handleChange}
+                />
+                {errors.address && (
+                  <div className="error-message">{errors.address}</div>
+                )}
+              </div>
+            ) : (
+              <div className="d-flex flex-column  mb-5">
+                <label htmlFor="" className="mb-4">
+                  配送地址
+                </label>
+                <input
+                  type="text"
+                  className="w-100"
+                  name="address"
+                  value={formData.address}
+                  ref={inputRefs.address}
+                  onChange={handleChange}
+                />
+                {errors.address && (
+                  <div className="error-message">{errors.address}</div>
+                )}
+              </div>
+            )}
             <div className="d-flex flex-column  mb-5">
               <label htmlFor="" className="mb-3">
                 配送備註
@@ -691,7 +813,7 @@ export default function CartTwo() {
                 type="radio"
                 id="cartBuy-card"
                 name="payState"
-                value="cardPay"
+                value="cardpay"
                 className="cartBuyInput cartBuy-card"
                 onChange={handleCardPayChange}
               />
@@ -702,7 +824,7 @@ export default function CartTwo() {
                 type="radio"
                 id="cartBuy-linepay"
                 name="payState"
-                value="line"
+                value="linepay"
                 className="cartBuyInput cartBuy-linepay"
                 onChange={handleLinePayChange}
               />

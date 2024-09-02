@@ -257,7 +257,9 @@ export default function Course() {
                 <div className="shane-course-wood mb-4" />
                 <div className="h1 shane-course-store row text-center justify-content-center">
                   課程
-                  <div className="shane-course-store p text-center ">Course</div>
+                  <div className="shane-course-store p text-center ">
+                    Course
+                  </div>
                 </div>
                 <div className="shane-course-wood mb-4" />
               </div>
@@ -479,7 +481,9 @@ export default function Course() {
                             <button
                               type="button"
                               className="btn like-btn"
-                              onClick={() => handleFavToggle(courses, v.id)}
+                              onClick={() =>
+                                handleFavToggle(courses, v.id, userID, isAuth)
+                              }
                             >
                               {v.fav ? (
                                 <img
@@ -628,6 +632,7 @@ export default function Course() {
             </div>
           </div>
         </div>
+        <Toaster />
       </>
     </>
   )

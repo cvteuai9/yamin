@@ -7,7 +7,11 @@ import sequelize from '#configs/db.js'
 import moment from 'moment'
 import authenticate from '../middlewares/authenticate.js'
 import { v4 as uuidv4 } from 'uuid'
+import transporter from '#configs/mail.js'
+import 'dotenv/config.js'
 // import { result } from 'lodash'
+import multer from 'multer'
+const upload = multer()
 const { YaminOrder, YaminOrderDetail } = sequelize.models
 
 // line pay使用npm套件
@@ -26,14 +30,27 @@ let reservation
 let linePayResponse
 let LineOrderInsertId
 let linePayState
+let orderinsertId
 /* GET home page. */
 router.use(express.json())
 router.get('/cart/coupon', async (req, res) => {
   try {
     const Copuser_id = req.query.user_id || 0
     console.log('使用者id', Copuser_id)
-    let GetUserCouponSQL = `SELECT coupons.* , uc.* FROM users_coupons uc JOIN coupons ON coupons.id = uc.coupon_id WHERE user_id=${Copuser_id}`
-    const testCouSql = await db.query(GetUserCouponSQL)
+    let GetUserCouponSQL =
+      'SELECT coupons.* , uc.* FROM users_coupons uc JOIN coupons ON coupons.id = uc.coupon_id WHERE user_id=? AND uc.status=?'
+    const testCouSql = await db.query(
+      GetUserCouponSQL,
+      [Copuser_id, 'unused'],
+      (err, result) => {
+        if (err) {
+          res.json(err)
+        }
+        if (result) {
+          res.json(result)
+        }
+      }
+    )
     console.log('測試撈庫鵬卷', testCouSql[0])
     return res.json(testCouSql[0])
   } catch (err) {
@@ -57,21 +74,29 @@ router.post('/', async (req, res) => {
   // const uuid = shortUUID()
   // const shortCode = uuid.new()
   const newOrder = req.body
+  // if (parseFloat(newOrder.selectedValue) === NaN) {
+  //   newOrder.selectedValue = 0
+  // }
+  // if (parseFloat(newOrder.selectedValue) !== NaN) {
+  //   newOrder.selectedValue = parseFloat(newOrder.selectedValue)
+  // }
   // const resultOrder = newOrder.allProductId.
-  console.log(newOrder)
+  console.log('咱們現在要看的', newOrder)
   const testOrder = [...newOrder.allProductId]
   // console.log(testOrder)
   const ArrayProductOrderData = JSON.parse(req.body.allProductId)
   const ArrayCourseOrderData = JSON.parse(req.body.allCourseId)
   console.log('1140看', ArrayCourseOrderData)
   const orderQuery =
-    'INSERT INTO YaminOrder (state,order_uuid, user_id, amount, total_price, username, email, phone, delivery, address, note, pay_state, cardnumber, cardholder, cardexpiry, cvc,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
+    'INSERT INTO YaminOrder (state,order_uuid, user_id, coupon_id,coupon_discount, amount, total_price, username, email, phone, delivery, address, note, pay_state, cardnumber, cardholder, cardexpiry, cvc,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
   const [yamintest] = await db.query(
     orderQuery,
     [
       newOrder.state,
       getRandomCode(),
       newOrder.userId,
+      newOrder.selectedCouponId,
+      Number(parseFloat(newOrder.selectedValue)),
       newOrder.amount,
       newOrder.totalPrice,
       newOrder.username,
@@ -96,13 +121,31 @@ router.post('/', async (req, res) => {
       }
       if (results.insertId) {
         console.log('12345', results)
+
         res.json({ results })
         console.log('現在要看', results.insertId)
       }
     }
   )
   // const testYamin = JSON.stringify(yamintest)
+  orderinsertId = yamintest.insertId
   console.log('12345', yamintest.insertId)
+
+  const orderDeleteCouponQuery =
+    'UPDATE users_coupons SET users_coupons.status = ? WHERE users_coupons.user_id = ? AND users_coupons.coupon_id = ?'
+  const orderDeleteCouponUser = await db.query(
+    orderDeleteCouponQuery,
+    ['used', newOrder.userId, newOrder.selectedCouponId],
+    (err, resultDeleteCoupon) => {
+      if (err) {
+        res.json(err)
+      }
+      if (resultDeleteCoupon) {
+        res.json(resultDeleteCoupon)
+      }
+    }
+  )
+
   if (yamintest.insertId) {
     const orderProductDetailQuery =
       'INSERT INTO YaminProductDetail (order_id,product_id,product_image,product_name,product_unitprice,product_quantity,product_totalprice,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?)'
@@ -221,7 +264,7 @@ router.post('/', async (req, res) => {
   //   status: 'success',
   //   data: null,
   // })
-
+  res.json(yamintest)
   function getRandomCode(length = 11) {
     const min = Math.pow(10, length - 1)
     const max = Math.pow(10, length) - 1
@@ -241,15 +284,17 @@ router.post('/linepay', async (req, res) => {
 
   const ArrayProductOrderData = JSON.parse(req.body.allProductId)
   const ArrayCourseOrderData = JSON.parse(req.body.allCourseId)
-  console.log('1140看', ArrayCourseOrderData)
+  console.log('1140看', newOrder.selectedCouponId)
   const orderQuery =
-    'INSERT INTO YaminOrder (state,order_uuid, user_id, amount, total_price, username, email, phone, delivery, address, note, pay_state, cardnumber, cardholder, cardexpiry, cvc,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
+    'INSERT INTO YaminOrder (state,order_uuid, user_id, coupon_id, coupon_discount, amount, total_price, username, email, phone, delivery, address, note, pay_state, cardnumber, cardholder, cardexpiry, cvc,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
   const [yamintest] = await db.query(
     orderQuery,
     [
       newOrder.state,
       getRandomCode(),
       newOrder.userId,
+      newOrder.selectedCouponId,
+      parseFloat(newOrder.selectedValue),
       newOrder.amount,
       newOrder.totalPrice,
       newOrder.username,
@@ -279,6 +324,38 @@ router.post('/linepay', async (req, res) => {
       }
     }
   )
+  // 刪除使用優惠券的
+  // const orderDeleteCouponQuery =
+  //   'DELETE FROM users_coupons WHERE users_coupons.user_id = ? AND users_coupons.coupon_id = ?'
+  // const orderDeleteCouponUser = await db.query(
+  //   orderDeleteCouponQuery,
+  //   [newOrder.userId, newOrder.selectedCouponId],
+  //   (err, resultDeleteCoupon) => {
+  //     if (err) {
+  //       res.json(err)
+  //     }
+  //     if (resultDeleteCoupon) {
+  //       res.json(resultDeleteCoupon)
+  //     }
+  //   }
+  // )
+  // 更新優惠券已使用
+  const orderDeleteCouponQuery =
+    'UPDATE users_coupons SET users_coupons.status = ? WHERE users_coupons.user_id = ? AND users_coupons.coupon_id = ?'
+  const orderDeleteCouponUser = await db.query(
+    orderDeleteCouponQuery,
+    ['used', newOrder.userId, newOrder.selectedCouponId],
+    (err, resultDeleteCoupon) => {
+      if (err) {
+        res.json(err)
+      }
+      if (resultDeleteCoupon) {
+        res.json(resultDeleteCoupon)
+      }
+    }
+  )
+
+  console.log(orderDeleteCouponUser)
   // const testYamin = JSON.stringify(yamintest)
   console.log('12345', yamintest.insertId)
   if (yamintest.insertId) {
@@ -460,7 +537,7 @@ router.get('/linepay', async (req, res) => {
   const packageId = uuidv4()
   console.log(LineOrderInsertId)
 
-  if (linePayState === 'line') {
+  if (linePayState === 'linepay') {
     if (LineOrderInsertId) {
       console.log('line 0408', LineOrderInsertId)
 
@@ -642,4 +719,123 @@ router.get('/confirm', async (req, res) => {
   }
 })
 
+router.get('/cardpay', async (req, res) => {
+  const cardPayid = req.query.orderId
+  console.log('信用卡的id', cardPayid)
+  const cardPaySql = 'SELECT * FROM YaminOrder WHERE id = ?'
+  const SearchCardPayId = await db.query(
+    cardPaySql,
+    [cardPayid],
+    (err, result) => {
+      if (err) {
+        res.json(err)
+      }
+      if (result) {
+        res.json(result)
+      }
+    }
+  )
+  console.log('我要取uuid', SearchCardPayId)
+  res.json(SearchCardPayId)
+})
+router.post('/send', upload.none(), async (req, res, next) => {
+  // 寄送
+  console.log('檢查傳出的insertId', orderinsertId)
+  console.log('檢查送來的值', req.body)
+  const checkOrderUuidSql = 'SELECT * FROM YaminOrder WHERE id = ?'
+  const checkOrderUuid = await db.query(
+    checkOrderUuidSql,
+    [orderinsertId],
+    (err, result) => {
+      if (err) {
+        console.log(err)
+        res.json(err)
+      }
+      if (result) {
+        console.log(result)
+        res.json(result)
+      }
+    }
+  )
+  console.log('檢查要傳的orderId', checkOrderUuid)
+  console.log('檢查要傳的email', checkOrderUuid[0][0].email)
+  const mailOptions = {
+    from: `"support"<${process.env.SMTP_TO_EMAIL}>`,
+    to: `${checkOrderUuid[0][0].email}`,
+    subject: `[雅茗]訂單成立，這是您的訂單編號${checkOrderUuid[0][0].order_uuid}`,
+    // text: `感謝您的購買，\r\n<a href="http://localhost:3000/order/orderTwoFiveList?orderId=${checkOrderUuid[0][0].id}">前往訂單明細</a>\r\n這是您的訂單編號:${checkOrderUuid[0][0].order_uuid}。\r\n共消費:${checkOrderUuid[0][0].total_price}`,
+    html: ` <div style="padding: 20px;width: 300px; height: 400px;background-color: #003E52;">
+
+       <div style="margin-botton:10px">
+        <img style="width: 80px ;background-size: cover;"  src="https://raw.githubusercontent.com/GuanLin-Liao/testImg/main/LOGO-%E7%9B%B4%E5%90%91.png" alt="">
+       </div>
+       <div style="color:#B29564 ;padding-bottom: 10px;border-bottom: 2px solid #B29564; margin-bottom: 21px;">謝謝您的購買</div>
+       <div style="color:#B29564 ;padding-bottom: 10px;border-bottom: 2px solid #B29564; margin-bottom: 21px;"><a href="http://localhost:3000/order/orderTwoFiveList?orderId=${checkOrderUuid[0][0].id}">前往訂單明細資料</a></div><div style="color:#B29564 ;padding-bottom: 10px;border-bottom: 2px solid #B29564; margin-bottom: 21px;">訂單編號:${checkOrderUuid[0][0].order_uuid}</div><div style="color:#B29564 ;padding-bottom: 10px;border-bottom: 2px solid #B29564; margin-bottom: 21px;">總價:${checkOrderUuid[0][0].total_price}</div>
+       
+
+
+    </div>`,
+  }
+
+  transporter.sendMail(mailOptions, (err, response) => {
+    if (err) {
+      // 失敗處理
+      return res.status(400).json({ status: 'error', message: err })
+    } else {
+      // 成功回覆的json
+      return res.json({ status: 'success', data: null })
+    }
+  })
+  res.json('ok')
+})
+router.post('/linepay/send', upload.none(), async (req, res, next) => {
+  // 寄送
+  console.log('檢查傳出的insertId', LineOrderInsertId)
+  console.log('檢查送來的值', req.body)
+  const checkOrderUuidSql = 'SELECT * FROM YaminOrder WHERE id = ?'
+  const checkOrderUuid = await db.query(
+    checkOrderUuidSql,
+    [LineOrderInsertId],
+    (err, result) => {
+      if (err) {
+        console.log(err)
+        res.json(err)
+      }
+      if (result) {
+        console.log(result)
+        res.json(result)
+      }
+    }
+  )
+  console.log('檢查要傳的orderId', checkOrderUuid)
+  console.log('檢查要傳的email', checkOrderUuid[0][0].email)
+  const mailOptions = {
+    from: `"support"<${process.env.SMTP_TO_EMAIL}>`,
+    to: `${checkOrderUuid[0][0].email}`,
+    subject: `[雅茗]訂單成立，這是您的訂單編號${checkOrderUuid[0][0].order_uuid}`,
+    // text: `感謝您的購買，\r\n<a href="http://localhost:3000/order/orderTwoFiveList?orderId=${checkOrderUuid[0][0].id}">前往訂單明細</a>\r\n這是您的訂單編號:${checkOrderUuid[0][0].order_uuid}。\r\n共消費:${checkOrderUuid[0][0].total_price}`,
+    html: ` <div style="padding: 20px;width: 300px; height: 400px;background-color: #003E52;">
+
+       <div style="margin-botton:10px">
+        <img style="width: 80px ;background-size: cover;"  src="https://raw.githubusercontent.com/GuanLin-Liao/testImg/main/LOGO-%E7%9B%B4%E5%90%91.png" alt="">
+       </div>
+       <div style="color:#B29564 ;padding-bottom: 10px;border-bottom: 2px solid #B29564; margin-bottom: 21px;">謝謝您的購買</div>
+       <div style="color:#B29564 ;padding-bottom: 10px;border-bottom: 2px solid #B29564; margin-bottom: 21px;"><a href="http://localhost:3000/order/orderTwoFiveList?orderId=${checkOrderUuid[0][0].id}">前往訂單明細資料</a></div><div style="color:#B29564 ;padding-bottom: 10px;border-bottom: 2px solid #B29564; margin-bottom: 21px;">訂單編號:${checkOrderUuid[0][0].order_uuid}</div><div style="color:#B29564 ;padding-bottom: 10px;border-bottom: 2px solid #B29564; margin-bottom: 21px;">總價:${checkOrderUuid[0][0].total_price}</div>
+       
+
+
+    </div>`,
+  }
+
+  transporter.sendMail(mailOptions, (err, response) => {
+    if (err) {
+      // 失敗處理
+      return res.status(400).json({ status: 'error', message: err })
+    } else {
+      // 成功回覆的json
+      return res.json({ status: 'success', data: null })
+    }
+  })
+  res.json('ok')
+})
 export default router

@@ -1,32 +1,34 @@
 import { DataTypes } from 'sequelize'
+
 export default async function (sequelize) {
   return sequelize.define(
     'Users_Coupons',
     {
       id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER(11),
         primaryKey: true,
         autoIncrement: true,
       },
       user_id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER(11),
         allowNull: false,
         references: {
-          model: 'users', // 假設您有一個 users 表
+          model: 'users',
           key: 'id',
         },
       },
       coupon_id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER(11),
         allowNull: false,
         references: {
-          model: 'coupons', // 這裡引用我們之前定義的 coupons 表
+          model: 'coupons',
           key: 'id',
         },
       },
       assigned_at: {
         type: DataTypes.DATE,
         allowNull: false,
+        defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
       },
       redeemed_at: {
         type: DataTypes.DATE,
@@ -37,14 +39,28 @@ export default async function (sequelize) {
         allowNull: false,
         defaultValue: 'unused',
       },
+      created_at: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
+      },
+      updated_at: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
+      },
     },
     {
-      tableName: 'users_coupons', //直接提供資料表名稱
-      timestamps: true, // 使用時間戳
-      paranoid: false, // 軟性刪除
-      underscored: true, // 所有自動建立欄位，使用snake_case命名
-      createdAt: 'created_at', // 建立的時間戳
-      updatedAt: 'updated_at', // 更新的時間戳
+      tableName: 'users_coupons',
+      timestamps: true,
+      underscored: true,
+      createdAt: 'created_at',
+      updatedAt: 'updated_at',
+      hooks: {
+        beforeCreate: (record, options) => {
+          record.assigned_at = new Date()
+        },
+      },
     }
   )
 }
