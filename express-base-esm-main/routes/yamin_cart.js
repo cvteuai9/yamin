@@ -770,7 +770,7 @@ router.post('/send', upload.none(), async (req, res, next) => {
         <img style="width: 80px ;background-size: cover;"  src="https://raw.githubusercontent.com/GuanLin-Liao/testImg/main/LOGO-%E7%9B%B4%E5%90%91.png" alt="">
        </div>
        <div style="color:#B29564 ;padding-bottom: 10px;border-bottom: 2px solid #B29564; margin-bottom: 21px;">謝謝您的購買</div>
-       <div style="color:#B29564 ;padding-bottom: 10px;border-bottom: 2px solid #B29564; margin-bottom: 21px;"><a href="http://localhost:3000/order/orderTwoFiveList?orderId=${checkOrderUuid[0][0].id}">前往訂單明細資料</a></div><div style="color:#B29564 ;padding-bottom: 10px;border-bottom: 2px solid #B29564; margin-bottom: 21px;">訂單編號:${checkOrderUuid[0][0].order_uuid}</div><div style="color:#B29564 ;padding-bottom: 10px;border-bottom: 2px solid #B29564; margin-bottom: 21px;">總價:${checkOrderUuid[0][0].total_price}</div>
+       <div style="color:#B29564 ;padding-bottom: 10px;border-bottom: 2px solid #B29564; margin-bottom: 21px;"><a href="http://localhost:3000/order/orderTwoOneList?orderId=${checkOrderUuid[0][0].id}">前往訂單明細資料</a></div><div style="color:#B29564 ;padding-bottom: 10px;border-bottom: 2px solid #B29564; margin-bottom: 21px;">訂單編號:${checkOrderUuid[0][0].order_uuid}</div><div style="color:#B29564 ;padding-bottom: 10px;border-bottom: 2px solid #B29564; margin-bottom: 21px;">總價:${checkOrderUuid[0][0].total_price}</div>
        
 
 
@@ -820,7 +820,7 @@ router.post('/linepay/send', upload.none(), async (req, res, next) => {
         <img style="width: 80px ;background-size: cover;"  src="https://raw.githubusercontent.com/GuanLin-Liao/testImg/main/LOGO-%E7%9B%B4%E5%90%91.png" alt="">
        </div>
        <div style="color:#B29564 ;padding-bottom: 10px;border-bottom: 2px solid #B29564; margin-bottom: 21px;">謝謝您的購買</div>
-       <div style="color:#B29564 ;padding-bottom: 10px;border-bottom: 2px solid #B29564; margin-bottom: 21px;"><a href="http://localhost:3000/order/orderTwoFiveList?orderId=${checkOrderUuid[0][0].id}">前往訂單明細資料</a></div><div style="color:#B29564 ;padding-bottom: 10px;border-bottom: 2px solid #B29564; margin-bottom: 21px;">訂單編號:${checkOrderUuid[0][0].order_uuid}</div><div style="color:#B29564 ;padding-bottom: 10px;border-bottom: 2px solid #B29564; margin-bottom: 21px;">總價:${checkOrderUuid[0][0].total_price}</div>
+       <div style="color:#B29564 ;padding-bottom: 10px;border-bottom: 2px solid #B29564; margin-bottom: 21px;"><a href="http://localhost:3000/order/orderTwoOneList?orderId=${checkOrderUuid[0][0].id}">前往訂單明細資料</a></div><div style="color:#B29564 ;padding-bottom: 10px;border-bottom: 2px solid #B29564; margin-bottom: 21px;">訂單編號:${checkOrderUuid[0][0].order_uuid}</div><div style="color:#B29564 ;padding-bottom: 10px;border-bottom: 2px solid #B29564; margin-bottom: 21px;">總價:${checkOrderUuid[0][0].total_price}</div>
        
 
 

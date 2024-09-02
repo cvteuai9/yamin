@@ -356,7 +356,7 @@ export default function CardOne() {
           {/* 390Map end */}
 
           {/* 390的list */}
-          <div className="row cartlistBorMd h5">
+          {/* <div className="row cartlistBorMd h5">
             <div className="col-3 text-center colorWhite">
               <img src="/images/cart/image_0001.jpg" alt="" />
             </div>
@@ -380,7 +380,7 @@ export default function CardOne() {
                 <i className="fa-solid fa-trash-can colorWhite " />
               </button>
             </div>
-          </div>
+          </div> */}
           {/* 390的list end */}
           <div className=" h2 pe-2 ">
             <h5 className="text-end d-line-block my-5 colorWhite">
@@ -405,7 +405,7 @@ export default function CardOne() {
             <div className="col-1 text-center colorWhite">移除</div>
           </div>
           {courseCart.items.length === 0 ? (
-            <div className="checkCartMd">
+            <div className="checkCart">
               <h1>課程購物車為空</h1>
             </div>
           ) : (
@@ -502,14 +502,17 @@ export default function CardOne() {
           {/* 390的list */}
           {courseCart.items.length === 0 ? (
             <div className="checkCartMd">
-              <h1>購物車為空</h1>
+              <h1>課程購物車為空</h1>
             </div>
           ) : (
             courseCart.items.map((v) => {
               return (
                 <div key={v.id} className="row cartlistBorMd h5">
                   <div className="col-3 text-center colorWhite">
-                    <img src={v.img1} alt="" />
+                    <img
+                      src={`/images/yaming/tea_class_picture/${v.img1}`}
+                      alt=""
+                    />
                   </div>
                   <div className="col-8 ps-4  colorWhite">
                     <p style={{ marginLeft: '6px' }}>{v.name}</p>
@@ -560,7 +563,7 @@ export default function CardOne() {
               )
             })
           )}
-          <div className="row cartlistBorMd h5">
+          {/* <div className="row cartlistBorMd h5">
             <div className="col-3 text-center colorWhite">
               <img src="/images/cart/image_0001.jpg" alt="" />
             </div>
@@ -584,7 +587,7 @@ export default function CardOne() {
                 <i className="fa-solid fa-trash-can colorWhite " />
               </button>
             </div>
-          </div>
+          </div> */}
           {/* 390的list end */}
           <div className=" h2 pe-2 ">
             <h5 className="text-end d-line-block my-5 colorWhite">
