@@ -1,7 +1,22 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Leftnav from '@/components/member/left-nav'
 import Link from 'next/link'
+import { useAuth } from '@/hooks/my-use-auth'
+// import bootstrap from 'bootstrap'
+import { Button } from 'react-bootstrap'
+import { Modal } from 'react-bootstrap'
+import { YaminUseCart } from '@/hooks/yamin-use-cart'
+
+import Swal from 'sweetalert2'
 export default function OrderTwoFiveList() {
+  const { selectOrderId, setSelectOrderId, selectCourseId, setSelectCourseId } =
+    YaminUseCart()
+  const [testReview, setTestReview] = useState({})
+  const { auth } = useAuth()
+  const [userId, setUserId] = useState(0)
+  const courseBtn = useRef({})
+  const [show, setShow] = useState(false)
+  const handleClose = () => setShow(false)
   const [orderDetail, setOrderDetail] = useState([])
   const [productTotalPrice, setProductTotalPrice] = useState([])
   const [productAmount, setProductAmount] = useState([])
@@ -11,17 +26,44 @@ export default function OrderTwoFiveList() {
   const [allTotalPrice, setAllTotalPrice] = useState()
   const [discount, setDiscount] = useState()
   const [afterDiscount, setAfterDiscount] = useState()
+  const [selectOption, setSelectOption] = useState(0)
+  const [selectedValue, setSelectedValue] = useState(0)
+  const [star, SetStar] = useState()
+  const [note, setNote] = useState()
   const [hydrated, setHydrated] = useState(false)
+  const [isDisabled, setIsDisabled] = useState(false)
+  const [checkReview, setCheckReview] = useState([])
+  const [checkReviewProduct, setCheckReviewProduct] = useState([])
+  const [crp, setCrp] = useState([])
+  let testtest
+  let reviewC
+  let reviewP
+  let productM
+  const [formData, setFormData] = useState({
+    user_id: 0,
+    order_id: 0,
+    product_id: 0,
+    course_id: 0,
+    star: 0,
+    note: '',
+  })
   useEffect(() => {
     setHydrated(true)
   }, [])
-
+  useEffect(() => {
+    setUserId(auth.userData.id)
+  }, [auth])
+  useEffect(() => {}, [userId])
   // const [init]
   useEffect(() => {
     if (typeof window !== 'undefined') {
       CheckOrderDetail()
     }
   }, [])
+  useEffect(() => {
+    setCheckReviewProduct(reviewP)
+    setCheckReview(reviewC)
+  }, [reviewC, reviewP])
   useEffect(() => {}, [
     orderDetail,
     productTotalPrice,
@@ -32,6 +74,16 @@ export default function OrderTwoFiveList() {
     allTotalPrice,
     discount,
     afterDiscount,
+    selectedValue,
+    note,
+    formData,
+    testReview,
+    checkReview,
+    setCheckReview,
+    testtest,
+    reviewC,
+    reviewP,
+    productM,
   ])
   if (!hydrated) {
     return null
@@ -49,9 +101,51 @@ export default function OrderTwoFiveList() {
       apiUrl.search = searchParams
       const res = await fetch(apiUrl)
       const data = await res.json()
+      testtest = data
+      reviewC = data[3]
+      reviewP = data[4]
+      productM = data[2].map((v) => {
+        return Array.isArray(reviewP) &&
+          reviewP.some(
+            (b) => b.product_id === v.product_id && b.order_id === v.order_id
+          ) ? (
+          <button
+            type="button"
+            className="orderProductBtnDone"
+            onClick={() => {
+              SelectProduct(v.product_id, v.order_id)
+            }}
+            disabled={true}
+            style={{ color: 'black' }}
+          >
+            <i className="fa-regular fa-pen-to-square" />
+          </button>
+        ) : (
+          <button
+            type="button"
+            className="orderProductBtn"
+            onClick={() => {
+              SelectProduct(v.product_id, v.order_id)
+            }}
+            disabled={false}
+          >
+            <i className="fa-regular fa-pen-to-square" />
+          </button>
+        )
+      })
+      setCrp(productM)
       console.log('打印', data)
       console.log('打印打印', data[0][0].total_price)
       console.log('打印打印', data[0][0].coupon_discount)
+      console.log(
+        '超級打印',
+        data[3].map((v) => {
+          return v.course_id
+        })
+      )
+      console.log('超級打印打印', data[2])
+      setCheckReviewProduct(data[4])
+      setCheckReview(data[3])
       setDiscount(data[0][0].coupon_discount)
       setAfterDiscount(data[0][0].total_price)
       setOrderDetail(data)
@@ -79,11 +173,102 @@ export default function OrderTwoFiveList() {
       setProductTotalPrice(goProductTotalPrice)
       setAllAmount(goAllAmount)
       setAllTotalPrice(goAllTotalPrice)
-      console.log('測試總數量', testData)
+      // console.log('測試總數量', testData)
       // const orderId = parseInt(orderId)
     } catch (err) {
       console.log(err)
     }
+  }
+  async function CheckReview() {
+    try {
+      const url = new URL('http://localhost:3005/api/yamin_order/orderId')
+    } catch (err) {}
+  }
+  async function SelectStar(e) {
+    console.log('星級', e.target.options[e.target.selectedIndex].value)
+    const selectStar = { ...formData }
+    selectStar.star = e.target.options[e.target.selectedIndex].value
+    setFormData(selectStar)
+    setSelectedValue(e.target.options[e.target.selectedIndex].value)
+  }
+  async function GoComment(e) {
+    console.log('評論內容', e.target.value)
+    setNote(e.target.value)
+    const selectNote = { ...formData }
+    selectNote.note = e.target.value
+    setFormData(selectNote)
+    console.log('檢查評論', formData)
+  }
+  async function SelectProduct(productId, orderId) {
+    setShow(true)
+
+    console.log('檢查點開', userId, productId, orderId)
+    if (productId) {
+      const selectId = { ...formData }
+      selectId.user_id = userId
+      selectId.order_id = orderId
+      selectId.product_id = productId
+      selectId.course_id = null
+      setFormData(selectId)
+    }
+  }
+  async function SelectCourse(courseId, orderId) {
+    setShow(true)
+    const buttonElement = courseBtn.current[courseId]
+    console.log('檢查現在Current', courseBtn.current[courseId].dataset.courseId)
+    console.log('檢查點開', userId, courseId, orderId)
+    if (courseId) {
+      const selectId = { ...formData }
+      selectId.user_id = userId
+      selectId.order_id = orderId
+      selectId.course_id = courseId
+      selectId.product_id = null
+      selectId.buttonElement = buttonElement
+      setFormData(selectId)
+    }
+  }
+  async function GoSendReview(e) {
+    // e.preventdefault()
+    handleClose()
+    const selectId = { ...formData }
+    // console.log('檢查帶過來', selectId.buttonElement)
+    // setTestReview((selectId.buttonElement.disabled = true))
+    // selectId.buttonElement.disabled = true
+    const PostFormData = new FormData()
+    console.log('送出去', formData)
+    PostFormData.append('userId', formData.user_id)
+    PostFormData.append('orderId', formData.order_id)
+    PostFormData.append('productId', formData.product_id)
+    PostFormData.append('courseId', formData.course_id)
+    PostFormData.append('star', formData.star)
+    PostFormData.append('note', formData.note)
+
+    try {
+      const url = 'http://localhost:3005/api/yamin_order/review'
+      const res = await fetch(url, {
+        method: 'POST',
+
+        body: PostFormData,
+      })
+        .then((response) => response.json())
+        .then((result) => {
+          console.log('回傳結果', result)
+        })
+
+      // PostFormData = new FormData()
+    } catch (err) {
+      console.log(err)
+    }
+    Swal.fire({
+      position: 'top-mid',
+      icon: 'success',
+      title: '評價完成',
+      showConfirmButton: false,
+      timer: 1000,
+    })
+    setTimeout(() => {
+      window.location.reload()
+    }, 1000)
   }
 
   return (
@@ -141,7 +326,7 @@ export default function OrderTwoFiveList() {
                   </div>
                 </div>
                 <div className="col-3">
-                  <h3 className="orderStateMargin ">完成評價</h3>
+                  <h3 className="orderStateMargin ">完成訂單</h3>
                   <div className="orderStateImg">
                     <img src="/images/cart/star,state=hover.svg" alt="" />
                   </div>
@@ -188,9 +373,35 @@ export default function OrderTwoFiveList() {
                         {v.product_totalprice}
                       </div>
                       <div className="col-1 text-center colorWhite cartlistCol">
-                        <button type="button" className="orderProductBtnDone">
-                          <i className="fa-regular fa-pen-to-square" />
-                        </button>
+                        {Array.isArray(checkReviewProduct) &&
+                        checkReviewProduct.some(
+                          (b) =>
+                            b.product_id === v.product_id &&
+                            b.order_id === v.order_id
+                        ) ? (
+                          <button
+                            type="button"
+                            className="orderProductBtnDone"
+                            onClick={() => {
+                              SelectProduct(v.product_id, v.order_id)
+                            }}
+                            disabled={true}
+                            style={{ color: 'black' }}
+                          >
+                            <i className="fa-regular fa-pen-to-square" />
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            className="orderProductBtn"
+                            onClick={() => {
+                              SelectProduct(v.product_id, v.order_id)
+                            }}
+                            disabled={false}
+                          >
+                            <i className="fa-regular fa-pen-to-square" />
+                          </button>
+                        )}
                       </div>
                     </div>
                   )
@@ -270,7 +481,7 @@ export default function OrderTwoFiveList() {
                     <div key={v.id} className="row cartlistBor h5">
                       <div className="col-2 text-center colorWhite py-4">
                         <img
-                          src="/images/cart/image_0001.jpg"
+                          src={`/images/yaming/tea_class_picture/${v.course_image}`}
                           className="orderCartImg"
                           alt=""
                         />
@@ -293,9 +504,43 @@ export default function OrderTwoFiveList() {
                         {v.course_totalprice}
                       </div>
                       <div className="col-1 text-center colorWhite cartlistCol">
-                        <button type="button" className="orderProductBtnDone">
-                          <i className="fa-regular fa-pen-to-square" />
-                        </button>
+                        {Array.isArray(checkReview) &&
+                        checkReview.some(
+                          (b) =>
+                            b.course_id === v.course_id &&
+                            b.order_id === v.order_id
+                        ) ? (
+                          <button
+                            ref={(el) => (courseBtn.current[v.course_id] = el)}
+                            type="button"
+                            className={`orderProductBtnDone ${v.course_id}`}
+                            data-course-id={v.course_id}
+                            data-order-id={v.order_id}
+                            onClick={() => {
+                              SelectCourse(v.course_id, v.order_id)
+                            }}
+                            disabled={true}
+                          >
+                            <i
+                              className="fa-regular fa-pen-to-square"
+                              style={{ color: 'black' }}
+                            />
+                          </button>
+                        ) : (
+                          <button
+                            ref={(el) => (courseBtn.current[v.course_id] = el)}
+                            type="button"
+                            className={`orderProductBtn ${v.course_id}`}
+                            data-course-id={v.course_id}
+                            data-order-id={v.order_id}
+                            onClick={() => {
+                              SelectCourse(v.course_id, v.order_id)
+                            }}
+                            disabled={false}
+                          >
+                            <i className="fa-regular fa-pen-to-square" />
+                          </button>
+                        )}
                       </div>
                     </div>
                   )
@@ -469,6 +714,47 @@ export default function OrderTwoFiveList() {
             {/* 付款摘要end */}
           </div>
           {/* 歷史訂單部分 end*/}
+          {/* Modal */}
+          <Modal show={show} onHide={handleClose}>
+            <Modal.Header closeButton>
+              <Modal.Title>評價</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <h5>滿意度</h5>
+              <select
+                name=""
+                id=""
+                value={selectedValue}
+                className="form-select mb-4 h5"
+                onChange={SelectStar}
+              >
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+              <h5>內容</h5>
+              <textarea
+                name=""
+                id=""
+                className="w-100"
+                cols={30}
+                rows={10}
+                defaultValue={''}
+                onChange={GoComment}
+              />
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={handleClose}>
+                關閉
+              </Button>
+              <Button variant="primary" onClick={GoSendReview}>
+                送出
+              </Button>
+            </Modal.Footer>
+          </Modal>
+          {/* modal end */}
         </div>
       </div>
     </>

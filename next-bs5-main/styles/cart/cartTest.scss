@@ -218,7 +218,21 @@ body {
 }
 
 // test
-
+.cartNumberTotalP{
+  position: relative;
+}
+.cartNumberTotal {
+  padding: 2px;
+  height: 18px;
+  width: 18px;
+  text-align: center;
+  color: #ffffff;
+  position: absolute;
+  top:0;
+  right:10px;
+  border-radius:50% ;
+  background-color: var(--primary2);
+}
 .error-message {
   color: red;
   font-size: 14px;
@@ -234,6 +248,14 @@ body {
 }
 .checkCartMd {
   display: none;
+}
+.cardNumberInput {
+  background-color: var(--primary);
+  color: var(--primary2);
+}
+.monthInput {
+  background-color: var(--primary);
+  color: var(--primary2);
 }
 @media (max-width: 790px) {
   .cartlistBorMd {
