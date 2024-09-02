@@ -7,6 +7,7 @@ import axiosInstance from '@/services/axios-instance'
 export default function CartThree() {
   // lineconfirm
   const [orderUUid, setorderUUid] = useState('')
+  const [cardPayOrderId, setCardPayOrderId] = useState('')
   const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
   const [result, setResult] = useState({
@@ -45,8 +46,21 @@ export default function CartThree() {
     // 處理完畢，關閉載入狀態
     setIsLoading(false)
   }
+  const cardHandleConfirm = async (orderId) => {
+    console.log('信用卡支付', orderId)
+    try{const apiUrl = new URL(`http://localhost:3005/api/yamin_cart/cardpay?orderId=${orderId}`)
+      const res = await fetch(apiUrl)
+      const data = await res.json()
+      console.log('成功後的',data[0][0].order_uuid)
+      setCardPayOrderId(data[0][0].order_uuid)
+    }catch(err){
 
+    }
+  }
+ useEffect(()=>{},[setCardPayOrderId])
+  
   // confirm回來用的
+
   useEffect(() => {
     if (router.isReady) {
       // 這裡確保能得到router.query值
@@ -55,7 +69,9 @@ export default function CartThree() {
       // 這裡要得到交易id，處理伺服器通知line pay已確認付款，為必要流程
       // TODO: 除非為不需登入的交易，為提高安全性應檢查是否為會員登入狀態
       const { transactionId, orderId } = router.query
-
+      if(!transactionId && orderId){
+        cardHandleConfirm(orderId)
+      }
       // 如果沒有帶transactionId或orderId時，導向至首頁(或其它頁)
       if (!transactionId || !orderId) {
         // 關閉載入狀態
@@ -109,7 +125,7 @@ export default function CartThree() {
               className="cartProcess"
               alt=""
             />
-            <h5 className="mt-2">訂單完成</h5>
+            <h5 className="mt-2">訂單成立</h5>
           </div>
         </div>
         <div className="cartOk d-flex align-items-center flex-column">
@@ -117,8 +133,8 @@ export default function CartThree() {
             <img src="/images/cart/ok,web.svg" alt="" />
           </div>
           <div className="cartOkContent ">
-            <h2 className="text-center mb-6">完成訂單</h2>
-            <h2 className="text-center mb-6"> 訂單編號為:{orderUUid}</h2>
+            <h2 className="text-center mb-6">訂單成立</h2>
+            <h2 className="text-center mb-6"> 訂單編號為:{orderUUid?orderUUid : cardPayOrderId}</h2>
             <Link
               className="cartOk-Alink text-center px-5 h3"
               href="http://localhost:3000/order"

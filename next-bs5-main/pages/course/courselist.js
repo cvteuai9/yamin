@@ -632,6 +632,7 @@ export default function Course() {
             </div>
           </div>
         </div>
+        <Toaster />
       </>
     </>
   )

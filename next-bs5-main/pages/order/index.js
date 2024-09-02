@@ -97,7 +97,7 @@ export default function OrderOne() {
                 <h5>訂單編號</h5>
               </div>
               <div className="orderListCol col-3">
-                <h5>訂單編號</h5>
+                <h5>訂單日期</h5>
               </div>
               <div className="orderListCol col-2">
                 <h5>總價</h5>
@@ -107,7 +107,7 @@ export default function OrderOne() {
               </div>
               <div className="orderListCol col-1"></div>
             </div>
-            <div className="orderlistRow mb-3 row">
+            {/* <div className="orderlistRow mb-3 row">
               <div className="orderListCol col-3">
                 <h5>3131231231</h5>
               </div>
@@ -127,8 +127,8 @@ export default function OrderOne() {
                   </button>
                 </h5>
               </div>
-            </div>
-            <div className="orderlistRow mb-3 row">
+            </div> */}
+            {/* <div className="orderlistRow mb-3 row">
               <div className="orderListCol col-3">
                 <h5>3131231231</h5>
               </div>
@@ -148,8 +148,8 @@ export default function OrderOne() {
                   </button>
                 </h5>
               </div>
-            </div>
-            <div className="orderlistRow mb-3 row">
+            </div> */}
+            {/* <div className="orderlistRow mb-3 row">
               <div className="orderListCol col-3">
                 <h5>3131231231</h5>
               </div>
@@ -169,7 +169,7 @@ export default function OrderOne() {
                   </button>
                 </h5>
               </div>
-            </div>
+            </div> */}
             {orderDetail.map((v, i) => {
               return (
                 <div key={v.id} className="orderlistRow mb-3 row">
@@ -204,7 +204,7 @@ export default function OrderOne() {
                       <h5 className="d-none"></h5>
                     )}
                     {v.state === 5 ? (
-                      <h5>完成評價</h5>
+                      <h5>完成訂單</h5>
                     ) : (
                       <h5 className="d-none"></h5>
                     )}

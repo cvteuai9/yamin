@@ -141,7 +141,7 @@ export default function OrderTwoFourList() {
                   </div>
                 </div>
                 <div className="col-3">
-                  <h3 className="orderStateMargin ">完成評價</h3>
+                  <h3 className="orderStateMargin ">完成訂單</h3>
                   <div className="orderStateImg">
                     <img src="/images/cart/star,state=default.svg" alt="" />
                   </div>
@@ -270,7 +270,7 @@ export default function OrderTwoFourList() {
                     <div key={v.id} className="row cartlistBor h5">
                       <div className="col-2 text-center colorWhite py-4">
                         <img
-                          src="/images/cart/image_0001.jpg"
+                          src={`/images/yaming/tea_class_picture/${v.course_image}`}
                           className="orderCartImg"
                           alt=""
                         />

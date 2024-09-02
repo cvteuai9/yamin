@@ -6,6 +6,8 @@ import { useAuth } from '@/hooks/my-use-auth'
 import { Button } from 'react-bootstrap'
 import { Modal } from 'react-bootstrap'
 import { YaminUseCart } from '@/hooks/yamin-use-cart'
+
+import Swal from 'sweetalert2'
 export default function OrderTwoFiveList() {
   const { selectOrderId, setSelectOrderId, selectCourseId, setSelectCourseId } =
     YaminUseCart()
@@ -32,6 +34,11 @@ export default function OrderTwoFiveList() {
   const [isDisabled, setIsDisabled] = useState(false)
   const [checkReview, setCheckReview] = useState([])
   const [checkReviewProduct, setCheckReviewProduct] = useState([])
+  const [crp, setCrp] = useState([])
+  let testtest
+  let reviewC
+  let reviewP
+  let productM
   const [formData, setFormData] = useState({
     user_id: 0,
     order_id: 0,
@@ -53,6 +60,10 @@ export default function OrderTwoFiveList() {
       CheckOrderDetail()
     }
   }, [])
+  useEffect(() => {
+    setCheckReviewProduct(reviewP)
+    setCheckReview(reviewC)
+  }, [reviewC, reviewP])
   useEffect(() => {}, [
     orderDetail,
     productTotalPrice,
@@ -68,6 +79,11 @@ export default function OrderTwoFiveList() {
     formData,
     testReview,
     checkReview,
+    setCheckReview,
+    testtest,
+    reviewC,
+    reviewP,
+    productM,
   ])
   if (!hydrated) {
     return null
@@ -85,6 +101,39 @@ export default function OrderTwoFiveList() {
       apiUrl.search = searchParams
       const res = await fetch(apiUrl)
       const data = await res.json()
+      testtest = data
+      reviewC = data[3]
+      reviewP = data[4]
+      productM = data[2].map((v) => {
+        return Array.isArray(reviewP) &&
+          reviewP.some(
+            (b) => b.product_id === v.product_id && b.order_id === v.order_id
+          ) ? (
+          <button
+            type="button"
+            className="orderProductBtnDone"
+            onClick={() => {
+              SelectProduct(v.product_id, v.order_id)
+            }}
+            disabled={true}
+            style={{ color: 'black' }}
+          >
+            <i className="fa-regular fa-pen-to-square" />
+          </button>
+        ) : (
+          <button
+            type="button"
+            className="orderProductBtn"
+            onClick={() => {
+              SelectProduct(v.product_id, v.order_id)
+            }}
+            disabled={false}
+          >
+            <i className="fa-regular fa-pen-to-square" />
+          </button>
+        )
+      })
+      setCrp(productM)
       console.log('打印', data)
       console.log('打印打印', data[0][0].total_price)
       console.log('打印打印', data[0][0].coupon_discount)
@@ -94,6 +143,7 @@ export default function OrderTwoFiveList() {
           return v.course_id
         })
       )
+      console.log('超級打印打印', data[2])
       setCheckReviewProduct(data[4])
       setCheckReview(data[3])
       setDiscount(data[0][0].coupon_discount)
@@ -209,7 +259,16 @@ export default function OrderTwoFiveList() {
     } catch (err) {
       console.log(err)
     }
-    window.location.reload()
+    Swal.fire({
+      position: 'top-mid',
+      icon: 'success',
+      title: '評價完成',
+      showConfirmButton: false,
+      timer: 1000,
+    })
+    setTimeout(() => {
+      window.location.reload()
+    }, 1000)
   }
 
   return (
@@ -322,7 +381,7 @@ export default function OrderTwoFiveList() {
                         ) ? (
                           <button
                             type="button"
-                            className="orderProductBtn"
+                            className="orderProductBtnDone"
                             onClick={() => {
                               SelectProduct(v.product_id, v.order_id)
                             }}
@@ -422,7 +481,7 @@ export default function OrderTwoFiveList() {
                     <div key={v.id} className="row cartlistBor h5">
                       <div className="col-2 text-center colorWhite py-4">
                         <img
-                          src="/images/cart/image_0001.jpg"
+                          src={`/images/yaming/tea_class_picture/${v.course_image}`}
                           className="orderCartImg"
                           alt=""
                         />
@@ -454,7 +513,7 @@ export default function OrderTwoFiveList() {
                           <button
                             ref={(el) => (courseBtn.current[v.course_id] = el)}
                             type="button"
-                            className={`orderProductBtn ${v.course_id}`}
+                            className={`orderProductBtnDone ${v.course_id}`}
                             data-course-id={v.course_id}
                             data-order-id={v.order_id}
                             onClick={() => {
