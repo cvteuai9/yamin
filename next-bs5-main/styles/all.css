@@ -198,12 +198,24 @@ hr {
 }
 
 .titlenav {
-  width: 100%;
+  width: 100vw;
+  /* height: auto; */
   display: inline;
   justify-content: center;
   text-align: center;
-
+  margin-top: 70px;
   margin-bottom: 20px;
+  /* ===julia 08-30 test標題img固定位置 ↓
+  position: sticky;
+  top: 70px;
+  background-color: var(--primary); 
+  z-index: 100; */
+}
+/* ===julia 08-30 test標題img固定位置 ↓*/
+.couponchoose {
+  @media screen and (max-width: 576px) {
+    font-size: 1.4rem; 
+  }
 }
 /* =================================== */
 input::placeholder,
@@ -735,6 +747,12 @@ input::placeholder,
     /* white-space: nowrap; */
     left: 700px;
     top: 0px;
+
+    /* 修改 */
+    /* @media screen and (max-width: 900px) {
+      left: 550px;
+      top: -40px;
+    } */
   }
 }
 .coupon-p-14 {
@@ -764,14 +782,15 @@ input::placeholder,
   overflow-y: auto;
 }
 /* ====julia08-26新增--優惠券使用說明視窗
-/* ==========08-27 優惠券領取視窗  */
+/* ==========08-30 微調 優惠券領取視窗  */
 .floating-coupon-container {
-  position: absolute;
-  margin-bottom: 1rem;
+  position: fixed;
   right: 5vw;
-  top: 20vw;
+  top: 250px;
+  margin-bottom: 1rem;
+  z-index: 1000; /* 確保它在其他元素之上 */
 }
-
+/* ============ */
 .floating-coupon-button {
   width: 5rem;
   height: 15rem;
@@ -786,7 +805,7 @@ input::placeholder,
   /* font-size: 0.875rem; */
   display: flex;
   align-items: center;
-  writing-mode:vertical-rl;
+  writing-mode: vertical-rl;
   justify-content: center;
   transition: all 0.3s ease;
   animation: bounce 2s infinite;
@@ -796,7 +815,6 @@ input::placeholder,
   transform: translateY(-3px);
   box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
   background: var(--error-color);
-
 }
 
 .floating-coupon-button:focus {
@@ -812,4 +830,4 @@ input::placeholder,
   50% {
     transform: translateY(-10px);
   }
-} 
+}

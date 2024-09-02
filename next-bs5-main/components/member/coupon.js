@@ -4,7 +4,7 @@ import { FaAngleDown } from 'react-icons/fa6'
 import option from '@/components/article/option.module.sass'
 import { Modal, Button } from 'react-bootstrap'
 import { Gift } from 'lucide-react'
-import e from 'express'
+// import e from 'express'
 
 // 狀態映射對象
 const statusMapping = {
@@ -57,9 +57,10 @@ export default function Coupon() {
       // discount: '',
       annivCoupons.data
     )
+
     setIsOpen(true)
   }
-  // ========== 新增: 0829 ju test ==========
+  // ========新增: 處理浮動按鈕重新獲取所有優惠券 ==========
 
   const updateCouponsAfterClaim = () => {
     const newCoupons = [...coupons, ...annivCoupons]
@@ -227,7 +228,7 @@ export default function Coupon() {
             </p>
             <p className="grayf">
               ＊優惠券詳細規範及抵用辦法，請參考「
-              {/* ==========08-26 優惠券使用說明視窗 */}
+              {/*  優惠券使用說明視窗 */}
               <span
                 className="goldenf"
                 onClick={handleShowModal}
@@ -265,7 +266,7 @@ export default function Coupon() {
               </Modal.Footer>
             </Modal>
             {/* ... */}
-            {/* ==========08-26 優惠券使用說明視窗 */}
+            {/*  優惠券使用說明視窗 */}
             <p className="grayf"> 雅茗保留活動修改、變更及終止之權利。 </p>
             <div className="coupon-cinput">
               <p className="grayf pt-3">優惠券歸戶</p>
@@ -343,7 +344,6 @@ export default function Coupon() {
                     ) : (
                       <tr className="">
                         <td colSpan="5" className="text-center p pt-3 goldenf">
-                          {/* 沒有可用的優惠券 */}
                           {activeTab === 'all'
                             ? '沒有任何優惠券'
                             : `沒有${statusMapping[activeTab] || ''}優惠券`}
@@ -352,9 +352,10 @@ export default function Coupon() {
                     )}
                   </tbody>
                 </table>
-                {/* ==========08-26 優惠券下拉式選單 */}
+                {/*  優惠券下拉式選單 */}
+
                 <div
-                  className="d-flex justify-content-end choosebtn text-nowrap align-items-center"
+                  className="d-flex justify-content-end choosebtn text-nowrap align-items-center "
                   style={{ width: 150 }}
                 >
                   <div
@@ -405,7 +406,7 @@ export default function Coupon() {
           </div>
         </div>
       </div>
-      {/* ==========08-27 優惠券領取視窗 */}
+      {/*  優惠券領取視窗 */}
       {/* ========== 修改: 更新浮動優惠券按鈕和模態框 ========== */}
       <div className="floating-coupon-container ">
         <button
@@ -462,7 +463,6 @@ export default function Coupon() {
           </Modal.Footer>
         </Modal>
       </div>
-      {/* ==========08-27 優惠券領取視窗 */}
     </>
   )
 }

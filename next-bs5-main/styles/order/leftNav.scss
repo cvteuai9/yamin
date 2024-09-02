@@ -1,3 +1,13 @@
+/* ===julia 08-30 test ↓*/
+.sidebar {
+  height: 100vh; /* 使用視窗高度 */
+  position: sticky;
+  top: 100px;
+  // overflow-y: auto;
+  /* 如果內容超出，允許滾動 */
+}
+/* =================================== */
+
 .left-nav {
   font-size: 20px;
   background-color: var(--primary);
