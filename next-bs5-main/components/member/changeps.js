@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/router';
 import Leftnav from '@/components/member/left-nav'
 import Link from 'next/link'
 import { RiEyeLine } from 'react-icons/ri'
@@ -65,30 +66,39 @@ export default function Changeps() {
     console.log(password)
     console.log(id)
 
-    // try {
-    const res = await updatePassword(id, password)
-
-    // } catch (error) {
-    if (res.status==='error'){
-
-      toast.error(res.data.message)
+    try {
+      const res = await updatePassword(id, password)
+      if (res.status === 'error') {
+        toast.error(res.data.message)
+      }else{
+        toast.success('會員密碼修改成功')
+      }
+    } catch (error) {
+      // 捕捉異常情況並顯示錯誤訊息
+      if (error.response && error.response.status === 401) {
+        toast.error('密碼錯誤')
+      } else {
+        toast.error('密碼更新失敗，請稍後再試。')
+      }
     }
-    // }
 
-    console.log(res.data)
-
-    if (res.data.status === 'success') {
-      toast.success('會員密碼修改成功')
-    } else {
-      toast.error('會員密碼修改失敗')
-    }
+    
   }
+  const router = useRouter()
+  useEffect(() => {
+    if (auth.userData.google_uid && auth.userData.google_uid.length > 0) {
+      alert('google快速登入用戶不需要修改密碼');
+      router.push('/member/profile'); // 重定向到 profile 頁面
+    }
+  }, [auth.userData.google_uid, router]);
+  console.log(auth.userData.google_uid);
   // 未登入時，不會出現頁面內容
   if (!auth.isAuth) return <></>
+  if (auth.userData.google_uid && auth.userData.google_uid.length > 0) return <><div></div></>
   return (
     <>
-      <main>
-        <div className="container mb-6">
+      <main className='profile-cps-main'>
+        <div className="container-fluid mb-6">
           <div className="d-flex">
             <div className="titlenav">
               <img src="/images/favorite/title.svg" alt="title" />
@@ -106,7 +116,7 @@ export default function Changeps() {
               </div>
               <div className="col-md-8 profile-content-right">
                 <h4 className="goldenf">
-                  <Link href="/user/profile" className="h5 goldenf">
+                  <Link href="/member/profile" className="h5 goldenf">
                     個人檔案
                   </Link>
                   &nbsp;/&nbsp;
@@ -119,13 +129,13 @@ export default function Changeps() {
                   </Link>
                 </h4>
                 <form onSubmit={handleSubmit}>
-                  <div>
-                    <p className="mt-5 my-0 whitef">舊密碼(必填)</p>
+                  <div className='changeps-label'>
+                    <p className="mt-5 my-0 whitef">舊密碼</p>
                     <div className="changeps-inputgroup d-flex">
                       <input
                         className="changeps-inputtext "
                         type={showOldPassword ? 'text' : 'password'}
-                        placeholder="請輸入你的舊密碼"
+                        placeholder="8到12個字元，須包含大小寫英文字母和數字"
                         name="origin"
                         value={userPassword.origin}
                         onChange={handleFieldChange}
@@ -144,16 +154,16 @@ export default function Changeps() {
                         )}
                       </div>
                     </div>
-                    <div className="mb-2 p2 whitef">
-                      * 8到12個字元，且至少需包含一個英文大寫與一個英文小寫字元
-                    </div>
+                    {/* <div className="mb-2 p2 whitef">
+                      * 8到12個字元，須包含大小寫英文字母和數字
+                    </div> */}
                   </div>
                   <div>
-                    <p className="my-0 mt-4 whitef">密碼(必填)</p>
+                    <p className="my-0 mt-4 whitef">新密碼</p>
                     <div className="changeps-inputgroup d-flex">
                       <input
                         className="changeps-inputtext"
-                        placeholder="請輸入你的密碼"
+                        placeholder="8到12個字元，須包含大小寫英文字母和數字"
                         value={userPassword.new}
                         name="new"
                         type={showPassword ? 'text' : 'password'}
@@ -175,7 +185,7 @@ export default function Changeps() {
                     </div>
                   </div>
                   <div>
-                    <p className="my-0 mt-4 whitef">密碼確認&nbsp;(必填)</p>
+                    <p className="my-0 mt-4 whitef">密碼確認</p>
                     <div className="changeps-inputgroup d-flex">
                       <input
                         className="changeps-inputtext"

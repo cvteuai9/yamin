@@ -19,6 +19,7 @@ export default function DetailForm() {
   const [categories, setCategories] = useState([])
   const [topArticles, setTopArticles] = useState([]) // 儲存前五篇熱門文章
   const [newArticles, setNewArticles] = useState([]) // 儲存前五篇最新文章
+  const [recommend, setRecommend] = useState([])
   const { auth } = useAuth()
   const [userID, setUserID] = useState(0)
   const [isAuth, setIsAuth] = useState(false)
@@ -70,6 +71,15 @@ export default function DetailForm() {
       }
     }
   }
+  const getRecommend = async (id) => {
+    // console.log(id);
+    let apiUrl = `http://localhost:3005/api/my-articles/${id}/recommendations`
+
+    const res = await fetch(apiUrl)
+    const data = await res.json()
+    setRecommend(data.data.topMatches)
+  }
+  // console.log(recommend)
   const getViews = async (id) => {
     let apiUrl = `http://localhost:3005/api/my-articles/${id}/views`
 
@@ -103,10 +113,15 @@ export default function DetailForm() {
   useEffect(() => {
     if (router.isReady) {
       getArticle(router.query.articleCode, userID, isAuth)
-      getViews(router.query.articleCode)
       getRecommend(router.query.articleCode)
     }
   }, [router.isReady, userID, isAuth])
+  // 確保views重整只會增加一次
+  useEffect(() => {
+    if (router.isReady) {
+      getViews(router.query.articleCode);
+    }
+  }, [router.isReady]);
 
   useEffect(() => {
     getCategories()
@@ -126,8 +141,8 @@ export default function DetailForm() {
   return (
     <>
       <main className="articledetail">
-        <div className="container">
-          <StarLarge />
+        <div className="container mt-4">
+          {/* <StarLarge /> */}
           <div className="row d-flex">
             {/*-------------------- 左邊主要區 ---------------------*/}
             <div className="col-lg-9 article-left pe-lg-3 mx-0 px-0">
@@ -145,8 +160,6 @@ export default function DetailForm() {
                       <IoEyeSharp color="#ffffffa0" />
                       <p className="p2 mb-0 me-4 ms-2">{article.views}</p>
                       <FaRegComment color="#ffffffa0" />
-                      <p className="p2 mb-0 me-4 ms-2">10</p>
-                      <FaBookmark color="#ffffffa0" />
                       <p className="p2 mb-0 me-4 ms-2">10</p>
                     </div>
                     <div className="addbookmarks d-flex align-items-center">
@@ -264,7 +277,7 @@ export default function DetailForm() {
             </div>
             {/*----------------- 右邊 -----------------------*/}
             <div className="col-lg-3 article_info ">
-              <div className="row mx-0 ">
+              <div className="row mx-0 mt-3">
                 <div className="col-12 ">
                   <div className="all_articles_title bgc-right">
                     <div className="article_right_title mx-0">
