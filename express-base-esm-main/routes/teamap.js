@@ -6,21 +6,94 @@ router.get('/', async (req, res) => {
   try {
     const type = req.query.type || 'teaHouse'
     const order = req.query.order || 'starDESC'
-    const businessStatus = req.query.businessStatus || 'all'
+    // const businessStatus = req.query.businessStatus || 'all'
     const starRating = req.query.starRating || 'all'
-    const searchRange = req.query.searchRange || '1k'
-    let queryCluse = ``
+    const searchRange = req.query.searchRange || '10k'
+    const lat = Number(req.query.lat) || 23.896271539202733
+    const lng = Number(req.query.lng) || 120.92187627041206
+    console.log(type, order, starRating, searchRange, lat, lng)
+    let queryCluse = ``,
+      typeQueryCluse = ``,
+      orderQueryCluse = ``,
+      starRatingQueryCluse = ``,
+      searchRangeQueryCluse = ``
+    // 設定type為茶館/茶廠
     switch (type) {
       case 'teaFactory':
-        queryCluse = `SELECT * FROM gmap_tea_factory`
+        typeQueryCluse = `gmap_tea_factory`
         break
       case 'teaHouse':
-        queryCluse = `SELECT * FROM gmap_tea_house`
+        typeQueryCluse = `gmap_tea_house`
         break
       default:
-        queryCluse = `SELECT * FROM gmap_tea_house`
+        typeQueryCluse = `gmap_tea_house`
         break
     }
+    // 設定搜尋範圍(公里)
+    switch (searchRange) {
+      case '1k':
+        searchRangeQueryCluse = `1`
+        break
+      case '5k':
+        searchRangeQueryCluse = `5`
+        break
+      case '10k':
+        searchRangeQueryCluse = `10`
+        break
+    }
+    // 設定排序 by 星等or總評論數or距離(公里)
+    switch (order) {
+      case 'starDESC':
+        orderQueryCluse = 'ORDER BY rating DESC'
+        break
+      case 'starASC':
+        orderQueryCluse = 'ORDER BY rating ASC'
+        break
+      case 'ratingCountDESC':
+        orderQueryCluse = 'ORDER BY user_ratings_total DESC'
+        break
+      case 'ratingCountASC':
+        orderQueryCluse = 'ORDER BY user_ratings_total ASC'
+        break
+      case 'distanceDESC':
+        orderQueryCluse = 'ORDER BY distance DESC'
+        break
+      case 'distanceASC':
+        orderQueryCluse = 'ORDER BY distance ASC'
+        break
+    }
+    // 設定星等篩選
+    switch (starRating) {
+      case 'all':
+        starRatingQueryCluse = ''
+        break
+      case '5':
+        starRatingQueryCluse = ' WHERE rating = 5'
+        break
+      case '4':
+        starRatingQueryCluse = ' WHERE rating >= 4 && rating <5'
+        break
+      case '3':
+        starRatingQueryCluse = ' WHERE rating >= 3 && rating <4'
+        break
+      case '2':
+        starRatingQueryCluse = ' WHERE rating >= 2 && rating <3'
+        break
+      case '1':
+        starRatingQueryCluse = ' WHERE rating < 2'
+        break
+    }
+    // 組合sql語句
+    queryCluse = `SELECT *, (
+    6371 * acos (
+      cos ( radians(latitude) )
+      * cos( radians( ${lat} ) )
+      * cos( radians( ${lng} ) - radians(longitude) )
+      + sin ( radians(latitude) )
+      * sin( radians( ${lat} ) )
+    )
+  ) AS distance FROM ${typeQueryCluse}${starRatingQueryCluse} HAVING distance < ${searchRangeQueryCluse} ${orderQueryCluse}`
+    // console.log(queryCluse)
     const [rows] = await db.query(queryCluse)
     // 處理營業時間字串，將字串轉為陣列
     let mapData = rows.map((v) => {

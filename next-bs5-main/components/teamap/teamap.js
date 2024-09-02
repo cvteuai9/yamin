@@ -17,13 +17,13 @@ export default function TeaMapComponent({
   storeName = '',
   positionFromPage = {},
 }) {
-  const apiKey = 'AIzaSyBAzhEGkDmxTNyMAN3hFt_rOPVLliaNulc'
+  const apiKey = process.env.NEXT_PUBLIC_VITE_GOOGLE_MAP_API_KEY
   const [poi, setPoi] = useState([])
   const [data, setData] = useState([])
   const [type, setType] = useState('')
   const [chooseStore, setChooseStore] = useState('')
   // 預設位置為null，待設定好才會渲染地圖
-  const [position, setPosition] = useState(null)
+  const [position, setPosition] = useState({ lat: null, lng: null })
   const [activeMark, setActiveMark] = useState('')
   // 接收從page來的資料
   async function getPoiData(data) {
@@ -68,10 +68,10 @@ export default function TeaMapComponent({
   }, [data])
   return (
     <APIProvider
-      apiKey={`${apiKey}`}
+      apiKey={apiKey}
       onLoad={() => console.log('Maps API has loaded.')}
     >
-      {position && (
+      {position.lat && (
         <Map
           defaultZoom={12}
           defaultCenter={position}
