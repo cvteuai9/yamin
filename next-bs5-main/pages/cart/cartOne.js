@@ -167,7 +167,7 @@ export default function CardOne() {
             <div className="col-1 text-center colorWhite">移除</div>
           </div>
 
-          <div className="row cartlistBor h5">
+          {/* <div className="row cartlistBor h5">
             <div className="col-2 text-center colorWhite py-4">
               <img src="/images/cart/image_0001.jpg" alt="" />
             </div>
@@ -198,7 +198,7 @@ export default function CardOne() {
                 <i className="fa-solid fa-trash-can colorWhite p-3" />
               </button>
             </div>
-          </div>
+          </div> */}
           {/* itemsMap開始 */}
           {items.length === 0 ? (
             <div className="checkCart">
@@ -413,7 +413,10 @@ export default function CardOne() {
               return (
                 <div key={v.id} className="row cartlistBor h5">
                   <div className="col-2 text-center colorWhite py-4">
-                    <img src={v.img1} alt="" />
+                    <img
+                      src={`/images/yaming/tea_class_picture/${v.img1}`}
+                      alt=""
+                    />
                   </div>
                   <div className=" col-4 text-center colorWhite cartlistCol">
                     {v.name}
@@ -470,7 +473,7 @@ export default function CardOne() {
               )
             })
           )}
-          <div className="row cartlistBor h5">
+          {/* <div className="row cartlistBor h5">
             <div className="col-2 text-center colorWhite py-4">
               <img src="/images/cart/image_0001.jpg" alt="" />
             </div>
@@ -495,7 +498,7 @@ export default function CardOne() {
                 <i className="fa-solid fa-trash-can colorWhite p-3" />
               </button>
             </div>
-          </div>
+          </div> */}
           {/* 390的list */}
           {courseCart.items.length === 0 ? (
             <div className="checkCartMd">
