@@ -8,10 +8,12 @@ import styles from '@/components/article/list.module.scss'
 import option from '@/components/article/option.module.sass'
 import StarLarge from '@/components/star/star-large'
 import { IoEyeSharp } from 'react-icons/io5'
-import { FaRegComment, FaBookmark } from 'react-icons/fa'
+import { FaRegComment, FaBookmark, FaRegBookmark } from 'react-icons/fa'
 import { FaAngleDown } from 'react-icons/fa6'
 import Link from 'next/link'
 import StarPage from '@/components/star/star-page'
+import { useAuth } from '@/hooks/my-use-auth'
+import next from 'next'
 
 export default function ListForm() {
   const router = useRouter()
@@ -23,23 +25,74 @@ export default function ListForm() {
   const [sortOrder, setSortOrder] = useState(router.query.sort || 'date_desc')
   const [totalPages, setTotalPages] = useState(1)
   const ARTICLES_PER_PAGE = 12; // 每頁顯示的文章數量
+  const { auth } = useAuth()
+  const [userID, setUserID] = useState(0)
+  const [isAuth, setIsAuth] = useState(false)
 
 
   // 使用 useCallback 優化函數
-  const getArticles = useCallback(async (categoryId, currentSortOrder) => {
+  const getArticles = useCallback(async (categoryId, currentSortOrder,userID, isAuth) => {
     try {
       const currentPage = router.query.page || '1'
       const apiUrl = `http://localhost:3005/api/my-articles/filter?category_id=${categoryId || 1}&page=${currentPage}&limit=${ARTICLES_PER_PAGE}&sort=${currentSortOrder}`
       const res = await fetch(apiUrl)
       const data = await res.json()
-      setArticles(data.data.articles)
+      
+      let favoriteArticles = []
+      if (isAuth) {
+        const favRes = await fetch(
+          `http://localhost:3005/api/my-articles/favorites?user_id=${userID}`
+        )
+        favoriteArticles = await favRes.json()
+      }
+      const nextData = data.data.articles.map((article) => ({
+        ...article,
+        fav: favoriteArticles.includes(article.id)
+      }))
+      setArticles(nextData)
       setTotalPages(Math.ceil(data.data.totalCount / ARTICLES_PER_PAGE))
     } catch (error) {
       console.error('Failed to fetch articles:', error)
     }
   }, [router.query.page])
   // console.log(articles);
-
+  // 處理我的最愛
+  async function handleFavToggle(id, userID, isAuth) {
+    if (isAuth) {
+      const nextArticle = articles.map((v, i) => {
+        if (v.id === id) {
+          if (v.fav === false) {
+            fetch(
+              `http://localhost:3005/api/my-articles/favorites?user_id=${userID}&article_id=${id}`,
+              {
+                method: 'PUT',
+              }
+            )
+          } else {
+            fetch(
+              `http://localhost:3005/api/my-articles/favorites?user_id=${userID}&article_id=${id}`,
+              {
+                method: 'DELETE',
+              }
+            )
+          }
+          return { ...v, fav: !v.fav }
+        } else {
+          return v
+        }
+      })
+      setArticles(nextArticle)
+    } else {
+      // 如果沒有登入，則導向至登入頁面
+      if (confirm('您尚未登入，請登入後再操作!')) {
+        router.push('/member/login')
+      }
+    }
+  }
+  useEffect(() => {
+    setUserID(auth.userData.id)
+    setIsAuth(auth.isAuth)
+  }, [auth])
 
   const getCategories = useCallback(async () => {
     try {
@@ -97,26 +150,26 @@ export default function ListForm() {
       let initialCategoryId = router.query.category_id || localStorage.getItem('lastVisitedCategoryId') || '1'
       let initialSortOrder = router.query.sort || 'date_desc'
       let initialPage = router.query.page || '1'
-  
+
       if (!router.isReady) return;
-  
-      if (router.query.category_id !== initialCategoryId || 
-          router.query.sort !== initialSortOrder || 
-          router.query.page !== initialPage) {
+
+      if (router.query.category_id !== initialCategoryId ||
+        router.query.sort !== initialSortOrder ||
+        router.query.page !== initialPage) {
         await router.push({
           pathname: router.pathname,
-          query: { 
-            category_id: initialCategoryId, 
+          query: {
+            category_id: initialCategoryId,
             sort: initialSortOrder,
             page: initialPage
           },
         }, undefined, { shallow: true })
       }
-  
+
       setSelectedCategoryId(parseInt(initialCategoryId))
       setSortOrder(initialSortOrder)
     }
-  
+
     initializeCategory()
     getCategories()
   }, [router.isReady, router.query, router, getCategories])
@@ -125,9 +178,9 @@ export default function ListForm() {
     if (categories.length > 0 && selectedCategoryId) {
       const category = categories.find(cat => cat.id === selectedCategoryId) || categories[0]
       setSelectedCategory(category.name)
-      getArticles(category.id, sortOrder)
+      getArticles(category.id, sortOrder, userID, isAuth)
     }
-  }, [selectedCategoryId, categories, sortOrder, getArticles])
+  }, [selectedCategoryId, categories, sortOrder, getArticles, userID, isAuth])
 
   // 分頁處理函數
   const handlePageChange = useCallback(async (newPage) => {
@@ -142,10 +195,10 @@ export default function ListForm() {
 
   return (
     <main className={styles['article-list']}>
-      <div className="container">
-      <div className={styles.headerImg}>
-        <img src="/images/article/articlelist/article-header.webp" alt="" />
-      </div>
+      <div className="container-fluid">
+        <div className={styles.headerImg}>
+          <img src="/images/article/articlelist/article-header.webp" alt="" />
+        </div>
         <div className={styles['typetitle_group']}>
           {categories.map((category) => (
             <a
@@ -182,37 +235,42 @@ export default function ListForm() {
         <div className={`row row-cols-1 row-cols-md-2 row-cols-lg-3 my-4 g-5 mx-0 ${styles['articlelist']}`}>
           {articles.map((article) => (
             <div className="col" key={article.id}>
-              <Link href={`/article/${article.id}`} className={styles['articleLink']}>
-                <div className={styles['articlecard']}>
+              <div className={styles['articlecard']}>
+                <Link href={`/article/${article.id}`} className={styles['articleLink']}>
                   <img
                     className={styles['articlecard-img']}
                     src={`${getImagePathPrefix(selectedCategory)}${article.article_images.replace(/"/g, '')}`}
                     alt=""
                     onError={(e) => { e.target.src = '/images/article/articlelist/articledefault.jpg'; }}
                   />
-                  <div className={`${styles['articlec-body']} m-3`}>
-                    <div className={`${styles['timeandnum']} m-3`}>
-                      <p className="p2 mb-0 me-3">{article.created_at.split(' ')[0]}</p>
-                      <IoEyeSharp color="#ffffffa0" />
-                      <p className="p2 mb-0 me-3 ms-2">{article.views}</p>
-                      <FaRegComment color="#ffffffa0" />
-                      <p className="p2 mb-0 me-3 ms-2">10</p>
-                      <FaBookmark color="#ffffffa0" />
-                      <p className="p2 mb-0 me-3 ms-2">10</p>
-                    </div>
-                    <h5 className={`${styles['arttitle']} m-3`}>{article.title}</h5>
-                    <p className={`${styles['arttext']} m-3`}>{article.content}</p>
-                    <div className="d-flex">
-                      <p className={`${styles['arttext']} m-3 p2`}>閱讀更多</p>
-                      <img
-                        src="/images/article/articlelist/rightarrow.svg"
-                        alt="Right Arrow"
-                        className={styles['arrow-animation']}
-                      />
-                    </div>
+                </Link>
+
+                <div className={`${styles['articlec-body']} m-3`}>
+                  <div className={`${styles['timeandnum']} m-3`}>
+                    <p className="p2 mb-0 me-3">{article.created_at.split(' ')[0]}</p>
+                    <IoEyeSharp color="#ffffffa0" />
+                    <p className="p2 mb-0 me-3 ms-2">{article.views}</p>
+                    <FaRegComment color="#ffffffa0" />
+                    <p className="p2 mb-0 me-3 ms-2">10</p>
+                    <button className='btn p-0 m-0 d-flex align-items-center' onClick={() =>
+                      handleFavToggle(article.id, userID, isAuth)
+                    }>
+                      {article.fav === false ? (<FaRegBookmark color="#ffffffa0" />) : (<FaBookmark color='#b29564' />)}
+
+                    </button>
+                  </div>
+                  <h5 className={`${styles['arttitle']} m-3`}>{article.title}</h5>
+                  <p className={`${styles['arttext']} m-3`}>{article.content}</p>
+                  <div className="d-flex">
+                    <p className={`${styles['arttext']} m-3 p2`}>閱讀更多</p>
+                    <img
+                      src="/images/article/articlelist/rightarrow.svg"
+                      alt="Right Arrow"
+                      className={styles['arrow-animation']}
+                    />
                   </div>
                 </div>
-              </Link>
+              </div>
             </div>
           ))}
         </div>

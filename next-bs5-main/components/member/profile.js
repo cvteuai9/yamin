@@ -16,7 +16,8 @@ import { useUserProfile } from '@/context/UserProfileContext'
 import { IoColorFill, IoColorFillSharp } from 'react-icons/io5'
 
 export default function Profile() {
-  const { userProfile, updateUserProfile, avatarVersion, updateAvatar } = useUserProfile()
+  const { userProfile, updateUserProfile, avatarVersion, updateAvatar } =
+    useUserProfile()
   // const router = useRouter()
   // 定義要在此頁呈現/編輯的會員資料初始物件
   const initUserProfile = {
@@ -65,11 +66,11 @@ export default function Profile() {
 
       toast.success('會員資料載入成功', {
         style: {
-          backgroundColor: '#4caf50',  // 背景色
-          color: '#fff',                // 文字顏色
-          borderRadius: '8px',          // 圓角
-          padding: '16px',              // 內邊距
-          fontSize: '16px',             // 字體大小
+          backgroundColor: '#4caf50', // 背景色
+          color: '#fff', // 文字顏色
+          borderRadius: '8px', // 圓角
+          padding: '16px', // 內邊距
+          fontSize: '16px', // 字體大小
         },
       })
     } else {
@@ -175,7 +176,7 @@ export default function Profile() {
   return (
     <>
       <main>
-        <div className="container mb-6">
+        <div className="container-fluid mb-6">
           <div className="d-flex">
             <div className="titlenav">
               <img src="/images/favorite/title.svg" alt="" className="my-3" />
@@ -347,15 +348,18 @@ export default function Profile() {
                       確認
                     </button>
                     {auth.userData.google_uid.length !== null && (
-                      <div type="button" className="profile-changepassword  btn1 p">
+                      <div
+                        type="button"
+                        className="profile-changepassword  btn1 p"
+                      >
                         <Link
                           href="/member/changeps"
                           className=" goldenf text-decoration-none  color-inherit"
                         >
                           修改密碼
                         </Link>
-                      </div>)
-                    }
+                      </div>
+                    )}
                   </div>
                 </form>
               </div>
