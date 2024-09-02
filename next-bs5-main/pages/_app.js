@@ -22,6 +22,7 @@ import '@/styles/course_background.scss'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import '@/styles/index_course.scss'
+import '@/styles/map.scss'
 
 // Ju-掛載
 import '@/styles/Normalize.scss'

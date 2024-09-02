@@ -1,0 +1,67 @@
+#shane_map_name{
+    position: relative;
+    width: fit-content;
+    opacity: 0;
+    padding: 5px;
+    font-size: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.shane_map_path {
+    cursor: pointer;
+}
+
+.shane_map_path {
+    fill: #ffffff;
+}
+
+.shane_map_p {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1rem;
+    color: #B29564;
+    text-align: center;
+}
+
+.shane_map_image1 {
+    width: 80px;
+    height: 40px;
+}
+
+
+@media only screen and (max-width: 600px) {
+    #shane_map_name {
+        /* width: 100%;    */
+        opacity: 0;
+        /* 讓元素在手機上可見 */
+        font-size: 1.2rem;
+        /* 調整文字大小 */
+        justify-content: center;
+        /* 讓文字在中間 */
+    }
+
+    .shane_map_p {
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 0.3rem;
+        /* 調整文字大小 */
+    }
+
+    .shane_map_image1 {
+        width: 80px;
+        /* 縮小圖片以適應手機螢幕 */
+        height: 25px;
+    }
+
+    .shane_map_path {
+        width: 100%;
+        /* 讓 SVG 圖像自適應寬度 */
+        height: auto;
+        /* 讓高度自動調整 */
+    }
+}

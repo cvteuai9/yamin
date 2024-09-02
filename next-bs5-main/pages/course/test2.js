@@ -1,28 +1,43 @@
 import React, { useState } from 'react'
 
-const App = () => {
-  // 圖片列表
-  const images = [
-    'https://via.placeholder.com/400x300/FF0000/FFFFFF?text=Image+1',
-    'https://via.placeholder.com/400x300/00FF00/FFFFFF?text=Image+2',
-    'https://via.placeholder.com/400x300/0000FF/FFFFFF?text=Image+3',
-    'https://via.placeholder.com/400x300/FFFF00/FFFFFF?text=Image+4',
-    'https://via.placeholder.com/400x300/FF00FF/FFFFFF?text=Image+5',
+function CourseSelection() {
+  // 定義圖片列表，分別對應不同課程的顯示圖片
+  const courseData = [
+    {
+      title: '茶文化與歷史課程 1',
+      image: '/images/yaming/index/Union.png', // 替換為你的圖片地址
+    },
+    {
+      title: '茶文化與歷史課程 2',
+      image: '/images/yaming/index/Union2.png',
+    },
+    {
+      title: '茶文化與歷史課程 3',
+      image: '/images/yaming/index/Union3.png',
+    },
+    {
+      title: '茶文化與歷史課程 4',
+      image: '/images/yaming/index/Union4.png',
+    },
+    {
+      title: '茶文化與歷史課程 5',
+      image: '/images/yaming/index/Union5.png',
+    },
   ]
 
-  const [selectedImageIndex, setSelectedImageIndex] = useState(0) // 用於儲存當前選中的圖片索引
+  const [selectedCourseIndex, setSelectedCourseIndex] = useState(0) // 初始選中第一個課程
 
   return (
     <div style={styles.container}>
       {/* 左側選項區域 */}
       <div style={styles.leftPane}>
-        {images.map((_, index) => (
+        {courseData.map((course, index) => (
           <button
             key={index}
             style={styles.optionButton}
-            onClick={() => setSelectedImageIndex(index)}
+            onClick={() => setSelectedCourseIndex(index)} // 當點擊選項時，切換當前選中課程
           >
-            選項 {index + 1}
+            {course.title}
           </button>
         ))}
       </div>
@@ -30,16 +45,17 @@ const App = () => {
       {/* 右側圖片顯示區域 */}
       <div style={styles.rightPane}>
         <img
-          src={images[selectedImageIndex]}
-          alt={`選項 ${selectedImageIndex + 1} 的圖片`}
+          src={courseData[selectedCourseIndex].image}
+          alt={courseData[selectedCourseIndex].title}
           style={styles.image}
         />
+        <h5>{courseData[selectedCourseIndex].title}</h5>
       </div>
     </div>
   )
 }
 
-// 一些簡單的內聯樣式
+// 樣式
 const styles = {
   container: {
     display: 'flex',
@@ -47,34 +63,44 @@ const styles = {
     height: '100vh',
   },
   leftPane: {
-    width: '30%', // 左側區域寬度
-    backgroundColor: '#f0f0f0',
+    width: '50%',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
     padding: '20px',
+    border: 'none',
   },
   optionButton: {
-    width: '100%',
+    width: '80%',
     padding: '15px',
-    margin: '10px 0',
-    backgroundColor: '#ffffff',
-    border: '1px solid #ccc',
+    margin: '3px 0',
     cursor: 'pointer',
     fontSize: '18px',
+    border: 'none',
+    outline: 'none',
+    backgroundColor: 'transparent',
   },
   rightPane: {
-    width: '70%', // 右側區域寬度
+    width: '50%',
     display: 'flex',
+    flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#ffffff',
   },
   image: {
-    maxWidth: '90%',
-    maxHeight: '90%',
+    maxWidth: '80%',
+    maxHeight: '80%',
+  },
+  // 添加媒體查詢來隱藏右側圖片區域
+  '@media (min-width: 768px)': {
+    rightPane: {
+      display: 'none', // 小於 768px 時隱藏右側區域
+    },
+    leftPane: {
+      width: '100%', // 小於 768px 時左側區域佔滿全寬
+    },
   },
 }
 
-export default App
+export default CourseSelection

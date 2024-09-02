@@ -153,7 +153,7 @@ export default function MyHeader() {
                   alt=""
                   className={`${styles.svg}`}
                 />
-                <Link href="#">
+                <Link href="/article/list">
                   <h5>文章</h5>
                 </Link>
               </div>
@@ -248,10 +248,9 @@ export default function MyHeader() {
           </li>
           <li>
             <Link href="/course/courselist">課程</Link>
-            <Link href="/course/courselist">課程</Link>
           </li>
           <li>
-            <Link href="/article">文章</Link>
+            <Link href="/article/list">文章</Link>
           </li>
           <li>
             <Link href="/member/fav/favorite-p">收藏</Link>
