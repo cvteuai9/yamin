@@ -311,7 +311,9 @@ export default function MyHeader() {
                   alt=""
                   className={`${styles.svg}`}
                 />
-                <Link href="/article">文章</Link>
+                <Link href="/article">
+                  <h5>文章</h5>
+                </Link>
               </div>
             </li>
           </ul>

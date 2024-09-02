@@ -188,12 +188,12 @@ export default function RegisterForm() {
         minLength: 8,
         minLowercase: 1,
         minUppercase: 1,
-        minNumbers: 0,
+        minNumbers: 1,
         minSymbols: 0,
       })
     ) {
       newErrors.password =
-        '密碼為8到12個字元，且至少需包含一個英文大寫與一個英文小寫字元'
+        '密碼需為8到12個字元，必須包含大小寫英文字母和數字'
     }
     if (user.password.length > 12) {
       newErrors.password = '密碼至多12個字元'
@@ -287,7 +287,7 @@ export default function RegisterForm() {
                     type={showPassword ? 'text' : 'password'}
                     name="password"
                     id='password'
-                    placeholder="密碼"
+                    placeholder="8到12個字元，須包含大小寫英文字母和數字"
                     value={user.password}
                     onChange={handleFieldChange}
                   />

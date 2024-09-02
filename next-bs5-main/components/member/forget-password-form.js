@@ -67,85 +67,86 @@ export default function ForgetPasswordForm() {
 
   return (
     <>
-      <div className={`${styles['forgetps']}`}>
-
-        <div
-          className={['d-flex flex-column', styles['forgetpssec']].join(' ')}
-        >
-          <div className='d-flex justify-content-center my-3'>
-            <img src="/images/mobile-password.png" alt="" width={180} />
-          </div>
-          <h2 className="text-center my-5">重設密碼</h2>
-          <p className="text-center my-3">輸入你的會員電子郵件地址，按下&quot;取得驗證碼&ldquo;按鈕後，我們會將密碼重設指示寄送給你。</p>
+      <main className={styles.ForgetPS}>
+        <div className={`${styles['forgetps']}`}>
           <div
-            className={`mb-3 ${styles['fp-form']}`}
+            className={['d-flex flex-column', styles['forgetpssec']].join(' ')}
           >
-            <label className="mt-3">
-              電子郵件*
-              <div className='d-flex'>
-                <input
-                  type="email"
-                  placeholder="請輸入你的電子郵件"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-                <button
-                  className="btn btn-outline-secondary p-0"
-                  id="button-addon2"
-                  onClick={handleRequestOtpToken} disabled={disableBtn}
-                >
-                  {delay ? count + '秒後可以再次取得驗証碼' : '取得驗証碼'}
-                </button>
-              </div>
-            </label>
-            {/* <span className={`${styles['error']}`}>{errors.email}</span> */}
-            <label className="mt-3">
-              電子郵件驗證碼*
-              <input
-                type="text"
-                value={token}
-                placeholder="請輸入你的電子郵件驗證碼"
-                onChange={(e) => setToken(e.target.value)}
-              />
-            </label>
-            {/* <span className={`${styles['error']}`}>{errors.email}</span> */}
-            <label className="mt-3">
-              新密碼*
-              <div
-                className={`${styles['inputarea']} "d-flex justify-between"`}
-              >
+            <div className='d-flex justify-content-center my-3'>
+              <img src="/images/mobile-password.png" alt="" width={180} />
+            </div>
+            <h2 className="text-center my-5">重設密碼</h2>
+            <p className="text-center my-3">輸入你的會員電子郵件地址，按下&quot;取得驗證碼&ldquo;按鈕後，我們會將密碼重設指示寄送給你。</p>
+            <div
+              className={`mb-3 ${styles['fp-form']}`}
+            >
+              <label className="mt-3">
+                電子郵件*
+                <div className='d-flex'>
+                  <input
+                    type="email"
+                    placeholder="請輸入你的電子郵件"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                  <button
+                    className="btn btn-outline-secondary p-0"
+                    id="button-addon2"
+                    onClick={handleRequestOtpToken} disabled={disableBtn}
+                  >
+                    {delay ? count + '秒後可以再次取得驗証碼' : '取得驗証碼'}
+                  </button>
+                </div>
+              </label>
+              {/* <span className={`${styles['error']}`}>{errors.email}</span> */}
+              <label className="mt-3">
+                電子郵件驗證碼*
                 <input
                   type="text"
-                  placeholder="請輸入你的密碼"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  value={token}
+                  placeholder="請輸入你的電子郵件驗證碼"
+                  onChange={(e) => setToken(e.target.value)}
                 />
-              </div>
-            </label>
-            {/* <span className={`${styles['error']}`}>{errors.password}</span> */}
-            <div
-              className={[
-                styles['btn-div'],
-                'm-2 d-flex justify-content-center',
-              ].join(' ')}
-            >
-              <button
-                className={`${styles['btn-in']} mt-4 p-0`}
-                onClick={handleResetPassword}
+              </label>
+              {/* <span className={`${styles['error']}`}>{errors.email}</span> */}
+              <label className="mt-3">
+                新密碼*
+                <div
+                  className={`${styles['inputarea']} "d-flex justify-between"`}
+                >
+                  <input
+                    type="text"
+                    placeholder="請輸入你的密碼"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                </div>
+              </label>
+              {/* <span className={`${styles['error']}`}>{errors.password}</span> */}
+              <div
+                className={[
+                  styles['btn-div'],
+                  'm-2 d-flex justify-content-center',
+                ].join(' ')}
               >
-                重設密碼
-              </button>
+                <button
+                  className={`${styles['btn-in']} mt-4`}
+                  onClick={handleResetPassword}
+                >
+                  重設密碼
+                </button>
+              </div>
+            </div>
+            <div
+              className={`${styles['form-footer']} d-flex justify-content-center mb-5`}
+            >
+              <Link href="/member/login">返回登入</Link>
             </div>
           </div>
-          <div
-            className={`${styles['form-footer']} d-flex justify-content-center mb-5`}
-          >
-            <Link href="/member/login">返回登入</Link>
-          </div>
+          {/* 土司訊息視窗用 */}
+          <Toaster />
         </div>
-        {/* 土司訊息視窗用 */}
-        <Toaster />
-      </div>
+      </main>
     </>
     // <main className={`form-member w-100 m-auto text-center`}>
     //   <h2 className="text-center mb-5">重設密碼</h2>

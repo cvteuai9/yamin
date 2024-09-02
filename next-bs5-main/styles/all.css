@@ -75,6 +75,7 @@ a {
   width: fit-content;
 
   height: 7px;
+  /* width: 150px; */
   background: var(--primary2);
   color: var(--white);
   border: var(--primary2) 1px solid;
@@ -88,6 +89,11 @@ a {
 }
 .btn1:hover {
   background-color: var(--hover03);
+  transition: 0.3s;
+  /* 當滑鼠移過時改變背景顏色 */
+}
+.btn2:hover {
+  background-color: var(--button-hover-color);
   transition: 0.3s;
   /* 當滑鼠移過時改變背景顏色 */
 }
@@ -225,13 +231,14 @@ input::placeholder,
   width: 100px;
   height: 100px;
 }
+
 .changeps-inputtext {
-  margin: 12px 0px 12px 0px;
+  margin: 12px 0px;
   height: 50px;
   width: 100%;
   padding: 1.2rem;
   color: var(--bg-text-color);
-  background-color: var(--background);
+  background-color: #004c63d1;
   border: var(--primary2) solid 1px;
   font-size: 1.6rem;
   /* 懸停指示 */
@@ -261,8 +268,17 @@ input::placeholder,
 .changeps-inputgroup {
   position: relative;
   width: 100%;
+  font-family: 'B2Hana-Regular', sans-serif;
+  font-weight: 100;
+  input {
+    padding: 12px;
+    margin-bottom: 12px;
+    &::placeholder {
+      color: rgb(178, 149, 100, 0.8);
+    }
+  }
   .icon {
-    font-size: 1.6rem;
+    font-size: 1.8rem;
     color: var(--primary2);
     padding: 0px;
     position: absolute;
@@ -597,6 +613,9 @@ input::placeholder,
 /* =================================== */
 .profile-form {
   width: 100%;
+  input {
+    padding: 12px;
+  }
   .profile-inputtext {
     font-size: 1.6rem;
     font-family: 'B2Hana-Regular', sans-serif;
@@ -635,7 +654,7 @@ input::placeholder,
   all: unset;
   color: var(--white);
   width: 100%;
-  padding: 15px;
+  padding: 12px;
   border: 1px solid var(--primary2);
   box-sizing: border-box;
 }
