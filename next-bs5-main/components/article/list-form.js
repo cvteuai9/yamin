@@ -31,13 +31,13 @@ export default function ListForm() {
 
 
   // 使用 useCallback 優化函數
-  const getArticles = useCallback(async (categoryId, currentSortOrder,userID, isAuth) => {
+  const getArticles = useCallback(async (categoryId, currentSortOrder, userID, isAuth) => {
     try {
       const currentPage = router.query.page || '1'
       const apiUrl = `http://localhost:3005/api/my-articles/filter?category_id=${categoryId || 1}&page=${currentPage}&limit=${ARTICLES_PER_PAGE}&sort=${currentSortOrder}`
       const res = await fetch(apiUrl)
       const data = await res.json()
-      
+
       let favoriteArticles = []
       if (isAuth) {
         const favRes = await fetch(
@@ -196,9 +196,9 @@ export default function ListForm() {
   return (
     <main className={styles['article-list']}>
       <div className="container-fluid">
-        <div className={styles.headerImg}>
+        {/* <div className={styles.headerImg}>
           <img src="/images/article/articlelist/article-header.webp" alt="" />
-        </div>
+        </div> */}
         <div className={styles['typetitle_group']}>
           {categories.map((category) => (
             <a
@@ -248,27 +248,29 @@ export default function ListForm() {
                 <div className={`${styles['articlec-body']} m-3`}>
                   <div className={`${styles['timeandnum']} m-3`}>
                     <p className="p2 mb-0 me-3">{article.created_at.split(' ')[0]}</p>
-                    <IoEyeSharp color="#ffffffa0" />
+                    <IoEyeSharp className={`${styles['icon']}`} color="#ffffffa0" />
                     <p className="p2 mb-0 me-3 ms-2">{article.views}</p>
-                    <FaRegComment color="#ffffffa0" />
-                    <p className="p2 mb-0 me-3 ms-2">10</p>
+                    {/* <FaRegComment color="#ffffffa0" />
+                    <p className="p2 mb-0 me-3 ms-2">10</p> */}
                     <button className='btn p-0 m-0 d-flex align-items-center' onClick={() =>
                       handleFavToggle(article.id, userID, isAuth)
                     }>
-                      {article.fav === false ? (<FaRegBookmark color="#ffffffa0" />) : (<FaBookmark color='#b29564' />)}
+                      {article.fav === false ? (<FaRegBookmark color="#ffffffa0" className={`${styles['icon']}`} />) : (<FaBookmark color='#b29564' className={`${styles['icon']}`} />)}
 
                     </button>
                   </div>
-                  <h5 className={`${styles['arttitle']} m-3`}>{article.title}</h5>
-                  <p className={`${styles['arttext']} m-3`}>{article.content}</p>
-                  <div className="d-flex">
-                    <p className={`${styles['arttext']} m-3 p2`}>閱讀更多</p>
-                    <img
-                      src="/images/article/articlelist/rightarrow.svg"
-                      alt="Right Arrow"
-                      className={styles['arrow-animation']}
-                    />
-                  </div>
+                  <Link href={`/article/${article.id}`} className={styles['articleLink']}>
+                    <h5 className={`${styles['arttitle']} m-3`}>{article.title}</h5>
+                    <p className={`${styles['arttext']} m-3`}>{article.content}</p>
+                    <div className="d-flex">
+                      <p className={`${styles['arttext']} m-3 p2`}>閱讀更多</p>
+                      <img
+                        src="/images/article/articlelist/rightarrow.svg"
+                        alt="Right Arrow"
+                        className={styles['arrow-animation']}
+                      />
+                    </div>
+                  </Link>
                 </div>
               </div>
             </div>

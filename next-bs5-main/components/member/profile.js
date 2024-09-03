@@ -282,7 +282,7 @@ export default function Profile() {
                         checked={userProfile.gender === '男性'}
                         onChange={handleFieldChange}
                       />
-                      <p className="p whitef ms-3">男</p>
+                      <p className="p whitef ms-3 mb-0">男</p>
                       <input
                         type="radio"
                         className="ms-3"
@@ -292,7 +292,7 @@ export default function Profile() {
                         checked={userProfile.gender === '女性'}
                         onChange={handleFieldChange}
                       />
-                      <p className="p whitef ms-3">女</p>
+                      <p className="p whitef ms-3 mb-0">女</p>
                     </div>
                   </div>
                   <div className="">
@@ -347,7 +347,8 @@ export default function Profile() {
                     <button type="submit" className="profile-checked  btn2 p">
                       確認
                     </button>
-                    {auth.userData.google_uid.length !== null && (
+                    {/* 沒有google_uid才顯示 */}
+                    {auth.userData.google_uid === null && (
                       <div
                         type="button"
                         className="profile-changepassword  btn1 p"

@@ -7,7 +7,7 @@ import { useRouter } from 'next/router'
 import { useAuth } from '@/hooks/my-use-auth'
 import { useShip711StoreOpener } from '@/hooks/use-ship-711-store'
 import axiosInstance from '@/services/axios-instance'
-
+import Swal from 'sweetalert2'
 import {
   formatCVC,
   formatExpirationDate,
@@ -133,10 +133,29 @@ export default function CartTwo() {
   let getorderId
   useEffect(() => {}, [getorderId])
   const goLinePay = () => {
-    if (window.confirm('確認要導向至LINE Pay進行付款?')) {
-      // 先連到node伺服器後，導向至LINE Pay付款頁面
+    // if (window.confirm('確認要導向至LINE Pay進行付款?')) {
+    //   // 先連到node伺服器後，導向至LINE Pay付款頁面
+    //   window.location.href = `http://localhost:3005/api/yamin_cart/linepay?orderId=${getorderId}`
+    // }
+    Swal.fire({
+      title: '確認要導向至LINE Pay進行付款?',
+      text: '確認將導向到LINE Pay進行付款',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: '確認',
+      cancelButtonText: '取消',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: '確認成功!',
+          text: '即將導向Line Pay!',
+          icon: 'success',
+        })
+      }
       window.location.href = `http://localhost:3005/api/yamin_cart/linepay?orderId=${getorderId}`
-    }
+    })
   }
   const gocardPay = (cardPayId) => {
     console.log('我的cardpay', cardPayId)
@@ -386,7 +405,8 @@ export default function CartTwo() {
     }
 
     // router.push('http://localhost:3000/cart/cartThree')
-    // localStorage.removeItem('cart')
+    localStorage.removeItem('cart')
+    localStorage.removeItem('courseCart')
   }
 
   // test
@@ -443,21 +463,6 @@ export default function CartTwo() {
             <div className="col-2 text-center colorWhite">單價</div>
             <div className="col-1 text-center colorWhite">數量</div>
             <div className="col-3 text-center colorWhite">小計</div>
-          </div>
-          <div className="row cartlistBor h5">
-            <div className="col-2 text-center colorWhite py-4">
-              <img src="/images/cart/image_0001.jpg" alt="" />
-            </div>
-            <div className="col-4 text-center colorWhite cartlistCol Gotext">
-              精品原葉丨三峽碧螺 40g–精裝盒
-            </div>
-            <div className="col-2 text-center colorWhite cartlistCol">1000</div>
-            <div className="col-1 text-center colorWhite cartlistCol">
-              <button className="btn cartBtn  h5 cardTotalBtn" type="button">
-                $1000
-              </button>
-            </div>
-            <div className="col-3 text-center colorWhite cartlistCol">1000</div>
           </div>
 
           {items.length === 0 ? (
@@ -585,7 +590,39 @@ export default function CartTwo() {
             })
           )}
           {/* 390的list */}
-          <div className="row cartlistBorMd h5">
+          {courseCart.items.length === 0 ? (
+            <div className="checkCartMd">
+              <h1>課程購物車為空</h1>
+            </div>
+          ) : (
+            courseCart.items.map((v) => {
+              return (
+                <div key={v.id} className="row cartlistBorMd h5">
+                  <div className="col-3 text-center colorWhite">
+                    <img
+                      src={`/images/yaming/tea_class_picture/${v.img1}`}
+                      alt=""
+                    />
+                  </div>
+                  <div className="col-8 ps-4  colorWhite">
+                    <p style={{ marginLeft: '6px' }}>{v.name}</p>
+                    <p style={{ marginLeft: '6px' }}>單價:{v.price}</p>
+                    <p style={{ marginLeft: '6px' }}>總價:{v.subtotal}</p>
+                    <div className="CartListBtnMdBox">
+                      <button
+                        className="btn cartBtn  h5 cardTotalBtn"
+                        type="button"
+                      >
+                        <p>數量:{v.qty}</p>
+                      </button>
+                    </div>
+                  </div>
+                  <div className="trashBoxMd col-1 colorWhite d-flex justify-content-end align-ltems-end"></div>
+                </div>
+              )
+            })
+          )}
+          {/* <div className="row cartlistBorMd h5">
             <div className="col-3 text-center colorWhite">
               <img src="/images/cart/image_0001.jpg" alt="" />
             </div>
@@ -599,7 +636,7 @@ export default function CartTwo() {
               </div>
             </div>
             <div className="trashBoxMd col-1 colorWhite d-flex justify-content-end align-ltems-end"></div>
-          </div>
+          </div> */}
           {/* 390的list end */}
           <div className=" h2 pe-2  ">
             <h5 className="text-end d-line-block my-5 colorWhite">
@@ -709,6 +746,10 @@ export default function CartTwo() {
               </label>
               <input
                 type="email"
+                style={{
+                  background: 'var(--primary)',
+                  color: 'var(--primary2)',
+                }}
                 className="w-100"
                 name="email"
                 value={formData.email}
@@ -726,6 +767,9 @@ export default function CartTwo() {
               <select
                 name="delivery"
                 id="delivery"
+                style={{
+                  color: 'var(--primary2)',
+                }}
                 value={formData.delivery}
                 ref={inputRefs.delivery}
                 onChange={handleChange}

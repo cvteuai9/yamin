@@ -10,11 +10,26 @@
 }
 
 //user頭像
+.header-right{
+  display: flex;
+  justify-content: flex-end;
+   // 移除可能的右側 margin
+   > * {
+    margin-right: 0;
+  }
+  
+  // 為最後一個元素添加右側間距
+  > *:last-child {
+    margin-right: 1rem;
+  }
+}
+.header-userimg{
+  padding: 0.5rem 2rem;
+}
 .header-personimgdiv {
   position: relative;
   height: 30px;
   width: 30px;
-  margin: 0rem 1rem;
   .header-personimg {
     position: absolute;
     top: 50%;

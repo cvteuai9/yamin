@@ -197,7 +197,16 @@ export default function FavoriteA() {
                   )
                 })
               ) : (
-                <></>
+                <div className={`${styles.noFavorites}`}>
+                    <h4 className="fw-bold mb-5">你還沒有收藏的文章喔!</h4>
+                    <Link
+                      href={`/article`}
+                      className={`h4 d-flex align-items-center justify-content-center gap-1`}
+                    >
+                      <FaProductHunt />
+                      來去逛逛吧!
+                    </Link>
+                  </div>
               )}
             </div>
             {/* 文章 */}

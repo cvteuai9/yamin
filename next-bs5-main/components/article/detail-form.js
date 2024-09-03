@@ -143,7 +143,7 @@ export default function DetailForm() {
   return (
     <>
       <main className="articledetail">
-        <div className="container mt-4">
+        <div className="container-fluid mt-4">
           {/* <StarLarge /> */}
           <div className="row d-flex">
             {/*-------------------- 左邊主要區 ---------------------*/}

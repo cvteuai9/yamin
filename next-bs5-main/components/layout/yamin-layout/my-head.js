@@ -317,7 +317,7 @@ export default function MyHeader() {
               </div>
             </li>
           </ul>
-          <div className="d-flex align-items-center">
+          <div className={`${styles.headerRight} d-flex align-items-center`}>
             <div className={`${styles.search}`}>
               <input
                 type="button"
@@ -363,10 +363,12 @@ export default function MyHeader() {
               </Link>
               <div className="cartNumberTotal">{cartAllLength}</div>
             </div>
-            <div className="header-userimg position-relative d-flex align-items-center">
+            <div
+              className={`${styles['userimg']} header-userimg position-relative d-flex align-items-center`}
+            >
               <button
                 ref={buttonRef}
-                className="d-flex align-items-center btn btn-reset p-0 "
+                className="d-flex align-items-center btn btn-reset p-0 m-0"
                 onClick={(e) => toggleMenu(e)}
                 aria-haspopup="true"
                 aria-expanded={menuOpen}
@@ -500,7 +502,7 @@ export default function MyHeader() {
               )}
             </div>
           </div>
-          <div>
+          <div className={`${styles.searchDiv}`}>
             <div className="d-flex align-items-center">
               <input
                 type="button"
