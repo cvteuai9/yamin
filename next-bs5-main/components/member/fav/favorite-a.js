@@ -14,6 +14,7 @@ import SearchNav from './search-nav'
 import Link from 'next/link'
 import styles from '@/components/member/fav/favorite.module.scss'
 import { useAuth } from '@/hooks/my-use-auth'
+import Swal from 'sweetalert2'
 import { func } from 'prop-types'
 
 export default function FavoriteA() {
@@ -34,20 +35,46 @@ export default function FavoriteA() {
     setOrder(value)
   }
   async function handleFavDelete(id, userID) {
-    const agreeDelete = confirm('確認要移除此收藏文章?')
-    if (agreeDelete) {
-      await fetch(
-        `http://localhost:3005/api/my-articles/favorites?user_id=${userID}&article_id=${id}`,
-        { method: 'DELETE' }
-      )
-        .then((res) => res.json())
-        .then((result) => {
-          if (result.message) {
-            getFavArticle(page, order, userID)
-          }
-        })
-        .catch((error) => console.log(error))
-    }
+    // 原本的
+    // const agreeDelete = confirm('確認要移除此收藏文章?')
+    // if (agreeDelete) {
+    //   await fetch(
+    //     `http://localhost:3005/api/my-articles/favorites?user_id=${userID}&article_id=${id}`,
+    //     { method: 'DELETE' }
+    //   )
+    //     .then((res) => res.json())
+    //     .then((result) => {
+    //       if (result.message) {
+    //         getFavArticle(page, order, userID)
+    //       }
+    //     })
+    //     .catch((error) => console.log(error))
+    // }
+    // Swal
+    Swal.fire({
+      title: '確定要移除此收藏課程?',
+      text: '是否要取消收藏',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: '確定',
+      cancelButtonText: '取消',
+    }).then((result) => {
+      if (result.isConfirmed) {
+         fetch(
+          `http://localhost:3005/api/my-articles/favorites?user_id=${userID}&article_id=${id}`,
+          { method: 'DELETE' }
+        )
+          .then((res) => res.json())
+          .then((result) => {
+            if (result.message) {
+              getFavArticle(page, order, userID)
+            }
+          })
+          .catch((error) => console.log(error))
+      }
+    })
   }
   async function getFavArticle(page, order, userID) {
     // console.log(order);

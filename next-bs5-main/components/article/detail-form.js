@@ -10,6 +10,8 @@ import {
 } from 'react-icons/fa'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
+import toast, { Toaster } from 'react-hot-toast'
+import Swal from 'sweetalert2'
 
 export default function DetailForm() {
   const router = useRouter()
@@ -57,6 +59,15 @@ export default function DetailForm() {
             method: 'PUT',
           }
         )
+          .then((res) => res.json())
+          .then((result) => {
+            if (result.message === 'Favorite Article Insert successfully') {
+              toast.success(<p className="m-0">加入收藏成功!</p>)
+            } else {
+              toast.error(<p className="m-0">加入收藏失敗!</p>)
+            }
+          })
+          .catch((error) => console.log(error))
       } else {
         await fetch(
           `http://localhost:3005/api/my-articles/favorites?user_id=${userID}&article_id=${article.id}`,
@@ -64,13 +75,38 @@ export default function DetailForm() {
             method: 'DELETE',
           }
         )
+          .then((res) => res.json())
+          .then((result) => {
+            if (result.message === 'Favorite Article DELETE successfully') {
+              toast.success(<p className="m-0">移除收藏成功!</p>)
+            } else {
+              toast.error(<p className="m-0">移除收藏失敗!</p>)
+            }
+          })
+          .catch((error) => console.log(error))
       }
       let tmp = { ...article, fav: !article.fav }
       setArticle(tmp)
     } else {
-      if (confirm('您尚未登入，請登入後再操作!!')) {
-        router.push('/member/login')
-      }
+      // 原本寫的
+      // if (confirm('您尚未登入，請登入後再操作!')) {
+      //   router.push('/member/login')
+      // }
+      // Swal的confirm
+      Swal.fire({
+        title: '無法收藏',
+        text: '您尚未登入，請登入後再操作!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: '登入',
+        cancelButtonText: '取消',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          router.push('/member/login')
+        }
+      })
     }
   }
   const getRecommend = async (id) => {
@@ -121,9 +157,9 @@ export default function DetailForm() {
   // 確保views重整只會增加一次
   useEffect(() => {
     if (router.isReady) {
-      getViews(router.query.articleCode);
+      getViews(router.query.articleCode)
     }
-  }, [router.isReady]);
+  }, [router.isReady])
 
   useEffect(() => {
     getCategories()
@@ -396,6 +432,7 @@ export default function DetailForm() {
           </div>
         </div>
       </main>
+      <Toaster />
     </>
   )
 }

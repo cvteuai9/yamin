@@ -8,6 +8,7 @@ import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'
 import { useAuth } from '@/hooks/my-use-auth'
 import { YaminCourseUseCart } from '@/hooks/yamin-use-Course-cart'
 import toast, { Toaster } from 'react-hot-toast'
+import Swal from 'sweetalert2'
 // Import Swiper styles
 import 'swiper/css'
 import 'swiper/css/free-mode'
@@ -74,18 +75,53 @@ export default function CourseDetail() {
             `http://localhost:3005/api/course/favorites?user_id=${userID}&course_id=${course.id}`,
             { method: 'PUT' }
           )
+            .then((res) => res.json())
+            .then((result) => {
+              if (result.message === 'Favorite Course Insert successfully') {
+                toast.success(<p className="m-0">加入收藏成功!</p>)
+              } else {
+                toast.error(<p className="m-0">加入收藏失敗!</p>)
+              }
+            })
+            .catch((error) => console.log(error))
         } else {
           await fetch(
             `http://localhost:3005/api/course/favorites?user_id=${userID}&course_id=${course.id}`,
             { method: 'DELETE' }
           )
+            .then((res) => res.json())
+            .then((result) => {
+              if (result.message === 'Favorite Course deleted successfully') {
+                toast.success(<p className="m-0">移除收藏成功!</p>)
+              } else {
+                toast.error(<p className="m-0">移除收藏失敗!</p>)
+              }
+            })
+            .catch((error) => console.log(error))
         }
         let tmp = { ...course, fav: !course.fav }
         setCourse(tmp)
       } else {
-        if (confirm('您尚未登入，請登入後再操作!')) {
-          router.push('/member/login')
-        }
+        // 原本寫的
+        // if (confirm('您尚未登入，請登入後再操作!')) {
+        //   router.push('/member/login')
+        // }
+        // Swal的confirm
+        Swal.fire({
+          title: '無法收藏',
+          text: '您尚未登入，請登入後再操作!',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: '登入',
+          cancelButtonText: '取消',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            router.push('/member/login')
+          }
+        })
+
       }
     } catch (error) {
       console.error('Failed to toggle favorite:', error)

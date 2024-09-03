@@ -15,6 +15,7 @@ import Link from 'next/link'
 import styles from '@/components/member/fav/favorite.module.scss'
 import { func } from 'prop-types'
 import { FaProductHunt } from "react-icons/fa6";
+import Swal from 'sweetalert2'
 export default function FavoriteP() {
   // !!拿取會員資料
   const { auth } = useAuth()
@@ -34,20 +35,46 @@ export default function FavoriteP() {
   }
   async function handleFavCancel(id, userID) {
     // console.log(id);
-    const agreeDelete = confirm('您確定要移除此收藏商品?')
-    if (agreeDelete) {
-      await fetch(
-        `http://localhost:3005/api/my_products/favorites?user_id=${userID}&product_id=${id}`,
-        { method: 'DELETE' }
-      )
-        .then((res) => res.json())
-        .then((result) => {
-          if (result.message) {
-            getFavProduct()
-          }
-        })
-        .catch((error) => console.log(error))
-    }
+    // const agreeDelete = confirm('您確定要移除此收藏商品?')
+    // Swal的confirm
+     Swal.fire({
+      title: '確定要移除此收藏商品?',
+      text: '是否要取消收藏',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: '確定',
+      cancelButtonText: '取消',
+    }).then((result) => {
+      if (result.isConfirmed) {
+         fetch(
+          `http://localhost:3005/api/my_products/favorites?user_id=${userID}&product_id=${id}`,
+          { method: 'DELETE' }
+        )
+          .then((res) => res.json())
+          .then((result) => {
+            if (result.message) {
+              getFavProduct()
+            }
+          })
+          .catch((error) => console.log(error))
+      }
+    })
+    // 原本
+    // if (agreeDelete) {
+    //   await fetch(
+    //     `http://localhost:3005/api/my_products/favorites?user_id=${userID}&product_id=${id}`,
+    //     { method: 'DELETE' }
+    //   )
+    //     .then((res) => res.json())
+    //     .then((result) => {
+    //       if (result.message) {
+    //         getFavProduct()
+    //       }
+    //     })
+    //     .catch((error) => console.log(error))
+    // }
   }
   async function getFavProduct() {
     const url = new URL('http://localhost:3005/api/my-favorites')

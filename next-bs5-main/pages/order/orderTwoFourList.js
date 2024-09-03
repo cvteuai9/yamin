@@ -196,50 +196,41 @@ export default function OrderTwoFourList() {
                   )
                 })}
               {/* 390的list */}
-              <div className="row cartlistBorMd h5">
-                <div className="col-3 text-center colorWhite">
-                  <img src="/images/cart/image_0001.jpg" alt="" />
-                </div>
-                <div className="col-8 ps-4  colorWhite">
-                  <p>精品原葉丨三峽碧螺 40g–精裝盒</p>
-                  <p>$1000</p>
-                  <div className="CartListBtnMdBox">
-                    <button
-                      className="btn cartBtn  h5 cardTotalBtn"
-                      type="button"
-                    >
-                      $1000
-                    </button>
-                  </div>
-                </div>
-                <div className="trashBoxMd col-1 colorWhite d-flex justify-content-end align-ltems-end">
-                  <button type="button" className="orderProductBtnDone">
-                    <i className="fa-regular fa-pen-to-square" />
-                  </button>
-                </div>
-              </div>
-              <div className="row cartlistBorMd h5">
-                <div className="col-3 text-center colorWhite">
-                  <img src="/images/cart/image_0001.jpg" alt="" />
-                </div>
-                <div className="col-8 ps-4  colorWhite">
-                  <p>精品原葉丨三峽碧螺 40g–精裝盒</p>
-                  <p>$1000</p>
-                  <div className="CartListBtnMdBox">
-                    <button
-                      className="btn cartBtn  h5 cardTotalBtn"
-                      type="button"
-                    >
-                      $1000
-                    </button>
-                  </div>
-                </div>
-                <div className="trashBoxMd col-1 colorWhite d-flex justify-content-end align-ltems-end">
-                  <button type="button" className="orderProductBtnDone">
-                    <i className="fa-regular fa-pen-to-square" />
-                  </button>
-                </div>
-              </div>
+              {Array.isArray(orderDetail[2]) &&
+                orderDetail[2].map((v, i) => {
+                  return (
+                    <div key={v.id} className="row cartlistBorMd h5">
+                      <div className="col-3 text-center colorWhite">
+                        <img
+                          src={`/images/product/list1/products-images/${v.product_image}`}
+                          alt=""
+                        />
+                      </div>
+                      <div className="col-8 ps-4  colorWhite">
+                        <p style={{ marginLeft: '6px' }}>{v.product_name}</p>
+                        <p style={{ marginLeft: '6px' }}>
+                          單價:{v.product_unitprice}
+                        </p>
+                        <p style={{ marginLeft: '6px' }}>
+                          總價:{v.product_totalprice}
+                        </p>
+                        <div className="CartListBtnMdBox">
+                          <button
+                            className="btn cartBtn  h5 cardTotalBtn"
+                            type="button"
+                          >
+                            {v.product_quantity}
+                          </button>
+                        </div>
+                      </div>
+                      <div className="trashBoxMd col-1 colorWhite d-flex justify-content-end align-ltems-end">
+                        <button type="button" className="orderProductBtnDone">
+                          <i className="fa-regular fa-pen-to-square" />
+                        </button>
+                      </div>
+                    </div>
+                  )
+                })}
               {/* 390的list end */}
               <div className=" h2 pe-2 ">
                 <h5 className="text-end d-line-block my-5 colorWhite">
@@ -301,50 +292,42 @@ export default function OrderTwoFourList() {
                   )
                 })}
               {/* 390的list */}
-              <div className="row cartlistBorMd h5">
-                <div className="col-3 text-center colorWhite">
-                  <img src="/images/cart/image_0001.jpg" alt="" />
-                </div>
-                <div className="col-8 ps-4  colorWhite">
-                  <p>精品原葉丨三峽碧螺 40g–精裝盒</p>
-                  <p>$1000</p>
-                  <div className="CartListBtnMdBox">
-                    <button
-                      className="btn cartBtn  h5 cardTotalBtn"
-                      type="button"
-                    >
-                      $1000
-                    </button>
-                  </div>
-                </div>
-                <div className="trashBoxMd col-1 colorWhite d-flex justify-content-end align-ltems-end">
-                  <button type="button" className="orderProductBtnDone">
-                    <i className="fa-regular fa-pen-to-square" />
-                  </button>
-                </div>
-              </div>
-              <div className="row cartlistBorMd h5">
-                <div className="col-3 text-center colorWhite">
-                  <img src="/images/cart/image_0001.jpg" alt="" />
-                </div>
-                <div className="col-8 ps-4  colorWhite">
-                  <p>精品原葉丨三峽碧螺 40g–精裝盒</p>
-                  <p>$1000</p>
-                  <div className="CartListBtnMdBox">
-                    <button
-                      className="btn cartBtn  h5 cardTotalBtn"
-                      type="button"
-                    >
-                      $1000
-                    </button>
-                  </div>
-                </div>
-                <div className="trashBoxMd col-1 colorWhite d-flex justify-content-end align-ltems-end">
-                  <button type="button" className="orderProductBtnDone">
-                    <i className="fa-regular fa-pen-to-square" />
-                  </button>
-                </div>
-              </div>
+              {Array.isArray(orderDetail[1]) &&
+                orderDetail[1].map((v, i) => {
+                  return (
+                    <div key={v.id} className="row cartlistBorMd h5">
+                      <div className="col-3 text-center colorWhite">
+                        <img
+                          src={`/images/yaming/tea_class_picture/${v.course_image}`}
+                          alt=""
+                        />
+                      </div>
+                      <div className="col-8 ps-4  colorWhite">
+                        <p style={{ marginLeft: '6px' }}>{v.course_name}</p>
+                        <p style={{ marginLeft: '6px' }}>
+                          單價:{v.course_unitprice}
+                        </p>
+                        <p style={{ marginLeft: '6px' }}>
+                          總價:{v.course_totalprice}
+                        </p>
+                        <div className="CartListBtnMdBox">
+                          <button
+                            className="btn cartBtn  h5 cardTotalBtn"
+                            type="button"
+                          >
+                            {v.course_quantity}
+                          </button>
+                        </div>
+                      </div>
+                      <div className="trashBoxMd col-1 colorWhite d-flex justify-content-end align-ltems-end">
+                        <button type="button" className="orderProductBtnDone">
+                          <i className="fa-regular fa-pen-to-square" />
+                        </button>
+                      </div>
+                    </div>
+                  )
+                })}
+
               {/* 390的list end */}
               <div className=" h2 pe-2 ">
                 <h5 className="text-end d-line-block my-5 colorWhite">
