@@ -148,11 +148,33 @@ export default function Course() {
                 `http://localhost:3005/api/course/favorites?user_id=${userID}&course_id=${v.id}`,
                 { method: 'PUT' }
               )
+                .then((res) => res.json())
+                .then((result) => {
+                  if (
+                    result.message === 'Favorite Course Insert successfully'
+                  ) {
+                    toast.success(<p className="m-0">加入收藏成功!</p>)
+                  } else {
+                    toast.error(<p className="m-0">加入收藏失敗!</p>)
+                  }
+                })
+                .catch((error) => console.log(error))
             } else {
               fetch(
                 `http://localhost:3005/api/course/favorites?user_id=${userID}&course_id=${v.id}`,
                 { method: 'DELETE' }
               )
+                .then((res) => res.json())
+                .then((result) => {
+                  if (
+                    result.message === 'Favorite Course deleted successfully'
+                  ) {
+                    toast.success(<p className="m-0">移除收藏成功!</p>)
+                  } else {
+                    toast.error(<p className="m-0">移除收藏失敗!</p>)
+                  }
+                })
+                .catch((error) => console.log(error))
             }
             return { ...v, fav: !v.fav }
           } else {

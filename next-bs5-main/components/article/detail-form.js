@@ -10,6 +10,7 @@ import {
 } from 'react-icons/fa'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
+import toast, { Toaster } from 'react-hot-toast'
 import Swal from 'sweetalert2'
 
 export default function DetailForm() {
@@ -58,6 +59,15 @@ export default function DetailForm() {
             method: 'PUT',
           }
         )
+          .then((res) => res.json())
+          .then((result) => {
+            if (result.message === 'Favorite Article Insert successfully') {
+              toast.success(<p className="m-0">加入收藏成功!</p>)
+            } else {
+              toast.error(<p className="m-0">加入收藏失敗!</p>)
+            }
+          })
+          .catch((error) => console.log(error))
       } else {
         await fetch(
           `http://localhost:3005/api/my-articles/favorites?user_id=${userID}&article_id=${article.id}`,
@@ -65,6 +75,15 @@ export default function DetailForm() {
             method: 'DELETE',
           }
         )
+          .then((res) => res.json())
+          .then((result) => {
+            if (result.message === 'Favorite Article DELETE successfully') {
+              toast.success(<p className="m-0">移除收藏成功!</p>)
+            } else {
+              toast.error(<p className="m-0">移除收藏失敗!</p>)
+            }
+          })
+          .catch((error) => console.log(error))
       }
       let tmp = { ...article, fav: !article.fav }
       setArticle(tmp)
@@ -413,6 +432,7 @@ export default function DetailForm() {
           </div>
         </div>
       </main>
+      <Toaster />
     </>
   )
 }

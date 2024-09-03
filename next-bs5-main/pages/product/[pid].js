@@ -172,7 +172,13 @@ export default function Detail() {
           { method: 'PUT' }
         )
           .then((res) => res.json())
-          .then((result) => console.log(result))
+          .then((result) => {
+            if (result.message === 'Favorite Product Insert successfully') {
+              toast.success(<p className="m-0">成功加入收藏!</p>)
+            } else {
+              toast.error(<p className="m-0">加入收藏失敗!</p>)
+            }
+          })
           .catch((error) => console.log(error))
       } else {
         fetch(
@@ -180,7 +186,13 @@ export default function Detail() {
           { method: 'DELETE' }
         )
           .then((res) => res.json())
-          .then((result) => console.log(result))
+          .then((result) => {
+            if (result.message === 'Favorite Product deleted successfully') {
+              toast.success(<p className="m-0">移除收藏成功!</p>)
+            } else {
+              toast.error(<p className="m-0">移除收藏失敗!</p>)
+            }
+          })
           .catch((error) => console.log(error))
       }
       const tmp = { ...product, fav: !product.fav }
@@ -205,10 +217,10 @@ export default function Detail() {
       })
     }
   }
-  useEffect(() => {
-    // 第一次進入頁面才會有loading畫面
-    showLoader()
-  }, [])
+  // useEffect(() => {
+  //   // 第一次進入頁面才會有loading畫面
+  //   showLoader()
+  // }, [])
   useEffect(() => {
     if (thumbsSwiper) {
       thumbsSwiper.update()
