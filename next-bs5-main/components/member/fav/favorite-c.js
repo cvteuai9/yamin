@@ -14,6 +14,7 @@ import SearchNav from './search-nav'
 import Leftnav from '@/components/member/left-nav'
 import styles from '@/components/member/fav/favorite.module.scss'
 import { useAuth } from '@/hooks/my-use-auth'
+import Swal from 'sweetalert2'
 export default function FavoriteC() {
   const filterArray = ['金額由小到大', '金額由大到小']
   const router = useRouter()
@@ -34,20 +35,46 @@ export default function FavoriteC() {
   }
   async function handleFavCancel(id, userID) {
     // console.log(id);
-    const agreeDelete = confirm('您確定要移除此收藏商品?')
-    if (agreeDelete) {
-      await fetch(
-        `http://localhost:3005/api/course/favorites?user_id=${userID}&course_id=${id}`,
-        { method: 'DELETE' }
-      )
-        .then((res) => res.json())
-        .then((result) => {
-          if (result.message) {
-            getFavCourse(order, page, userID)
-          }
-        })
-        .catch((error) => console.log(error))
-    }
+    // 原本的
+    // const agreeDelete = confirm('您確定要移除此收藏商品?')
+    // if (agreeDelete) {
+    //   await fetch(
+    //     `http://localhost:3005/api/course/favorites?user_id=${userID}&course_id=${id}`,
+    //     { method: 'DELETE' }
+    //   )
+    //     .then((res) => res.json())
+    //     .then((result) => {
+    //       if (result.message) {
+    //         getFavCourse(order, page, userID)
+    //       }
+    //     })
+    //     .catch((error) => console.log(error))
+    // }
+    // Swal
+    Swal.fire({
+      title: '確定要移除此收藏課程?',
+      text: '是否要取消收藏',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: '確定',
+      cancelButtonText: '取消',
+    }).then((result) => {
+      if (result.isConfirmed) {
+         fetch(
+          `http://localhost:3005/api/course/favorites?user_id=${userID}&course_id=${id}`,
+          { method: 'DELETE' }
+        )
+          .then((res) => res.json())
+          .then((result) => {
+            if (result.message) {
+              getFavCourse(order, page, userID)
+            }
+          })
+          .catch((error) => console.log(error))
+      }
+    })
   }
   async function getFavCourse(order, page, userID) {
     const url = new URL('http://localhost:3005/api/my-favorites')
