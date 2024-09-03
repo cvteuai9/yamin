@@ -18,6 +18,8 @@
 .container {
   max-width: 1440px;
   height: auto;
+  padding: 0;
+  margin: 0;
 }
 
 a {
@@ -108,12 +110,10 @@ hr {
 /* 所有課程、商品nav */
 .favorite-nav {
   display: flex;
-  width: 100%;
   height: auto;
   justify-content: center;
   margin: 0;
   border-bottom: 1px solid var(--white50);
-
   position: relative;
 
   & .searchnavs {
@@ -203,8 +203,11 @@ hr {
   display: inline;
   justify-content: center;
   text-align: center;
-  margin-top: 70px;
-  margin-bottom: 20px;
+  /* margin-top: 70px;
+  margin-bottom: 20px; */
+  /* @media (max-width: 770px) {
+    margin: 0px;
+  } */
   /* ===julia 08-30 test標題img固定位置 ↓
   position: sticky;
   top: 70px;
@@ -214,7 +217,7 @@ hr {
 /* ===julia 08-30 test標題img固定位置 ↓*/
 .couponchoose {
   @media screen and (max-width: 576px) {
-    font-size: 1.4rem; 
+    font-size: 1.4rem;
   }
 }
 /* =================================== */
@@ -308,27 +311,20 @@ input::placeholder,
 }
 
 /* ======視窗更改============================= */
-/* @media screen and (max-width: 1245px) { */
+
 .left-nav,
 .left-nav-line > img {
   max-width: 100%;
   height: auto;
 }
-/* } */
-/* @media screen and (max-width: 960px) { */
-/* .left-nav,
-  .left-nav-line > img {
-    width: 150px;
-    height: auto;
-  } */
-/* } */
+
 @media screen and (max-width: 768px) {
   .left-nav,
   .left-nav-line > img {
-    display: none;
+    /* display: none; */
   }
 }
-/* order */
+
 /* =================================== */
 /* 資訊內文 */
 .order-ards {
@@ -692,11 +688,10 @@ input::placeholder,
 
 .coupon-inputtext {
   display: flex;
-  width: 300px;
   all: unset;
 
   color: var(--white);
-  height: 36px;
+  height: 15px;
   margin: 0 20px 0 20px;
   padding: 0 0 0 10px;
   border: 1px solid var(--primary2);
@@ -713,6 +708,7 @@ input::placeholder,
   margin: 0 0 0 10px;
 }
 .coupon-cinput {
+  height: 50px;
   font-size: 14px;
   display: flex;
   align-items: center;
@@ -740,13 +736,18 @@ input::placeholder,
 .tabchooes {
   position: relative;
   white-space: nowrap;
+  width: auto;
   /* ====julia08-22新增 */
   .choosebtn {
     position: absolute;
     background-color: var(--primary);
     /* white-space: nowrap; */
-    left: 700px;
-    top: 0px;
+    left: 570px;
+    top: -35px;
+    @media (max-width: 770px) {
+      left: 459px;
+      top: -35px;
+    }
 
     /* 修改 */
     /* @media screen and (max-width: 900px) {

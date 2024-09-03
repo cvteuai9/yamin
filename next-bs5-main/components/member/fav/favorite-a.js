@@ -106,173 +106,179 @@ export default function FavoriteA() {
   return (
     <>
       {/* 標題 & 篩選 */}
-      <div className="container-fluid">
-        <div className="row">
+      <div className="container-fluid mb-6">
+        <div className="d-flex">
           <div className="titlenav">
-            <img src="/images/favorite/title.svg" alt="" />
+            <img src="/images/favorite/title.svg" alt="" className="my-3 " />
             <img
               src="/images/favorite/group.svg"
               alt=""
               style={{ width: '100%' }}
             />
           </div>
-          <div className="col-md-3 ">
-            <Leftnav fromFavorite="fromFavorite" />
-          </div>
-          <div className="col-md-9 p-0">
-            <h5 className="goldenf mb-3 mt-3">我的收藏</h5>
-            <div className="favorite-nav">
-              <SearchNav favoriteArticle={1} />
-              <hr />
-              <div className="searchitem" type="button">
-                <div className="d-flex justify-content-end align-items-center ">
-                  {/* <h4>{selectedCategory}</h4> */}
-                  <div
-                    className="d-flex justify-content-between"
-                    style={{ width: 100 }}
-                  >
+        </div>
+        <div className="profile-content">
+          <div className="row mt-4">
+            <div className="col-md-4 profile-content-left">
+              <Leftnav fromFavorite="fromFavorite" />
+            </div>
+            <div className="col-md-8 profile-content-right">
+              <h5 className="goldenf">我的收藏</h5>
+              <div className="favorite-nav">
+                <SearchNav favoriteArticle={1} />
+                <hr />
+                <div className="searchitem" type="button">
+                  <div className="d-flex justify-content-end align-items-center ">
+                    {/* <h4>{selectedCategory}</h4> */}
                     <div
-                      className={`d-flex align-items-center justify-content-between ${option['articlechoose']}`}
+                      className="d-flex justify-content-between"
+                      style={{ width: 120 }}
                     >
-                      <input type="checkbox" name="a1-1" id="a1-1" />
-                      <label htmlFor="a1-1" className="d-flex flex-column">
-                        <p className="mb-0 align-items-center">
-                          排序
-                          <FaAngleDown className={option['icon']} />
-                        </p>
-                        <ul className="ul1">
-                          <li>
-                            <a
-                              href="#"
-                              data-value={3}
-                              onClick={(e) => {
-                                e.preventDefault()
-                                handleOption(e)
-                              }}
-                            >
-                              類別升冪
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              href="#"
-                              data-value={4}
-                              onClick={(e) => {
-                                e.preventDefault()
-                                handleOption(e)
-                              }}
-                            >
-                              類別降冪
-                            </a>
-                          </li>
-                        </ul>
-                      </label>
+                      <div
+                        className={`d-flex align-items-center justify-content-between ${option['articlechoose']}`}
+                      >
+                        <input type="checkbox" name="a1-1" id="a1-1" />
+                        <label htmlFor="a1-1" className="d-flex flex-column">
+                          <p
+                            className="mb-0 align-items-center flex-nowrap"
+                           
+                          >
+                            排序
+                            <FaAngleDown className={option['icon']} />
+                          </p>
+                          <ul className="ul1 ">
+                            <li>
+                              <a
+                                className="flex-nowrap"
+                                href="#"
+                                data-value={3}
+                                onClick={(e) => {
+                                  e.preventDefault()
+                                  handleOption(e)
+                                }}
+                              >
+                                類別升冪
+                              </a>
+                            </li>
+                            <li>
+                              <a
+                                className="flex-nowrap"
+                                href="#"
+                                data-value={4}
+                                onClick={(e) => {
+                                  e.preventDefault()
+                                  handleOption(e)
+                                }}
+                              >
+                                類別降冪
+                              </a>
+                            </li>
+                          </ul>
+                        </label>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div className={`${styles.favoriteArticleGroup} mt-5`}>
-              {article.length > 0 ? (
-                article.map((v, i) => {
-                  return (
-                    <div className={`${styles['favoritea-cards']}`} key={v.id}>
-                      <div className={`${styles['favoritea-pcard']}`}>
-                        <div className={`${styles['favoritea-imgbox']}`}>
-                        <Link href={`/article/${v.id}`}>
-                        <img
-                            src={`/images/article/articlelist/teaall/${v.article_images}`}
-                            alt=""
-                          />
-                        </Link>
-                        </div>
-                        <div className={`${styles['favoritea-cardtext']}`}>
-                          <div
-                            className={`${styles['favoritea-cardlefttext']}`}
-                          >
-                            <p className="whitef p2">{v.title}</p>
-                            <div
-                              className={`${styles.articleContent} p2 whitef50`}
-                            >
-                              {v.content}
-                            </div>
-                            <div
-                              className={`${styles['favoritea-bottomtext']}`}
-                            >
-                              <p className="p2 whitef">
-                                上架時間：{v.created_at}
-                              </p>
-                              <p className="p2 whitef ms-5">
-                                類別：{v.category_name}
-                              </p>
-                              <br />
-                            </div>
-                            <button
-                              className={`${styles['favoritea-markbtn']} btn`}
-                              type="button"
-                              onClick={() => handleFavDelete(v.id, userID)}
-                            >
-                              <i
-                                className="fa-solid fa-bookmark fa-2xl"
-                                style={{ color: '#b29564' }}
+              <div
+                className={` mt-5 ${styles.favoriteArticleGroup} ${
+                  article.length > 0 ? styles.hasArticles : ''
+                }`}
+              >
+                {article.length > 0 ? (
+                  article.map((v, i) => {
+                    return (
+                      <div
+                        className={`${styles['favoritea-cards']}`}
+                        key={v.id}
+                      >
+                        <div className={`${styles['favoritea-pcard']}`}>
+                          <div className={`${styles['favoritea-imgbox']}`}>
+                            <Link href={`/article/${v.id}`}>
+                              <img
+                                src={`/images/article/articlelist/teaall/${v.article_images}`}
+                                alt=""
                               />
-                            </button>
+                            </Link>
+                          </div>
+                          <div className={`${styles['favoritea-cardtext']}`}>
+                            <div
+                              className={`${styles['favoritea-cardlefttext']}`}
+                            >
+                              <p className="whitef p2">{v.title}</p>
+                              <div
+                                className={`${styles.articleContent} p2 whitef50`}
+                              >
+                                {v.content}
+                              </div>
+                              <div
+                                className={`${styles['favoritea-bottomtext']}`}
+                              >
+                                <p className="p2 whitef">
+                                  上架時間：{v.created_at}
+                                </p>
+                                <p className="p2 whitef ms-5">
+                                  類別：{v.category_name}
+                                </p>
+                                <br />
+                              </div>
+                              <button
+                                className={`${styles['favoritea-markbtn']} btn`}
+                                type="button"
+                                onClick={() => handleFavDelete(v.id, userID)}
+                              >
+                                <i
+                                  className="fa-solid fa-bookmark fa-2xl"
+                                  style={{ color: '#b29564' }}
+                                />
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  )
-                })
-              ) : (
-                <></>
-              )}
-            </div>
-            {/* 文章 */}
-            {/* 頁碼 */}
-            {article.length > 0 ? (
-              <div className={`${styles['page-choose']} text-center mt-5`}>
-                <div className="d-flex gap-3 justify-content-center pb-3">
-                  {/* 上一頁 */}
-                  <button
-                    type="button"
-                    className={`btn`}
-                    onClick={(e) => {
-                      const preNum = page - 1 !== 0 ? page - 1 : 1
-                      setPage(preNum)
-                    }}
-                  >
-                    <img
-                      src="/images/product/list1/page-left-arrow.svg"
-                      alt=""
-                    />
-                  </button>
-                  <div className="d-flex gap-3 align-items-center justify-content-center px-3">
-                    {pageArray.map((v, index) => {
-                      {
-                        /* 如果分頁等於分頁數字按鈕，加上current樣式 */
-                      }
-                      if (page === index + 1) {
-                        return (
-                          <div
-                            className={`${styles['page-number']} ${styles.current}`}
-                            key={index}
-                          >
-                            <button
-                              type="button"
-                              className={`btn m-0`}
-                              onClick={(e) => {
-                                setPage(Number(e.target.innerText))
-                              }}
-                            >
-                              {v + 1}
-                            </button>
-                          </div>
-                        )
-                      } else {
-                        if (index + 1 - page >= 3 || index + 1 - page <= -3) {
+                    )
+                  })
+                ) : (
+                  <div className={`${styles.noFavorites} mt-5`}>
+                    <h4 className="fw-bold mb-5">你還沒有收藏的文章喔!</h4>
+                    <Link
+                      href={`/article`}
+                      className={`h4 d-flex align-items-center justify-content-center gap-1`}
+                    >
+                      <FaProductHunt />
+                      來去逛逛吧!
+                    </Link>
+                  </div>
+                )}
+              </div>
+              {/* 文章 */}
+              {/* 頁碼 */}
+              {article.length > 0 ? (
+                <div className={`${styles['page-choose']} text-center mt-5`}>
+                  <div className="d-flex gap-3 justify-content-center pb-3">
+                    {/* 上一頁 */}
+                    <button
+                      type="button"
+                      className={`btn`}
+                      onClick={(e) => {
+                        const preNum = page - 1 !== 0 ? page - 1 : 1
+                        setPage(preNum)
+                      }}
+                    >
+                      <img
+                        src="/images/product/list1/page-left-arrow.svg"
+                        alt=""
+                      />
+                    </button>
+                    <div className="d-flex gap-3 align-items-center justify-content-center px-3">
+                      {pageArray.map((v, index) => {
+                        {
+                          /* 如果分頁等於分頁數字按鈕，加上current樣式 */
+                        }
+                        if (page === index + 1) {
                           return (
                             <div
-                              className={`${styles['page-number']} d-none`}
+                              className={`${styles['page-number']} ${styles.current}`}
                               key={index}
                             >
                               <button
@@ -287,61 +293,71 @@ export default function FavoriteA() {
                             </div>
                           )
                         } else {
-                          return (
-                            <div
-                              className={`${styles['page-number']}`}
-                              key={index}
-                            >
-                              <button
-                                type="button"
-                                className={`btn m-0`}
-                                onClick={(e) => {
-                                  setPage(Number(e.target.innerText))
-                                }}
+                          if (index + 1 - page >= 3 || index + 1 - page <= -3) {
+                            return (
+                              <div
+                                className={`${styles['page-number']} d-none`}
+                                key={index}
                               >
-                                {v + 1}
-                              </button>
-                            </div>
-                          )
+                                <button
+                                  type="button"
+                                  className={`btn m-0`}
+                                  onClick={(e) => {
+                                    setPage(Number(e.target.innerText))
+                                  }}
+                                >
+                                  {v + 1}
+                                </button>
+                              </div>
+                            )
+                          } else {
+                            return (
+                              <div
+                                className={`${styles['page-number']}`}
+                                key={index}
+                              >
+                                <button
+                                  type="button"
+                                  className={`btn m-0`}
+                                  onClick={(e) => {
+                                    setPage(Number(e.target.innerText))
+                                  }}
+                                >
+                                  {v + 1}
+                                </button>
+                              </div>
+                            )
+                          }
                         }
-                      }
-                    })}
-                  </div>
-                  {/* 下一頁 */}
-                  <button
-                    type="button"
-                    className={`btn`}
-                    onClick={(e) => {
-                      const nextNum =
-                        page + 1 <= totalPage ? page + 1 : totalPage
-                      setPage(nextNum)
-                    }}
-                  >
-                    <img
-                      src="/images/product/list1/page-right-arrow.svg"
-                      alt=""
-                    />
-                  </button>
-                </div>
-                <img
-                  src="/images/product/list1/page-choose-bottom-line.svg"
-                  alt=""
-                />
-              </div>
-            ) : (
-              <div className={`${styles.noFavorites}`}>
-                    <h4 className="fw-bold mb-5">你還沒有收藏的文章喔!</h4>
-                    <Link
-                      href={`/article`}
-                      className={`h4 d-flex align-items-center justify-content-center gap-1`}
+                      })}
+                    </div>
+                    {/* 下一頁 */}
+                    <button
+                      type="button"
+                      className={`btn`}
+                      onClick={(e) => {
+                        const nextNum =
+                          page + 1 <= totalPage ? page + 1 : totalPage
+                        setPage(nextNum)
+                      }}
                     >
-                      <FaProductHunt />
-                      來去逛逛吧!
-                    </Link>
+                      <img
+                        src="/images/product/list1/page-right-arrow.svg"
+                        alt=""
+                      />
+                    </button>
                   </div>
-            )}
+                  <img
+                    src="/images/product/list1/page-choose-bottom-line.svg"
+                    alt=""
+                  />
+                </div>
+              ) : (
+                <></>
+              )}
+            </div>
+            {/* 頁碼 */}
           </div>
-          {/* 頁碼 */}
         </div>
       </div>
     </>

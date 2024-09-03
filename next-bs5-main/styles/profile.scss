@@ -9,6 +9,10 @@
   margin: 0px auto;
   .profile-content-left {
     padding: 0px 0px 0px 50px;
+    // ====09-02 ju新增
+    @media (max-width: 768px) {
+      padding: 0px;
+    }
   }
   .profile-content-right {
     padding: 0px 50px 0px 20px;

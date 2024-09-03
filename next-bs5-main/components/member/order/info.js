@@ -3,7 +3,7 @@ import Link from 'next/link'
 export default function Orderedinfo() {
   return (
     <>
-      <div className="container">
+       <div className="container-fluid mb-6">
         <div className="row">
           <div className="titlenav">
             <img src="/images/favorite/title.svg" alt="" />
