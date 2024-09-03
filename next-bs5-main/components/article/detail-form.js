@@ -10,6 +10,7 @@ import {
 } from 'react-icons/fa'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
+import toast, { Toaster } from 'react-hot-toast'
 
 export default function DetailForm() {
   const router = useRouter()
@@ -57,6 +58,15 @@ export default function DetailForm() {
             method: 'PUT',
           }
         )
+          .then((res) => res.json())
+          .then((result) => {
+            if (result.message === 'Favorite Article Insert successfully') {
+              toast.success(<p className="m-0">加入收藏成功!</p>)
+            } else {
+              toast.error(<p className="m-0">加入收藏失敗!</p>)
+            }
+          })
+          .catch((error) => console.log(error))
       } else {
         await fetch(
           `http://localhost:3005/api/my-articles/favorites?user_id=${userID}&article_id=${article.id}`,
@@ -64,6 +74,15 @@ export default function DetailForm() {
             method: 'DELETE',
           }
         )
+          .then((res) => res.json())
+          .then((result) => {
+            if (result.message === 'Favorite Article DELETE successfully') {
+              toast.success(<p className="m-0">移除收藏成功!</p>)
+            } else {
+              toast.error(<p className="m-0">移除收藏失敗!</p>)
+            }
+          })
+          .catch((error) => console.log(error))
       }
       let tmp = { ...article, fav: !article.fav }
       setArticle(tmp)
@@ -121,9 +140,9 @@ export default function DetailForm() {
   // 確保views重整只會增加一次
   useEffect(() => {
     if (router.isReady) {
-      getViews(router.query.articleCode);
+      getViews(router.query.articleCode)
     }
-  }, [router.isReady]);
+  }, [router.isReady])
 
   useEffect(() => {
     getCategories()
@@ -396,6 +415,7 @@ export default function DetailForm() {
           </div>
         </div>
       </main>
+      <Toaster />
     </>
   )
 }
