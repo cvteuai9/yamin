@@ -45,7 +45,7 @@ export default function CategoryForm() {
 
   return (
     <main className={`${styles['article-category']}`} ref={sectionsRef}>
-      <div className="container">
+      <div className="container-fluid">
         <div className="d-flex justify-content-center">
           <img
             className={`${styles['main-title']}`}

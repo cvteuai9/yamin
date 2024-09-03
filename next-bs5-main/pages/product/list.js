@@ -88,7 +88,7 @@ export default function List1() {
         if (favoriteProduct.includes(v.id)) return { ...v, fav: !v.fav }
         else return v
       })
-      // console.log(nextData)
+      console.log(nextData)
       setProduct(nextData) // 設定商品資訊
       setTotalPage(products.product.totalPage) // 設定總頁數
       setTeaArray(products.product.teaFilter) // 設定「茶種」篩選選擇器陣列
