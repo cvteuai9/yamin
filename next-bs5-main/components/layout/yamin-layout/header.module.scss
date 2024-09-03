@@ -79,14 +79,14 @@
     cursor: pointer;
   }
 
-  .circle {
-    height: 30px;
-    width: 30px;
-    background-color: #b29564;
-    border-radius: 50%;
-    display: inline-block;
-    margin: 0rem 1rem;
-  }
+  // .circle {
+  //   height: 30px;
+  //   width: 30px;
+  //   background-color: #b29564;
+  //   border-radius: 50%;
+  //   display: inline-block;
+  //   margin: 0rem 1rem;
+  // }
 
   .search {
     align-items: center;
@@ -94,17 +94,20 @@
     margin: 0.4rem 1rem;
   }
 
-  .circle:hover,
+  .userimg:hover,
   .love_btn:hover,
   .action_btn:hover {
     transform: scale(1.05);
   }
 
-  .circle:active,
+  // .userimg:active,
   .action_btn:active .love_btn:active {
     transform: scale(0.95);
   }
   .search2 {
+    display: none;
+  }
+  .searchDiv {
     display: none;
   }
 
@@ -201,6 +204,9 @@
     .search2 {
       display: block;
       margin: 0rem 1rem;
+    }
+    .searchDiv{
+      display: block;
     }
     .logo {
       width: 100px;

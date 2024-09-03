@@ -4,7 +4,7 @@
 }
 
 .goldenf {
-  color: var(--primary2);
+  color: #D8B783;
 }
 .whitef {
   color: var(--white);
@@ -35,7 +35,7 @@ a {
   width: fit-content;
   height: auto;
   background: var(--primary);
-  color: var(--primary2);
+  color: #D8B783;
   border: var(--primary2) 1px solid;
   padding: 0;
   gap: 20px;
@@ -209,11 +209,14 @@ hr {
 input::placeholder,
 .inputtext::placeholder,
 .inputradio::placeholder {
-  color: var(--primary2);
+  color: #D8B783;
   font-size: 1.6rem; /*25.6px;   */
   @media screen and (max-width: 576px) {
     font-size: 1.4rem; /* 22.4px */
   }
+}
+input[type=text], input[type=number], input[type=date], textarea{
+  color: #D8B783;
 }
 
 /* changeps */
@@ -238,7 +241,7 @@ input::placeholder,
   width: 100%;
   padding: 1.2rem;
   color: var(--bg-text-color);
-  background-color: #004c63d1;
+  background-color: var(--primary);
   border: var(--primary2) solid 1px;
   font-size: 1.6rem;
   /* 懸停指示 */
@@ -628,6 +631,9 @@ input::placeholder,
   height: 150px;
 }
 .profile-picleft {
+  p{
+    color: #D8B783;
+  }
   .pc-text {
     margin-top: 30px;
   }
@@ -642,6 +648,9 @@ input::placeholder,
     }
   } */
 .profile-picright {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 50%;
   /* height: 150px; */
 }
