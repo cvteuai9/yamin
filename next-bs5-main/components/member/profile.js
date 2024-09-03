@@ -190,7 +190,7 @@ export default function Profile() {
           <div className="profile-content">
             <div className="row mt-4 ">
               <div className="col-md-4 profile-content-left">
-                <Leftnav />
+                <Leftnav fromProfile="fromProfile" />
               </div>
               <div className="col-md-8 profile-content-right">
                 <h4 className="goldenf">
@@ -347,7 +347,6 @@ export default function Profile() {
                     <button type="submit" className="profile-checked  btn2 p">
                       確認
                     </button>
-                    {/* 沒有google_uid才顯示 */}
                     {auth.userData.google_uid === null && (
                       <div
                         type="button"

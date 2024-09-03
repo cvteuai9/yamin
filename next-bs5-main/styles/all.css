@@ -18,6 +18,8 @@
 .container {
   max-width: 1440px;
   height: auto;
+  padding: 0;
+  margin: 0;
 }
 
 a {
@@ -108,12 +110,10 @@ hr {
 /* 所有課程、商品nav */
 .favorite-nav {
   display: flex;
-  width: 100%;
   height: auto;
   justify-content: center;
   margin: 0;
   border-bottom: 1px solid var(--white50);
-
   position: relative;
 
   & .searchnavs {
@@ -198,12 +198,27 @@ hr {
 }
 
 .titlenav {
-  width: 100%;
+  width: 100vw;
+  /* height: auto; */
   display: inline;
   justify-content: center;
   text-align: center;
-
-  margin-bottom: 20px;
+  /* margin-top: 70px;
+  margin-bottom: 20px; */
+  /* @media (max-width: 770px) {
+    margin: 0px;
+  } */
+  /* ===julia 08-30 test標題img固定位置 ↓
+  position: sticky;
+  top: 70px;
+  background-color: var(--primary); 
+  z-index: 100; */
+}
+/* ===julia 08-30 test標題img固定位置 ↓*/
+.couponchoose {
+  @media screen and (max-width: 576px) {
+    font-size: 1.4rem;
+  }
 }
 /* =================================== */
 input::placeholder,
@@ -299,27 +314,20 @@ input[type=text], input[type=number], input[type=date], textarea{
 }
 
 /* ======視窗更改============================= */
-/* @media screen and (max-width: 1245px) { */
+
 .left-nav,
 .left-nav-line > img {
   max-width: 100%;
   height: auto;
 }
-/* } */
-/* @media screen and (max-width: 960px) { */
-/* .left-nav,
-  .left-nav-line > img {
-    width: 150px;
-    height: auto;
-  } */
-/* } */
+
 @media screen and (max-width: 768px) {
   .left-nav,
   .left-nav-line > img {
-    display: none;
+    /* display: none; */
   }
 }
-/* order */
+
 /* =================================== */
 /* 資訊內文 */
 .order-ards {
@@ -689,11 +697,10 @@ input[type=text], input[type=number], input[type=date], textarea{
 
 .coupon-inputtext {
   display: flex;
-  width: 300px;
   all: unset;
 
   color: var(--white);
-  height: 36px;
+  height: 15px;
   margin: 0 20px 0 20px;
   padding: 0 0 0 10px;
   border: 1px solid var(--primary2);
@@ -710,6 +717,7 @@ input[type=text], input[type=number], input[type=date], textarea{
   margin: 0 0 0 10px;
 }
 .coupon-cinput {
+  height: 50px;
   font-size: 14px;
   display: flex;
   align-items: center;
@@ -737,13 +745,24 @@ input[type=text], input[type=number], input[type=date], textarea{
 .tabchooes {
   position: relative;
   white-space: nowrap;
+  width: auto;
   /* ====julia08-22新增 */
   .choosebtn {
     position: absolute;
     background-color: var(--primary);
     /* white-space: nowrap; */
-    left: 700px;
-    top: 0px;
+    left: 570px;
+    top: -35px;
+    @media (max-width: 770px) {
+      left: 459px;
+      top: -35px;
+    }
+
+    /* 修改 */
+    /* @media screen and (max-width: 900px) {
+      left: 550px;
+      top: -40px;
+    } */
   }
 }
 .coupon-p-14 {
@@ -773,14 +792,15 @@ input[type=text], input[type=number], input[type=date], textarea{
   overflow-y: auto;
 }
 /* ====julia08-26新增--優惠券使用說明視窗
-/* ==========08-27 優惠券領取視窗  */
+/* ==========08-30 微調 優惠券領取視窗  */
 .floating-coupon-container {
-  position: absolute;
-  margin-bottom: 1rem;
+  position: fixed;
   right: 5vw;
-  top: 20vw;
+  top: 250px;
+  margin-bottom: 1rem;
+  z-index: 1000; /* 確保它在其他元素之上 */
 }
-
+/* ============ */
 .floating-coupon-button {
   width: 5rem;
   height: 15rem;
@@ -795,7 +815,7 @@ input[type=text], input[type=number], input[type=date], textarea{
   /* font-size: 0.875rem; */
   display: flex;
   align-items: center;
-  writing-mode:vertical-rl;
+  writing-mode: vertical-rl;
   justify-content: center;
   transition: all 0.3s ease;
   animation: bounce 2s infinite;
@@ -805,7 +825,6 @@ input[type=text], input[type=number], input[type=date], textarea{
   transform: translateY(-3px);
   box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
   background: var(--error-color);
-
 }
 
 .floating-coupon-button:focus {
@@ -821,4 +840,4 @@ input[type=text], input[type=number], input[type=date], textarea{
   50% {
     transform: translateY(-10px);
   }
-} 
+}
