@@ -52,7 +52,7 @@ router.put('/favorites', async (req, res) => {
     )
     return res
       .status(200)
-      .json({ message: 'Article Favorite Insert successfully' })
+      .json({ message: 'Favorite Article Insert successfully' })
   } catch (error) {
     console.log(error)
     res.status(400).json({ error: 'Favorite Article Not Found' })
@@ -69,7 +69,7 @@ router.delete('/favorites', async (req, res) => {
     )
     return res
       .status(200)
-      .json({ message: 'Article Favorite DELETE successfully' })
+      .json({ message: 'Favorite Article DELETE successfully' })
   } catch (error) {
     console.log(error)
     res.status(400).json({ error: 'Favorite Article Not Found' })
