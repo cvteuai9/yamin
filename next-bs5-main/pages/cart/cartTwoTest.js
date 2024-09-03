@@ -7,7 +7,7 @@ import { useRouter } from 'next/router'
 import { useAuth } from '@/hooks/my-use-auth'
 import { useShip711StoreOpener } from '@/hooks/use-ship-711-store'
 import axiosInstance from '@/services/axios-instance'
-
+import Swal from 'sweetalert2'
 import {
   formatCVC,
   formatExpirationDate,
@@ -133,10 +133,29 @@ export default function CartTwo() {
   let getorderId
   useEffect(() => {}, [getorderId])
   const goLinePay = () => {
-    if (window.confirm('確認要導向至LINE Pay進行付款?')) {
-      // 先連到node伺服器後，導向至LINE Pay付款頁面
+    // if (window.confirm('確認要導向至LINE Pay進行付款?')) {
+    //   // 先連到node伺服器後，導向至LINE Pay付款頁面
+    //   window.location.href = `http://localhost:3005/api/yamin_cart/linepay?orderId=${getorderId}`
+    // }
+    Swal.fire({
+      title: '確認要導向至LINE Pay進行付款?',
+      text: '確認將導向到LINE Pay進行付款',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: '確認',
+      cancelButtonText: '取消',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: '確認成功!',
+          text: '即將導向Line Pay!',
+          icon: 'success',
+        })
+      }
       window.location.href = `http://localhost:3005/api/yamin_cart/linepay?orderId=${getorderId}`
-    }
+    })
   }
   const gocardPay = (cardPayId) => {
     console.log('我的cardpay', cardPayId)
@@ -727,6 +746,10 @@ export default function CartTwo() {
               </label>
               <input
                 type="email"
+                style={{
+                  background: 'var(--primary)',
+                  color: 'var(--primary2)',
+                }}
                 className="w-100"
                 name="email"
                 value={formData.email}
@@ -744,6 +767,9 @@ export default function CartTwo() {
               <select
                 name="delivery"
                 id="delivery"
+                style={{
+                  color: 'var(--primary2)',
+                }}
                 value={formData.delivery}
                 ref={inputRefs.delivery}
                 onChange={handleChange}

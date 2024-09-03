@@ -20,7 +20,6 @@ import { useSwiper } from 'swiper/react'
 // import required modules
 import { Autoplay, FreeMode, Navigation, Thumbs } from 'swiper/modules'
 import { ClientPageRoot } from 'next/dist/client/components/client-page'
-import Swal from 'sweetalert2'
 // 以上為  {商品圖輪播套件}
 
 export default function Detail() {
@@ -172,13 +171,7 @@ export default function Detail() {
           { method: 'PUT' }
         )
           .then((res) => res.json())
-          .then((result) => {
-            if (result.message === 'Favorite Product Insert successfully') {
-              toast.success(<p className="m-0">成功加入收藏!</p>)
-            } else {
-              toast.error(<p className="m-0">加入收藏失敗!</p>)
-            }
-          })
+          .then((result) => console.log(result))
           .catch((error) => console.log(error))
       } else {
         fetch(
@@ -186,41 +179,21 @@ export default function Detail() {
           { method: 'DELETE' }
         )
           .then((res) => res.json())
-          .then((result) => {
-            if (result.message === 'Favorite Product deleted successfully') {
-              toast.success(<p className="m-0">移除收藏成功!</p>)
-            } else {
-              toast.error(<p className="m-0">移除收藏失敗!</p>)
-            }
-          })
+          .then((result) => console.log(result))
           .catch((error) => console.log(error))
       }
       const tmp = { ...product, fav: !product.fav }
       setProduct(tmp)
     } else {
-      // if (confirm('您尚未登入，請登入後再操作!')) {
-      //   router.push('/member/login')
-      // }
-      Swal.fire({
-        title: '無法收藏',
-        text: '您尚未登入，請登入後再操作!',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: '登入',
-        cancelButtonText: '取消',
-      }).then((result) => {
-        if (result.isConfirmed) {
-          router.push('/member/login')
-        }
-      })
+      if (confirm('您尚未登入，請登入後再操作!')) {
+        router.push('/member/login')
+      }
     }
   }
-  // useEffect(() => {
-  //   // 第一次進入頁面才會有loading畫面
-  //   showLoader()
-  // }, [])
+  useEffect(() => {
+    // 第一次進入頁面才會有loading畫面
+    showLoader()
+  }, [])
   useEffect(() => {
     if (thumbsSwiper) {
       thumbsSwiper.update()
@@ -669,9 +642,7 @@ export default function Detail() {
                                     alt=""
                                   />
                                 </div>
-                                <h5 className="text-center fw-bold">
-                                  {v.user_name}
-                                </h5>
+                                <h5 className="text-center fw-bold">{v.user_name}</h5>
                               </div>
                               <div>
                                 <div
