@@ -12,6 +12,7 @@ import { YaminCourseCartProvider } from '@/hooks/yamin-use-Course-cart'
 import toast, { Toaster } from 'react-hot-toast'
 import { YaminCourseUseCart } from '@/hooks/yamin-use-Course-cart'
 import { useAuth } from '@/hooks/my-use-auth'
+import Swal from 'sweetalert2'
 export default function Course() {
   // 購物車部分
   const { addItem = () => {} } = YaminCourseUseCart()
@@ -182,9 +183,20 @@ export default function Course() {
         })
         setCourses(nextData)
       } else {
-        if (confirm('您尚未登入，請登入後再操作!')) {
-          router.push('/member/login')
-        }
+        Swal.fire({
+          title: '無法收藏',
+          text: '您尚未登入，請登入後再操作!',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: '登入',
+          cancelButtonText: '取消',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            router.push('/member/login')
+          }
+        })
       }
     } catch (error) {
       console.error('Failed to toggle favorite:', error)
