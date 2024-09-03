@@ -20,7 +20,6 @@ import { useSwiper } from 'swiper/react'
 // import required modules
 import { Autoplay, FreeMode, Navigation, Thumbs } from 'swiper/modules'
 import { ClientPageRoot } from 'next/dist/client/components/client-page'
-import Swal from 'sweetalert2'
 // 以上為  {商品圖輪播套件}
 
 export default function Detail() {
@@ -186,23 +185,9 @@ export default function Detail() {
       const tmp = { ...product, fav: !product.fav }
       setProduct(tmp)
     } else {
-      // if (confirm('您尚未登入，請登入後再操作!')) {
-      //   router.push('/member/login')
-      // }
-      Swal.fire({
-        title: '無法收藏',
-        text: '您尚未登入，請登入後再操作!',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: '登入',
-        cancelButtonText: '取消',
-      }).then((result) => {
-        if (result.isConfirmed) {
-          router.push('/member/login')
-        }
-      })
+      if (confirm('您尚未登入，請登入後再操作!')) {
+        router.push('/member/login')
+      }
     }
   }
   useEffect(() => {
@@ -657,9 +642,7 @@ export default function Detail() {
                                     alt=""
                                   />
                                 </div>
-                                <h5 className="text-center fw-bold">
-                                  {v.user_name}
-                                </h5>
+                                <h5 className="text-center fw-bold">{v.user_name}</h5>
                               </div>
                               <div>
                                 <div

@@ -727,6 +727,10 @@ export default function CartTwo() {
               </label>
               <input
                 type="email"
+                style={{
+                  background: 'var(--primary)',
+                  color: 'var(--primary2)',
+                }}
                 className="w-100"
                 name="email"
                 value={formData.email}
@@ -744,6 +748,9 @@ export default function CartTwo() {
               <select
                 name="delivery"
                 id="delivery"
+                style={{
+                  color: 'var(--primary2)',
+                }}
                 value={formData.delivery}
                 ref={inputRefs.delivery}
                 onChange={handleChange}

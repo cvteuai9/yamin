@@ -7,6 +7,7 @@ import { func } from 'prop-types'
 import { YaminUseCart } from '@/hooks/yamin-use-cart'
 import toast, { Toaster } from 'react-hot-toast'
 import { useAuth } from '@/hooks/my-use-auth'
+import Swal from 'sweetalert2'
 
 export default function List1() {
   const router = useRouter()
@@ -129,9 +130,24 @@ export default function List1() {
       setProduct(nextProduct)
     } else {
       // 如果沒有登入，則導向至登入頁面
-      if (confirm('您尚未登入，請登入後再操作!')) {
-        router.push('/member/login')
-      }
+      // if (confirm('您尚未登入，請登入後再操作!')) {
+      //   router.push('/member/login')
+      // }
+      // 用Swal判斷 fire接收的結果，then會接著操作
+      Swal.fire({
+        title: '無法收藏',
+        text: '您尚未登入，請登入後再操作!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: '登入',
+        cancelButtonText: '取消',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          router.push('/member/login')
+        }
+      })
     }
   }
   // 處理filter改變時的函式
