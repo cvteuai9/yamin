@@ -177,7 +177,6 @@ export default function Profile() {
     <>
       <main>
         <div className="container-fluid mb-6">
-        <div className="container-fluid mb-6">
           <div className="d-flex">
             <div className="titlenav">
               <img src="/images/favorite/title.svg" alt="" className="my-3" />
@@ -191,7 +190,7 @@ export default function Profile() {
           <div className="profile-content">
             <div className="row mt-4 ">
               <div className="col-md-4 profile-content-left">
-                <Leftnav fromProfile="fromProfile"/>
+                <Leftnav fromProfile="fromProfile" />
               </div>
               <div className="col-md-8 profile-content-right">
                 <h4 className="goldenf">
@@ -349,7 +348,10 @@ export default function Profile() {
                       確認
                     </button>
                     {auth.userData.google_uid === null && (
-                      <div type="button" className="profile-changepassword  btn1 p">
+                      <div
+                        type="button"
+                        className="profile-changepassword  btn1 p"
+                      >
                         <Link
                           href="/member/changeps"
                           className=" goldenf text-decoration-none  color-inherit"
