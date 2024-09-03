@@ -166,7 +166,7 @@ export default function Profile() {
   return (
     <>
       <main>
-        <div className="container mb-6">
+        <div className="container-fluid mb-6">
           <div className="d-flex">
             <div className="titlenav">
               <img src="/images/favorite/title.svg" alt="" className="my-3" />
@@ -180,7 +180,7 @@ export default function Profile() {
           <div className="profile-content">
             <div className="row mt-4 ">
               <div className="col-md-4 profile-content-left">
-                <Leftnav />
+                <Leftnav fromProfile="fromProfile"/>
               </div>
               <div className="col-md-8 profile-content-right">
                 <h4 className="goldenf">

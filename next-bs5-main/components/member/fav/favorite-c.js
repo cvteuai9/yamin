@@ -78,201 +78,202 @@ export default function FavoriteC() {
     <>
       <>
         {/* 標題 & 篩選 */}
-        <div className="container-fluid">
-          <div className="row">
+        <div className="container-fluid mb-6">
+          <div className="d-flex">
             <div className="titlenav">
-              <img src="/images/favorite/title.svg" alt="" />
+              <img src="/images/favorite/title.svg" alt="" className="my-3" />
               <img
                 src="/images/favorite/group.svg"
                 alt=""
                 style={{ width: '100%' }}
               />
             </div>
-            <div className="col-md-3">
-              <Leftnav fromFavorite="fromFavorite" />
-            </div>
-            <div className="col-md-9 p-0">
-              <h5 className="goldenf mb-3 mt-3">我的收藏</h5>
-              <div className="favorite-nav">
-                <SearchNav favoriteCourse={1} />
-                <hr />
-                <div className="searchitem" type="button">
-                  <div className="d-flex justify-content-end align-items-center ">
-                    {/* <h4>{selectedCategory}</h4> */}
-                    <div
-                      className="d-flex justify-content-between"
-                      style={{ width: 100 }}
-                    >
+          </div>
+          <div className="profile-content">
+            <div className="row mt-4">
+              <div className="col-md-4 profile-content-left">
+                <Leftnav fromFavorite="fromFavorite" />
+              </div>
+              <div className="col-md-8 profile-content-right">
+                <h5 className="goldenf ">我的收藏</h5>
+                <div className="favorite-nav">
+                  <SearchNav favoriteCourse={1} />
+                  <hr />
+                  <div className="searchitem" type="button">
+                    <div className="d-flex justify-content-end align-items-center ">
+                      {/* <h4>{selectedCategory}</h4> */}
                       <div
-                        className={`d-flex align-items-center justify-content-between ${option['articlechoose']}`}
+                        className="d-flex justify-content-between"
+                        style={{ width: 120 }}
                       >
-                        <input type="checkbox" name="a1-1" id="a1-1" />
-                        <label htmlFor="a1-1" className="d-flex flex-column">
-                          <p className="mb-0 align-items-center">
-                            排序
-                            <FaAngleDown className={option['icon']} />
-                          </p>
-                          <ul className="ul1">
-                            {filterArray.map((v, i) => {
-                              return (
-                                <li key={i}>
-                                  <a
-                                    href="#"
-                                    data-value={`${i + 1}`}
-                                    onClick={(e) => {
-                                      e.preventDefault()
-                                      handleOption(e)
-                                    }}
-                                  >
-                                    {v}
-                                  </a>
-                                </li>
-                              )
-                            })}
-                          </ul>
-                        </label>
+                        <div
+                          className={`d-flex align-items-center justify-content-between ${option['articlechoose']}`}
+                        >
+                          <input type="checkbox" name="a1-1" id="a1-1" />
+                          <label htmlFor="a1-1" className="d-flex flex-column">
+                            <p
+                              className="mb-0 align-items-center flex-nowrap"
+                   
+                            >
+                              排序
+                              <FaAngleDown className={option['icon']} />
+                            </p>
+                            <ul className="ul1">
+                              {filterArray.map((v, i) => {
+                                return (
+                                  <li key={i}>
+                                    <a
+                                      href="#"
+                                      data-value={`${i + 1}`}
+                                      onClick={(e) => {
+                                        e.preventDefault()
+                                        handleOption(e)
+                                      }}
+                                    >
+                                      {v}
+                                    </a>
+                                  </li>
+                                )
+                              })}
+                            </ul>
+                          </label>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              <div className={`${styles.favoriteCourseGroup} mt-5`}>
-                {course.length > 0 ? (
-                  course.map((v, i) => {
-                    return (
-                      <div
-                        className={`${styles['favoritec-cards']}`}
-                        key={v.id}
-                      >
-                        <div className={`${styles['favoritec-pcard']}`}>
-                          <div className={`${styles['favoritec-imgbox']}`}>
-                            <Link href={`http://localhost:3000/course/${v.id}`}>
-                              <img src={`/images/yaming/tea_class_picture/${v.img1}`} alt="" />
-                            </Link>
-                            <button
-                              className={`${styles['favoritec-fabtn']} btn`}
-                              type="button"
-                              onClick={() =>
-                                handleFavCancel(v.id, userID)
-                              }
-                            >
-                              <img
-                                id="like2"
-                                src="/images/favorite/heart-fill.svg"
-                                alt="移除收藏"
-                              />
-                            </button>
-                          </div>
-                          <div className={`${styles['favoritec-cardtext']}`}>
-                            <div
-                              className={`${styles['favoritec-cardlefttext']}`}
-                            >
-                              <h5 className="whitef">{v.course_name}</h5>
-                              <div
-                                className={`${styles.courseDescription} p2 whitef50`}
-                              >
-                                <p>{v.description}</p>
-                              </div>
-                              <div
-                                className={`${styles['favoritec-bottomtext']}`}
-                              >
-                                <p className="p2 classdate">
-                                  {v.start_time} ~ {v.end_time}
-                                </p>
-                                <br />
-                                <p className="p2 classdate ms-3">
-                                  人數限制 {v.limit_people} 人：已經報名{' '}
-                                  {v.current_number} 人
-                                </p>
-                              </div>
-                            </div>
-                            <div
-                              className={`${styles['favoritec-cardrighttext']} mt-3`}
-                            >
-                              <div>
-                                <i
-                                  className="fa-solid fa-location-dot fa-lg"
-                                  style={{ color: '#ffffff' }}
-                                />
-                                <p className="mb-0 ms-3 p2 whitef">
-                                  {v.location}
-                                </p>
-                              </div>
-                              <div>
-                                <p className="whitef p2">NT$ {v.price}</p>
-                              </div>
-                              <div className="btns">
-                                <div
-                                  className="btn1 d-flex justify-content-center align-items-center p2"
-                                  type="button"
+                <div
+                  className={`mt-5 ${styles.favoriteCourseGroup} ${
+                    course.length > 0 ? styles.hasArticles : ''
+                  } `}
+                >
+                  {course.length > 0 ? (
+                    course.map((v, i) => {
+                      return (
+                        <div
+                          className={`${styles['favoritec-cards']} `}
+                          key={v.id}
+                        >
+                          <div>
+                            <div className={`${styles['favoritec-pcard']} `}>
+                              <div className={`${styles['favoritec-imgbox']}`}>
+                                <Link
+                                  href={`http://localhost:3000/course/${v.id}`}
                                 >
-                                  加入購物車
+                                  <img
+                                    src={`/images/yaming/tea_class_picture/${v.img1}`}
+                                    alt=""
+                                  />
+                                </Link>
+                                <button
+                                  className={`${styles['favoritec-fabtn']} btn`}
+                                  type="button"
+                                  onClick={() => handleFavCancel(v.id, userID)}
+                                >
+                                  <img
+                                    id="like2"
+                                    src="/images/favorite/heart-fill.svg"
+                                    alt="移除收藏"
+                                  />
+                                </button>
+                              </div>
+                              <div>
+                                <div
+                                  className={`${styles['favoritec-cardtext']}`}
+                                >
+                                  <div
+                                    className={`${styles['favoritec-cardlefttext']}`}
+                                  >
+                                    <h5 className="whitef">{v.course_name}</h5>
+                                    <div
+                                      className={`${styles.courseDescription} p2 whitef50`}
+                                    >
+                                      <p>{v.description}</p>
+                                    </div>
+                                  </div>
+                                  <div
+                                    className={`${styles['favoritec-cardrighttext']} mt-3`}
+                                  >
+                                    <div>
+                                      <i
+                                        className="fa-solid fa-location-dot fa-lg"
+                                        style={{ color: '#ffffff' }}
+                                      />
+                                      <p className="mb-0 ms-3 p2 whitef">
+                                        {v.location}
+                                      </p>
+                                    </div>
+                                    <div>
+                                      <p className="whitef p2">NT$ {v.price}</p>
+                                    </div>
+                                    <div className="btns">
+                                      <div
+                                        className="btn1 d-flex justify-content-center align-items-center p2"
+                                        type="button"
+                                      >
+                                        加入購物車
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div
+                                  className={`${styles['favoritec-bottomtext']}`}
+                                >
+                                  <p className="p2 m-0">
+                                    {v.start_time} ~ {v.end_time}
+                                  </p>
+                                  <p className="p2  ms-3">
+                                    人數限制 {v.limit_people} 人：已經報名{' '}
+                                    {v.current_number} 人
+                                  </p>
                                 </div>
                               </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                    )
-                  })
-                ) : (
-                  <div className={`${styles.noFavorites}`}>
-                    <h4 className="fw-bold mb-5">你還沒有收藏的課程喔!</h4>
-                    <Link
-                      href={`/course/courselist`}
-                      className={`h4 d-flex align-items-center justify-content-center gap-1`}
-                    >
-                      <FaProductHunt />
-                      來去逛逛吧!
-                    </Link>
-                  </div>
-                )}
-              </div>
-              {/* 頁碼 */}
-              {course.length > 0 ? (
-                <div className={`${styles['page-choose']} text-center mt-5`}>
-                  <div className="d-flex gap-3 justify-content-center pb-3">
-                    {/* 上一頁 */}
-                    <button
-                      type="button"
-                      className={`btn`}
-                      onClick={(e) => {
-                        const preNum = page - 1 !== 0 ? page - 1 : 1
-                        setPage(preNum)
-                      }}
-                    >
-                      <img
-                        src="/images/product/list1/page-left-arrow.svg"
-                        alt=""
-                      />
-                    </button>
-                    <div className="d-flex gap-3 align-items-center justify-content-center px-3">
-                      {pageArray.map((v, index) => {
-                        {
-                          /* 如果分頁等於分頁數字按鈕，加上current樣式 */
-                        }
-                        if (page === index + 1) {
-                          return (
-                            <div
-                              className={`${styles['page-number']} ${styles.current}`}
-                              key={index}
-                            >
-                              <button
-                                type="button"
-                                className={`btn m-0`}
-                                onClick={(e) => {
-                                  setPage(Number(e.target.innerText))
-                                }}
-                              >
-                                {v + 1}
-                              </button>
-                            </div>
-                          )
-                        } else {
-                          if (index + 1 - page >= 3 || index + 1 - page <= -3) {
+                      )
+                    })
+                  ) : (
+                    <div className={`${styles.noFavorites} mt-5`}>
+                      <h4 className="fw-bold mb-5">你還沒有收藏的課程喔!</h4>
+                      <Link
+                        href={`/course/courselist`}
+                        className={`h4 d-flex align-items-center justify-content-center gap-1`}
+                      >
+                        <FaProductHunt />
+                        來去逛逛吧!
+                      </Link>
+                    </div>
+                  )}
+                </div>
+                {/* 頁碼 */}
+                {course.length > 0 ? (
+                  <div className={`${styles['page-choose']} text-center mt-5`}>
+                    <div className="d-flex gap-3 justify-content-center pb-3">
+                      {/* 上一頁 */}
+                      <button
+                        type="button"
+                        className={`btn`}
+                        onClick={(e) => {
+                          const preNum = page - 1 !== 0 ? page - 1 : 1
+                          setPage(preNum)
+                        }}
+                      >
+                        <img
+                          src="/images/product/list1/page-left-arrow.svg"
+                          alt=""
+                        />
+                      </button>
+                      <div className="d-flex gap-3 align-items-center justify-content-center px-3">
+                        {pageArray.map((v, index) => {
+                          {
+                            /* 如果分頁等於分頁數字按鈕，加上current樣式 */
+                          }
+                          if (page === index + 1) {
                             return (
                               <div
-                                className={`${styles['page-number']} d-none`}
+                                className={`${styles['page-number']} ${styles.current}`}
                                 key={index}
                               >
                                 <button
@@ -287,53 +288,76 @@ export default function FavoriteC() {
                               </div>
                             )
                           } else {
-                            return (
-                              <div
-                                className={`${styles['page-number']}`}
-                                key={index}
-                              >
-                                <button
-                                  type="button"
-                                  className={`btn m-0`}
-                                  onClick={(e) => {
-                                    setPage(Number(e.target.innerText))
-                                  }}
+                            if (
+                              index + 1 - page >= 3 ||
+                              index + 1 - page <= -3
+                            ) {
+                              return (
+                                <div
+                                  className={`${styles['page-number']} d-none`}
+                                  key={index}
                                 >
-                                  {v + 1}
-                                </button>
-                              </div>
-                            )
+                                  <button
+                                    type="button"
+                                    className={`btn m-0`}
+                                    onClick={(e) => {
+                                      setPage(Number(e.target.innerText))
+                                    }}
+                                  >
+                                    {v + 1}
+                                  </button>
+                                </div>
+                              )
+                            } else {
+                              return (
+                                <div
+                                  className={`${styles['page-number']}`}
+                                  key={index}
+                                >
+                                  <button
+                                    type="button"
+                                    className={`btn m-0`}
+                                    onClick={(e) => {
+                                      setPage(Number(e.target.innerText))
+                                    }}
+                                  >
+                                    {v + 1}
+                                  </button>
+                                </div>
+                              )
+                            }
                           }
-                        }
-                      })}
+                        })}
+                      </div>
+                      {/* 下一頁 */}
+                      <button
+                        type="button"
+                        className={`btn`}
+                        onClick={(e) => {
+                          const nextNum =
+                            page + 1 <= totalPage ? page + 1 : totalPage
+                          setPage(nextNum)
+                        }}
+                      >
+                        <img
+                          src="/images/product/list1/page-right-arrow.svg"
+                          alt=""
+                        />
+                      </button>
                     </div>
-                    {/* 下一頁 */}
-                    <button
-                      type="button"
-                      className={`btn`}
-                      onClick={(e) => {
-                        const nextNum =
-                          page + 1 <= totalPage ? page + 1 : totalPage
-                        setPage(nextNum)
-                      }}
-                    >
-                      <img
-                        src="/images/product/list1/page-right-arrow.svg"
-                        alt=""
-                      />
-                    </button>
+                    <img
+                      src="/images/product/list1/page-choose-bottom-line.svg"
+                      alt=""
+                    />
                   </div>
-                  <img
-                    src="/images/product/list1/page-choose-bottom-line.svg"
-                    alt=""
-                  />
-                </div>
-              ) : (
-                <></>
-              )}
+                ) : (
+                  <></>
+                )}
+              </div>
+
+              {/* 頁碼 */}
             </div>
           </div>
-          {/* 頁碼 */}
         </div>
       </>
     </>
