@@ -386,7 +386,8 @@ export default function CartTwo() {
     }
 
     // router.push('http://localhost:3000/cart/cartThree')
-    // localStorage.removeItem('cart')
+    localStorage.removeItem('cart')
+    localStorage.removeItem('courseCart')
   }
 
   // test
@@ -443,21 +444,6 @@ export default function CartTwo() {
             <div className="col-2 text-center colorWhite">單價</div>
             <div className="col-1 text-center colorWhite">數量</div>
             <div className="col-3 text-center colorWhite">小計</div>
-          </div>
-          <div className="row cartlistBor h5">
-            <div className="col-2 text-center colorWhite py-4">
-              <img src="/images/cart/image_0001.jpg" alt="" />
-            </div>
-            <div className="col-4 text-center colorWhite cartlistCol Gotext">
-              精品原葉丨三峽碧螺 40g–精裝盒
-            </div>
-            <div className="col-2 text-center colorWhite cartlistCol">1000</div>
-            <div className="col-1 text-center colorWhite cartlistCol">
-              <button className="btn cartBtn  h5 cardTotalBtn" type="button">
-                $1000
-              </button>
-            </div>
-            <div className="col-3 text-center colorWhite cartlistCol">1000</div>
           </div>
 
           {items.length === 0 ? (
@@ -585,7 +571,39 @@ export default function CartTwo() {
             })
           )}
           {/* 390的list */}
-          <div className="row cartlistBorMd h5">
+          {courseCart.items.length === 0 ? (
+            <div className="checkCartMd">
+              <h1>課程購物車為空</h1>
+            </div>
+          ) : (
+            courseCart.items.map((v) => {
+              return (
+                <div key={v.id} className="row cartlistBorMd h5">
+                  <div className="col-3 text-center colorWhite">
+                    <img
+                      src={`/images/yaming/tea_class_picture/${v.img1}`}
+                      alt=""
+                    />
+                  </div>
+                  <div className="col-8 ps-4  colorWhite">
+                    <p style={{ marginLeft: '6px' }}>{v.name}</p>
+                    <p style={{ marginLeft: '6px' }}>單價:{v.price}</p>
+                    <p style={{ marginLeft: '6px' }}>總價:{v.subtotal}</p>
+                    <div className="CartListBtnMdBox">
+                      <button
+                        className="btn cartBtn  h5 cardTotalBtn"
+                        type="button"
+                      >
+                        <p>數量:{v.qty}</p>
+                      </button>
+                    </div>
+                  </div>
+                  <div className="trashBoxMd col-1 colorWhite d-flex justify-content-end align-ltems-end"></div>
+                </div>
+              )
+            })
+          )}
+          {/* <div className="row cartlistBorMd h5">
             <div className="col-3 text-center colorWhite">
               <img src="/images/cart/image_0001.jpg" alt="" />
             </div>
@@ -599,7 +617,7 @@ export default function CartTwo() {
               </div>
             </div>
             <div className="trashBoxMd col-1 colorWhite d-flex justify-content-end align-ltems-end"></div>
-          </div>
+          </div> */}
           {/* 390的list end */}
           <div className=" h2 pe-2  ">
             <h5 className="text-end d-line-block my-5 colorWhite">

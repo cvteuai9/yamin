@@ -182,7 +182,7 @@ export default function OrderOne() {
                   <div className="orderListCol col-2">
                     <h5>{v.total_price}</h5>
                   </div>
-                  <div className="orderListCol col-3">
+                  <div className="orderListCol col-2">
                     {v.state === 1 ? (
                       <h5>訂單成立</h5>
                     ) : (
@@ -209,8 +209,8 @@ export default function OrderOne() {
                       <h5 className="d-none"></h5>
                     )}
                   </div>
-                  <div className="orderListCol col-1">
-                    <h5 className="">
+                  <div className="orderListCol  col-2">
+                    <h5 className="" style={{ textAlign: 'center' }}>
                       <button
                         className="orderListBtn"
                         onClick={() => {

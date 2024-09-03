@@ -13,6 +13,7 @@ import toast, { Toaster } from 'react-hot-toast'
 import MyPreviewUploadImage from '@/components/user/my-preview-upload-image'
 import { avatarBaseUrl } from '@/configs'
 import { useUserProfile } from '@/context/UserProfileContext'
+import { IoColorFill, IoColorFillSharp } from 'react-icons/io5'
 
 export default function Profile() {
   const { userProfile, updateUserProfile, avatarVersion, updateAvatar } = useUserProfile()
@@ -62,7 +63,15 @@ export default function Profile() {
       // 設定到狀態中
       // setUserProfile(dbUserProfile)
 
-      toast.success('會員資料載入成功')
+      toast.success('會員資料載入成功', {
+        style: {
+          backgroundColor: '#4caf50',  // 背景色
+          color: '#fff',                // 文字顏色
+          borderRadius: '8px',          // 圓角
+          padding: '16px',              // 內邊距
+          fontSize: '16px',             // 字體大小
+        },
+      })
     } else {
       toast.error(`會員資料載入失敗`)
     }
@@ -244,7 +253,7 @@ export default function Profile() {
                       onChange={handleFieldChange}
                     />
                   </div>
-                  <div className="mt-2">
+                  <div className="">
                     <span className="error">{errors.user_name}</span>
                   </div>
                   <div>
@@ -258,7 +267,7 @@ export default function Profile() {
                       onChange={handleFieldChange}
                     />
                   </div>
-                  <div className="mt-2">
+                  <div className="">
                     <span className="error">{errors.nick_name}</span>
                   </div>
                   <div>
@@ -285,7 +294,7 @@ export default function Profile() {
                       <p className="p whitef ms-3">女</p>
                     </div>
                   </div>
-                  <div className="mt-2">
+                  <div className="">
                     <span className="error">{errors.gender}</span>
                   </div>
                   <div>
@@ -317,7 +326,7 @@ export default function Profile() {
                       onChange={handleFieldChange}
                     />
                   </div>
-                  <div className="mt-2">
+                  <div className="">
                     <span className="error">{errors.phone}</span>
                   </div>
                   <div>
@@ -337,14 +346,16 @@ export default function Profile() {
                     <button type="submit" className="profile-checked  btn2 p">
                       確認
                     </button>
-                    <div type="button" className="profile-changepassword  btn1 p">
-                      <Link
-                        href="/member/changeps"
-                        className=" goldenf text-decoration-none  color-inherit"
-                      >
-                        修改密碼
-                      </Link>
-                    </div>
+                    {auth.userData.google_uid.length !== null && (
+                      <div type="button" className="profile-changepassword  btn1 p">
+                        <Link
+                          href="/member/changeps"
+                          className=" goldenf text-decoration-none  color-inherit"
+                        >
+                          修改密碼
+                        </Link>
+                      </div>)
+                    }
                   </div>
                 </form>
               </div>

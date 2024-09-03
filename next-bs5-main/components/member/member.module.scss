@@ -1,3 +1,7 @@
+// 忘記密碼
+.ForgetPS {
+  margin-top: 70px;
+}
 // changeps
 .changeps {
   font-family: 'B2Hana-Regular', sans-serif;
@@ -13,18 +17,24 @@
     /* align-items: center; */
     .error {
       font-size: 1.6rem;
-      color: red;
+      color: #ff4d4f;
     }
     .inputarea {
       position: relative;
       width: 900px;
       .icon {
-        padding: 0px;
         position: absolute;
-        right: 20px;
+        right: 5px;
         top: 50%;
         transform: translateY(-50%);
-        /*自己本身高度往上調50%*/
+        background: none;
+        border: none;
+        color: #b29564;
+        cursor: pointer;
+        font-size: 2rem;
+        display: flex; // 使用 flex 來更好地居中圖標
+        align-items: center;
+        justify-content: center;
       }
     }
 
@@ -137,7 +147,7 @@
     /* align-items: center; */
     .error {
       font-size: 1.6rem;
-      color: red;
+      color: #ff4d4f;
     }
     .inputarea {
       position: relative;
@@ -186,7 +196,7 @@
       font-size: 1.6rem;
       border: none;
       font-family: 'B2Hana-Regular', sans-serif;
-      padding: 1.3rem;
+      padding: 1.2rem;
       color: var(--bg-text-color);
     }
 
@@ -209,7 +219,7 @@
     }
   }
 }
-
+//
 .forgetpssec {
   width: 570px;
   > p {
@@ -231,7 +241,7 @@
     /* align-items: center; */
     .error {
       font-size: 1.6rem;
-      color: red;
+      color: #ff4d4f;
     }
     .inputarea {
       position: relative;
@@ -265,9 +275,9 @@
     }
     button {
       margin: 12px 0px 12px 0px;
-      height: 50px;
+      // height: 50px;
       width: 25%;
-      padding: 1.2rem;
+      padding: 12px;
       color: var(--bg-text-color);
       background-color: var(--background);
       border: var(--primary2) solid 1px;
@@ -288,14 +298,14 @@
       display: flex;
       flex-direction: column;
     }
-
+    // 忘記密碼按鈕
     .btn-in {
       width: 150px;
       background-color: var(--primary2);
       font-size: 1.6rem;
       border: none;
       font-family: 'B2Hana-Regular', sans-serif;
-      padding: 0;
+      padding: 1.2rem;
       color: var(--bg-text-color);
     }
 
@@ -347,7 +357,7 @@
         width: 100%;
       }
       button {
-        padding: 0;
+        padding: 0px;
         color: var(--bg-text-color);
         background-color: var(--background);
         border: var(--primary2) solid 1px;
@@ -364,7 +374,7 @@
 .loginPage,
 .registerPage {
   display: flex;
-  margin-top: 80px;
+  margin-top: 70px;
   font-family: 'B2Hana-Regular', sans-serif;
   background-color: #003e52;
 }
@@ -508,6 +518,7 @@
       background-color: #003e52;
       color: var(--bg-text-color);
       font-size: 16px;
+      margin-bottom: 5px;
 
       &::placeholder {
         color: #b29564;
@@ -525,7 +536,7 @@
 
     .eyeIcon {
       position: absolute;
-      right: 14px;
+      right: 5px;
       top: 50%;
       transform: translateY(-50%);
       background: none;
@@ -570,7 +581,7 @@
       color: var(--primary-light);
     }
   }
-  p{
+  p {
     color: var(--bg-text-color);
   }
 }
