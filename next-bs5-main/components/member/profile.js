@@ -346,7 +346,7 @@ export default function Profile() {
                     <button type="submit" className="profile-checked  btn2 p">
                       確認
                     </button>
-                    {auth.userData.google_uid.length !== null && (
+                    {auth.userData.google_uid === null && (
                       <div type="button" className="profile-changepassword  btn1 p">
                         <Link
                           href="/member/changeps"

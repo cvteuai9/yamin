@@ -277,12 +277,12 @@ export default function Coupon() {
               {/*  優惠券使用說明視窗 */}
               <p className="grayf"> 雅茗保留活動修改、變更及終止之權利。 </p>
               <div className="coupon-cinput">
-                <p className="grayf">優惠券歸戶</p>
+                <p className="grayf m-0">優惠券歸戶</p>
                 <input
                   className="coupon-inputtext p2 my-0"
                   type="text"
                   placeholder="活動序號或通關密語"
-                  style={{ width: 340 }}
+                  style={{ width: 250 }}
                   value={couponCode}
                   onChange={(e) => setCouponCode(e.target.value)}
                 />

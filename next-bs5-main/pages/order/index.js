@@ -194,26 +194,10 @@ export default function OrderOne() {
                           /* <h5 className="d-none"></h5> */
                         }
                       )}
-                      {v.state === 2 ? (
-                        <h5>已出貨</h5>
-                      ) : (
-                        <h5 className="d-none"></h5>
-                      )}
-                      {v.state === 3 ? (
-                        <h5>已到貨</h5>
-                      ) : (
-                        <h5 className="d-none"></h5>
-                      )}
-                      {v.state === 4 ? (
-                        <h5>已取貨</h5>
-                      ) : (
-                        <h5 className="d-none"></h5>
-                      )}
-                      {v.state === 5 ? (
-                        <h5>完成訂單</h5>
-                      ) : (
-                        <h5 className="d-none"></h5>
-                      )}
+                      {v.state === 2 ? <h5>已出貨</h5> : <></>}
+                      {v.state === 3 ? <h5>已到貨</h5> : <></>}
+                      {v.state === 4 ? <h5>已取貨</h5> : <></>}
+                      {v.state === 5 ? <h5>完成訂單</h5> : <></>}
                     </div>
                     <div className="orderListCol  col-2">
                       <h5 className="" style={{ textAlign: 'center' }}>
