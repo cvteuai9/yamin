@@ -14,7 +14,7 @@ import SearchNav from './search-nav'
 import Link from 'next/link'
 import styles from '@/components/member/fav/favorite.module.scss'
 import { func } from 'prop-types'
-import { FaProductHunt } from "react-icons/fa6";
+import { FaProductHunt } from 'react-icons/fa6'
 import Swal from 'sweetalert2'
 export default function FavoriteP() {
   // !!拿取會員資料
