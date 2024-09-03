@@ -547,7 +547,9 @@ export default function Detail() {
                 {review.map((v, i) => {
                   const starArray = new Array(v.rating).fill(0)
                   const starArrayUnfill = new Array(5 - v.rating).fill(0)
-                  console.log(v)
+                  {
+                    /* console.log(v) */
+                  }
                   return (
                     <div
                       className={`${styles['review-card']} d-flex flex-row gap-5 mb-3`}
