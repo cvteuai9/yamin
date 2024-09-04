@@ -17,13 +17,13 @@ export default function Leftnav({
             </Link>
           </li>
           <li>
-            <Link href="/order" className={`h5 ${fromOrder}`}>
-              購買訂單
+            <Link href="/member/coupon" className={`h5 ${fromCupon}`}>
+              優惠券
             </Link>
           </li>
           <li>
-            <Link href="/member/coupon" className={`h5 ${fromCupon}`}>
-              優惠券
+            <Link href="/order" className={`h5 ${fromOrder}`}>
+              購買訂單
             </Link>
           </li>
           <li>

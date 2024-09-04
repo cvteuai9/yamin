@@ -62,7 +62,7 @@ export default function FavoriteC() {
       cancelButtonText: '取消',
     }).then((result) => {
       if (result.isConfirmed) {
-         fetch(
+        fetch(
           `http://localhost:3005/api/course/favorites?user_id=${userID}&course_id=${id}`,
           { method: 'DELETE' }
         )
@@ -107,7 +107,7 @@ export default function FavoriteC() {
         {/* 標題 & 篩選 */}
         <div className="container-fluid">
           <div className="row">
-            <div className="titlenav">
+            <div className="titlenav mb-6">
               <img src="/images/favorite/title.svg" alt="" />
               <img
                 src="/images/favorite/group.svg"
@@ -119,7 +119,6 @@ export default function FavoriteC() {
               <Leftnav fromFavorite="fromFavorite" />
             </div>
             <div className="col-md-9 p-0">
-              <h5 className="goldenf mb-3 mt-3">我的收藏</h5>
               <div className="favorite-nav">
                 <SearchNav favoriteCourse={1} />
                 <hr />
@@ -146,6 +145,7 @@ export default function FavoriteC() {
                                   <a
                                     href="#"
                                     data-value={`${i + 1}`}
+                                    className="p-0"
                                     onClick={(e) => {
                                       e.preventDefault()
                                       handleOption(e)
@@ -174,14 +174,15 @@ export default function FavoriteC() {
                         <div className={`${styles['favoritec-pcard']}`}>
                           <div className={`${styles['favoritec-imgbox']}`}>
                             <Link href={`http://localhost:3000/course/${v.id}`}>
-                              <img src={`/images/yaming/tea_class_picture/${v.img1}`} alt="" />
+                              <img
+                                src={`/images/yaming/tea_class_picture/${v.img1}`}
+                                alt=""
+                              />
                             </Link>
                             <button
                               className={`${styles['favoritec-fabtn']} btn`}
                               type="button"
-                              onClick={() =>
-                                handleFavCancel(v.id, userID)
-                              }
+                              onClick={() => handleFavCancel(v.id, userID)}
                             >
                               <img
                                 id="like2"

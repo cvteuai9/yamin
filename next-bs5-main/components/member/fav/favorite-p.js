@@ -14,7 +14,7 @@ import SearchNav from './search-nav'
 import Link from 'next/link'
 import styles from '@/components/member/fav/favorite.module.scss'
 import { func } from 'prop-types'
-import { FaProductHunt } from "react-icons/fa6";
+import { FaProductHunt } from 'react-icons/fa6'
 import Swal from 'sweetalert2'
 export default function FavoriteP() {
   // !!拿取會員資料
@@ -37,7 +37,7 @@ export default function FavoriteP() {
     // console.log(id);
     // const agreeDelete = confirm('您確定要移除此收藏商品?')
     // Swal的confirm
-     Swal.fire({
+    Swal.fire({
       title: '確定要移除此收藏商品?',
       text: '是否要取消收藏',
       icon: 'warning',
@@ -48,7 +48,7 @@ export default function FavoriteP() {
       cancelButtonText: '取消',
     }).then((result) => {
       if (result.isConfirmed) {
-         fetch(
+        fetch(
           `http://localhost:3005/api/my_products/favorites?user_id=${userID}&product_id=${id}`,
           { method: 'DELETE' }
         )
@@ -106,7 +106,7 @@ export default function FavoriteP() {
       {/* 標題 & 篩選 */}
       <div className="container-fluid">
         <div className="row">
-          <div className="titlenav">
+          <div className="titlenav mb-6">
             <img src="/images/favorite/title.svg" alt="" />
             <img
               src="/images/favorite/group.svg"
@@ -119,7 +119,6 @@ export default function FavoriteP() {
             <Leftnav fromFavorite="fromFavorite" />
           </div>
           <div className="col-md-9 p-0">
-            <h5 className="goldenf mb-3 mt-3">我的收藏</h5>
             <div className="favorite-nav">
               <SearchNav favoriteProduct={1} />
               <hr />
@@ -146,6 +145,7 @@ export default function FavoriteP() {
                                 <a
                                   href="#"
                                   data-value={`${i + 1}`}
+                                  className="p-0"
                                   onClick={(e) => {
                                     e.preventDefault()
                                     handleOption(e)
@@ -222,8 +222,14 @@ export default function FavoriteP() {
                 })
               ) : (
                 <div className={`${styles.noFavorites}`}>
-                  <h4 className='fw-bold mb-5'>你還沒有收藏的商品喔!</h4>
-                  <Link href={`/product/list`} className={`h4 d-flex align-items-center justify-content-center gap-1`}><FaProductHunt />來去逛逛吧!</Link>
+                  <h4 className="fw-bold mb-5">你還沒有收藏的商品喔!</h4>
+                  <Link
+                    href={`/product/list`}
+                    className={`h4 d-flex align-items-center justify-content-center gap-1`}
+                  >
+                    <FaProductHunt />
+                    來去逛逛吧!
+                  </Link>
                 </div>
               )}
             </div>

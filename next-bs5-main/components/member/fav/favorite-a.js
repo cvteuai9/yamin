@@ -108,7 +108,7 @@ export default function FavoriteA() {
       {/* 標題 & 篩選 */}
       <div className="container-fluid">
         <div className="row">
-          <div className="titlenav">
+          <div className="titlenav mb-6">
             <img src="/images/favorite/title.svg" alt="" />
             <img
               src="/images/favorite/group.svg"
@@ -116,11 +116,10 @@ export default function FavoriteA() {
               style={{ width: '100%' }}
             />
           </div>
-          <div className="col-md-3 ">
+          <div className="col-md-3">
             <Leftnav fromFavorite="fromFavorite" />
           </div>
           <div className="col-md-9 p-0">
-            <h5 className="goldenf mb-3 mt-3">我的收藏</h5>
             <div className="favorite-nav">
               <SearchNav favoriteArticle={1} />
               <hr />
@@ -145,6 +144,7 @@ export default function FavoriteA() {
                             <a
                               href="#"
                               data-value={3}
+                              className='p-0'
                               onClick={(e) => {
                                 e.preventDefault()
                                 handleOption(e)
@@ -157,6 +157,7 @@ export default function FavoriteA() {
                             <a
                               href="#"
                               data-value={4}
+                              className='p-0'
                               onClick={(e) => {
                                 e.preventDefault()
                                 handleOption(e)

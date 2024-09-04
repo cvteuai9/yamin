@@ -4,13 +4,17 @@ import { useAuth } from '@/hooks/my-use-auth'
 export default function OrderOne() {
   const { auth } = useAuth()
   const [userID, setUserId] = useState(0)
+  const [isAuth, setIsAuth] = useState(false)
   const [orderDetail, setOrderDetail] = useState([])
   useEffect(() => {
     setUserId(auth.userData.id)
+    setIsAuth(auth.isAuth)
   }, [auth])
   useEffect(() => {
-    getOrderDetails(userID)
-  }, [userID])
+    if (userID !== 0 && isAuth) {
+      getOrderDetails(userID)
+    }
+  }, [userID, isAuth])
   async function getOrderDetails(userID) {
     try {
       const apiUrl = new URL('http://localhost:3005/api/yamin_order')
@@ -72,11 +76,16 @@ export default function OrderOne() {
     <>
       <div className="container-fluid order">
         {/* 會員中心Title */}
-        <div className="userTitle LiaoUserTitleMd w-100  mb-6">
+        <div className="LiaoUserTitleMd w-100  mb-6">
           <img
             src="/images/cart/userTItle.svg"
             alt=""
             className="d-block mx-auto"
+          />
+          <img
+            src="/images/favorite/group.svg"
+            alt=""
+            style={{ width: '100%' }}
           />
         </div>
         {/* 會員中心Title End */}
@@ -171,6 +180,24 @@ export default function OrderOne() {
               </div>
             </div> */}
             {orderDetail.map((v, i) => {
+              let stateString = ``
+              switch (v.state) {
+                case 1:
+                  stateString = '訂單成立'
+                  break
+                case 2:
+                  stateString = '已出貨'
+                  break
+                case 3:
+                  stateString = '已到貨'
+                  break
+                case 4:
+                  stateString = '已取貨'
+                  break
+                case 5:
+                  stateString = '完成訂單'
+                  break
+              }
               return (
                 <div key={v.id} className="orderlistRow mb-3 row">
                   <div className="orderListCol col-3">
@@ -183,31 +210,7 @@ export default function OrderOne() {
                     <h5>{v.total_price}</h5>
                   </div>
                   <div className="orderListCol col-2">
-                    {v.state === 1 ? (
-                      <h5>訂單成立</h5>
-                    ) : (
-                      <h5 className="d-none"></h5>
-                    )}
-                    {v.state === 2 ? (
-                      <h5>已出貨</h5>
-                    ) : (
-                      <h5 className="d-none"></h5>
-                    )}
-                    {v.state === 3 ? (
-                      <h5>已到貨</h5>
-                    ) : (
-                      <h5 className="d-none"></h5>
-                    )}
-                    {v.state === 4 ? (
-                      <h5>已取貨</h5>
-                    ) : (
-                      <h5 className="d-none"></h5>
-                    )}
-                    {v.state === 5 ? (
-                      <h5>完成訂單</h5>
-                    ) : (
-                      <h5 className="d-none"></h5>
-                    )}
+                    <h5>{stateString}</h5>
                   </div>
                   <div className="orderListCol  col-2">
                     <h5 className="" style={{ textAlign: 'center' }}>
