@@ -9,7 +9,7 @@ export default function Leftnav({
 }) {
   return (
     <>
-      <div className="left-nav">
+      <div className="left-nav sidebar">
         <ul>
           <li>
             <Link href="/member/profile" className={`h5 ${fromProfile}`}>
